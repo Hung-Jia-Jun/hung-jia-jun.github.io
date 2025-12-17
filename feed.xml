@@ -3,17 +3,18 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-17T14:44:43Z</updated>
+    <updated>2025-12-17T14:46:27Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-17T14:44:32Z</updated>
+            <updated>2025-12-17T14:46:16Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
-                
+                &lt;p&gt;just 技術筆記&lt;/p&gt;
+
             </content>
             <link href="https://hung-jia-jun.github.io/" >
         </entry>
@@ -22,7 +23,7 @@
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-17T14:44:32Z</updated>
+            <updated>2025-12-17T14:46:16Z</updated>
             <id>https://hung-jia-jun.github.io/apache-kafka/kafka/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
@@ -65,7 +66,7 @@
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T14:44:32Z</updated>
+            <updated>2025-12-17T14:46:16Z</updated>
             <id>https://hung-jia-jun.github.io/apache-kafka/consumer-offset-reset/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
