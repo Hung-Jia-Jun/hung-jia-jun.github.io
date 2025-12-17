@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh">
 <head>
-<title>kafka 高效率傳輸設定</title>
+<title>HA proxy VRRP 研究</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script async type="module">import mermaid from"https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"</script>
 <script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -87,7 +87,7 @@ CTRL + K
 </div>
 </div>
 <div x-show="isOpen" style="display:none" class="filelist">
-<div @click.stop class="notelink active-note"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/kafka 高效率傳輸設定/">kafka 高效率傳輸設定 </a>
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/kafka 高效率傳輸設定/">kafka 高效率傳輸設定 </a>
 </div>
 </div>
 </div>
@@ -100,7 +100,7 @@ CTRL + K
 <span class="foldername">Proxy</span>
 </div>
 <div x-show="isOpen" style="display:none" class="filelist">
-<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Proxy/HA proxy VRRP 研究/">HA proxy VRRP 研究 </a>
+<div @click.stop class="notelink active-note"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Proxy/HA proxy VRRP 研究/">HA proxy VRRP 研究 </a>
 </div>
 </div>
 </div>
@@ -166,50 +166,314 @@ CTRL + K
 <script>document.addEventListener("DOMContentLoaded",init,!1),document.addEventListener("DOMContentLoaded",setCorrectShortcut,!1),window.toggleSearch=function(){document.getElementById("globalsearch").classList.contains("active")?document.getElementById("globalsearch").classList.remove("active"):(document.getElementById("globalsearch").classList.add("active"),document.getElementById("term").focus())},window.toggleTagSearch=function(e){console.log(e.textContent);const t=e.textContent;t&&(window.document.getElementById("term").value=t.trim(),window.toggleSearch(),window.search())};const loadingSvg='\n    <svg width="100" height="100" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg" stroke="#fff">\n      <g fill="none" fill-rule="evenodd" transform="translate(1 1)" stroke-width="2">\n          <circle cx="22" cy="22" r="6" stroke-opacity="0">\n              <animate attributeName="r"\n                   begin="1.5s" dur="3s"\n                   values="6;22"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-opacity"\n                   begin="1.5s" dur="3s"\n                   values="1;0" calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-width"\n                   begin="1.5s" dur="3s"\n                   values="2;0" calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n          <circle cx="22" cy="22" r="6" stroke-opacity="0">\n              <animate attributeName="r"\n                   begin="3s" dur="3s"\n                   values="6;22"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-opacity"\n                   begin="3s" dur="3s"\n                   values="1;0" calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-width"\n                   begin="3s" dur="3s"\n                   values="2;0" calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n          <circle cx="22" cy="22" r="8">\n              <animate attributeName="r"\n                   begin="0s" dur="1.5s"\n                   values="6;1;2;3;4;5;6"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n      </g>\n  </svg>';function debounce(e,t,n){var a;return function(){var r=this,i=arguments,c=n&&!a;clearTimeout(a),a=setTimeout((function(){a=null,n||e.apply(r,i)}),t),c&&e.apply(r,i)}}function setCorrectShortcut(){navigator.platform.toUpperCase().indexOf("MAC")>=0&&document.querySelectorAll(".search-keys").forEach((e=>e.innerHTML="⌘ + K"))}function createIndex(e){const t=e=>e.toLowerCase().split(/([^a-z]|[^\x00-\x7F])/),n=new FlexSearch.Document({cache:!0,charset:"latin:extra",optimize:!0,index:[{field:"content",tokenize:"reverse",encode:t},{field:"title",tokenize:"forward",encode:t},{field:"tags",tokenize:"forward",encode:t}]});return e.forEach(((e,t)=>{n.add({id:t,title:e.title,content:e.content,tags:e.tags})})),n}async function init(){let e=!0;if(localStorage.getItem("searchIndex")){let{date:t,docs:n}=JSON.parse(localStorage.getItem("searchIndex"));if("2025-12-17T15:40:40.676Z"===t){e=!1;let t=createIndex(n);window.docs=n,window.index=t}}if(e){let e=await(await fetch("/searchIndex.json?v=2025-12-17T15:40:40.676Z")).json(),t=createIndex(e);localStorage.setItem("searchIndex",JSON.stringify({date:"2025-12-17T15:40:40.676Z",docs:e})),window.docs=e,window.index=t}document.addEventListener("keydown",(e=>{if((e.ctrlKey||e.metaKey)&&"k"===e.key&&(e.preventDefault(),toggleSearch()),"Escape"===e.key&&document.getElementById("globalsearch").classList.remove("active"),document.getElementById("globalsearch").classList.contains("active")){if("ArrowDown"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t?(t.classList.remove("active"),t.nextElementSibling?t.nextElementSibling.classList.add("active"):document.querySelector(".searchresult").classList.add("active")):document.querySelector(".searchresult").classList.add("active");let n=document.querySelector(".searchresult.active");n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})}if("ArrowUp"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t?(t.classList.remove("active"),t.previousElementSibling?t.previousElementSibling.classList.add("active"):document.querySelectorAll(".searchresult").forEach((e=>{e.nextElementSibling||e.classList.add("active")}))):document.querySelectorAll(".searchresult").forEach((e=>{e.nextElementSibling&&e.classList.add("active")}));let n=document.querySelector(".searchresult.active");n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})}if("Enter"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t&&(window.location.href=t.querySelector("a").href)}}}));const t=debounce(search,200,!1);field=document.querySelector("#term"),field.addEventListener("keydown",(e=>{"ArrowDown"!==e.key&&"ArrowUp"!==e.key&&t()})),resultsDiv=document.querySelector("#search-results");const n=new URL(location.href).searchParams;n.get("q")&&(field.setAttribute("value",n.get("q")),toggleSearch(),search())}async function search(){let e=field.value.trim();if(!e)return;if(e==lastSearch)return;console.log(`search for ${e}`),window.lastSearch=e,resultsDiv.innerHTML=loadingSvg;let t=offlineSearch(e),n="";if(!t.length){let t=document.createElement("p");return t.innerText=`No results for "${e}"`,resultsDiv.innerHTML="",void resultsDiv.appendChild(t)}n+='<div style="max-width:100%;">',t.forEach((e=>{e.tags&&e.tags.length>0?n+=`<div class="searchresult">\n                    <a class="search-link" href="${e.url}">${e.title}</a>\n                    <div onclick="window.location='${e.url}'">\n                        <div class="header-meta">\n                            <div class="header-tags">\n                                ${e.tags.map((e=>'<a class="tag" href="JavaScript:Void(0);">#'+e+"</a>")).join("")}\n                            </div>\n                        </div>\n                        ${e.content}\n                    </div>\n                </div>`:n+=`<div class="searchresult">\n                    <a class="search-link" href="${e.url}">${e.title}</a>\n                    <div onclick="window.location='${e.url}'">\n                        ${e.content}\n                    </div>\n                </div>`})),n+="</div>",resultsDiv.innerHTML=n}function truncate(e,t){return(e=e.replaceAll(/<[^>]*>/g,"")).length<t?e:e.substring(0,t-3)+"..."}function offlineSearch(e){let t=window.docs,n="#"===e[0]&&e.length>1?index.search(e.substring(1),[{field:"tags"}]):index.search(e,[{field:"title",limit:5},{field:"content",weight:10}]);const a=e=>{const t=n.filter((t=>t.field===e));return 0===t.length?[]:[...t[0].result]};return[...new Set([...a("title"),...a("content"),...a("tags")])].map((e=>{let n=t[e];return n.content=truncate(n.content,400),n.tags=n.tags.filter((e=>"gardenEntry"!=e&&"note"!=e)),n}))}window.lastSearch=""</script>
 <main class="content cm-s-obsidian">
 <header>
-<h1 data-note-icon="">kafka 高效率傳輸設定</h1>
+<h1 data-note-icon="">HA proxy VRRP 研究</h1>
 <div class="header-meta">
 <div class="header-tags">
 <a class="tag" onclick="toggleTagSearch(this)">
-#kafka
+#vrrp
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+#haproxy
 </a>
 </div>
 </div>
 </header>
-<p>訂閱 kafka 消息</p>
-<pre><code>kafka-console-consumer --bootstrap-server 127.0.0.1:19092 --topic wikimedia.recentchange
+<p><a class="tag" onclick="toggleTagSearch(this)" data-content="#haproxy">#haproxy</a> <a class="tag" onclick="toggleTagSearch(this)" data-content="#vrrp">#vrrp</a> <a class="tag" onclick="toggleTagSearch(this)" data-content="#linux">#linux</a> <a class="tag" onclick="toggleTagSearch(this)" data-content="#keepalived">#keepalived</a> <a class="tag" onclick="toggleTagSearch(this)" data-content="#proxy">#proxy</a></p>
+<h1 id="vrrp-virtual-router-redundancy-protocol" tabindex="-1">VRRP(Virtual Router Redundancy Protocol)</h1>
+<p>主要實現工具是 keepalived，他會透過 vrrp 廣播 master 的心跳，一但 master 死掉，Backup 就會代替 Master 回覆指定 IP 的 arp request。<br>
+兩台主機上都有 HA Proxy，接收到請求後會再傳到後端 server</p>
+<h2 id="架構圖" tabindex="-1">架構圖</h2>
+<p><picture src="/img/user/images/Pasted%20image%2020241122113609.png" alt="Pasted image 20241122113609.png"><source media="(max-width:480px)" srcset="/img/optimized/SGIbCGDhWh-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/SGIbCGDhWh-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/SGIbCGDhWh-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/SGIbCGDhWh-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122113609.png" alt="Pasted image 20241122113609.png" width=""></picture></p>
+<p>參考教學 : <a href="https://medium.com/@abhilashkulkarni340/vrrp-and-4-simple-steps-to-set-it-up-on-ubuntu-454c46abb3b4" target="_blank" class="external-link">https://medium.com/@abhilashkulkarni340/vrrp-and-4-simple-steps-to-set-it-up-on-ubuntu-454c46abb3b4</a></p>
+<h2 id="安裝" tabindex="-1">安裝</h2>
+<h3 id="haproxy" tabindex="-1">haproxy</h3>
+<pre><code>$ sudo apt install haproxy
+$ haproxy -v
+HA-Proxy version 2.0.33-0ubuntu0.1 2023/10/31 - https://haproxy.org/
 </code></pre>
-<p>高效率傳輸時，可考慮以下設定</p>
+<h3 id="keepalived" tabindex="-1">keepalived</h3>
+<pre><code>$ apt-get install keepalived
+$ systemctl status keepalived
+● keepalived.service - Keepalive Daemon (LVS and VRRP)
+     Loaded: loaded (/lib/systemd/system/keepalived.service; enabled; vendor preset: enabled)
+     Active: inactive (dead)
+  Condition: start condition failed at Thu 2024-11-21 13:47:53 CST; 2h 11min ago
+
+Nov 21 13:47:53 jason-2 systemd[1]: Condition check resulted in Keepalive Daemon (LVS and VRRP) being skipped.
+</code></pre>
+<p>出現 inactive 是正常的，因為沒有 keepalived 的設定檔</p>
+<p>所以要從 keepalived config sample 裡面拿到範例設定檔</p>
+<pre><code>$ cp /usr/share/doc/keepalived/samples/keepalived.conf.sample /etc/keepalived/keepalived.conf
+</code></pre>
+<h2 id="vrrp" tabindex="-1">VRRP 主備切換環境</h2>
+<p><picture src="/img/user/images/Pasted%20image%2020241122103718.png" alt="Pasted image 20241122103718.png"><source media="(max-width:480px)" srcset="/img/optimized/RkbpfnwCBQ-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/RkbpfnwCBQ-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/RkbpfnwCBQ-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/RkbpfnwCBQ-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122103718.png" alt="Pasted image 20241122103718.png" width=""></picture></p>
+<h2 id="設定檔" tabindex="-1">設定檔</h2>
+<p>jason-1(Master)、jason-2(Backup) 兩台測試機的設定檔都要放</p>
+<h3 id="jason-1-master" tabindex="-1">jason-1(Master)</h3>
+<p>/etc/haproxyhaproxy.cfg</p>
+<pre><code>global
+	log /dev/log	local0
+	log /dev/log	local1 notice
+	chroot /var/lib/haproxy
+	stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+	stats timeout 30s
+	user haproxy
+	group haproxy
+	daemon
+
+	# Default SSL material locations
+	ca-base /etc/ssl/certs
+	crt-base /etc/ssl/private
+
+	# See: https://ssl-config.mozilla.org/#server=haproxy&amp;server-version=2.0.3&amp;config=intermediate
+        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+
+defaults
+	log	global
+	mode	http
+	option	httplog
+	option	dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
+
+frontend firstbalance
+    bind *:80
+    option forwardfor
+    default_backend webservers
+
+backend webservers
+    balance roundrobin
+    server test-2 10.xx.x.154:8080 check &lt;-- 這個要指定後端 server 位置
+</code></pre>
+<p>/etc/keepalived/keepalived.conf</p>
+<pre><code>! Configuration File for keepalived
+
+global_defs {
+   router_id LVS_DEVEL
+}
+
+vrrp_instance VI_1 {
+    state MASTER # 路由器的首選狀態 - MASTER 或 BACKUP
+    interface ens160 # IP 位址綁定的介面。它還必須添加到 virtual_ipaddress 部分
+    unicast_src_ip 10.xx.x.153 # 目前路由器的IP位址
+    unicast_peer{ 
+        10.xx.x.154 # VRRP中其他路由器的IP位址
+    } 
+    virtual_router_id 50
+    # nopreempt # nopreempt允許一個priority比較低的節點作為master，即使有priority更高的節點啟動。
+    priority 101 # 優先權：該路由器在其他路由器中的優先權
+    advert_int 1
+    virtual_ipaddress {
+	    10.xx.x.160 # 此部分用於新增虛擬 IP 位址 (VIP)。請注意它如何與 src_ip 和對等點位於同一網路中。
+    }
+}
+</code></pre>
+<h3 id="jason-2-backup" tabindex="-1">jason-2(Backup)</h3>
+<p>/etc/haproxyhaproxy.cfg</p>
+<pre><code>global
+	log /dev/log	local0
+	log /dev/log	local1 notice
+	chroot /var/lib/haproxy
+	stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+	stats timeout 30s
+	user haproxy
+	group haproxy
+	daemon
+
+	# Default SSL material locations
+	ca-base /etc/ssl/certs
+	crt-base /etc/ssl/private
+
+	# See: https://ssl-config.mozilla.org/#server=haproxy&amp;server-version=2.0.3&amp;config=intermediate
+        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+
+defaults
+	log	global
+	mode	http
+	option	httplog
+	option	dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
+frontend firstbalance
+    bind *:80
+    option forwardfor
+    default_backend webservers
+
+backend webservers
+    server test-2 172.xx.x.1:8080 check
+    # option httpchk
+</code></pre>
+<p>/etc/keepalived/keepalived.conf</p>
+<pre><code>! Configuration File for keepalived
+
+global_defs {
+   router_id LVS_DEVEL
+}
+vrrp_instance VI_1 {
+    interface ens160
+    state BACKUP
+    unicast_src_ip 10.xx.x.154
+    unicast_peer{ 
+        10.xx.x.153
+    } 
+    virtual_router_id 50
+    # nopreempt
+    priority 101
+    advert_int 1
+    virtual_ipaddress {
+	    10.xx.x.160
+    }
+}
+</code></pre>
+<div class="callout" data-callout="tip"><div class="callout-title"><div class="callout-title-inner"> Tip: nopreempt<br></div></div>
+<div class="callout-content">
+<p>
+允許一個priority比較低的節點作為master，即使有priority更高的節點啟動。<br>
+發生情境:<br>
+其中一台設置為master，一台設置為backup。 當master出現異常后，backup自動切換為master。 當backup成為master后，master恢復正常后會再次搶佔成為master，導致不必要的主備切換。 因此可以將兩台keepalived初始狀態均配置為backup，設置不同的優先順序，優先順序高的設置nopreempt解決異常恢復后再次搶佔的問題。</p>
+</div></div>
+<hr>
+<h2 id="執行" tabindex="-1">執行</h2>
+<p>jason-1(Master)</p>
+<pre><code>$ sudo systemctl restart keepalived
+</code></pre>
+<p>jason-2(Backup)</p>
+<pre><code>$ sudo systemctl restart keepalived
+</code></pre>
+<p>jason-2 這台目前是 BACKUP mode<br>
+<picture src="/img/user/images/Pasted%20image%2020241121162744.png" alt="Pasted image 20241121162744.png"><source media="(max-width:480px)" srcset="/img/optimized/6Y2awI99wf-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/6Y2awI99wf-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/6Y2awI99wf-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/6Y2awI99wf-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241121162744.png" alt="Pasted image 20241121162744.png" width=""></picture></p>
+<h2 id="實驗" tabindex="-1">實驗</h2>
+<p>目前狀態</p>
+<p>jason-1 - Master<br>
+jason-2 - Backup<br>
+<picture src="/img/user/images/Pasted%20image%2020241121163855.png" alt="Pasted image 20241121163855.png"><source media="(max-width:480px)" srcset="/img/optimized/AMHXc7c32A-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/AMHXc7c32A-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/AMHXc7c32A-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/AMHXc7c32A-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241121163855.png" alt="Pasted image 20241121163855.png" width=""></picture></p>
+<h4 id="jason-3" tabindex="-1">jason-3 觀測機</h4>
+<p>arp table 測試</p>
+<pre><code>$ sudo arping 10.xx.x.160
+60 bytes from 00:xx:xx:xx:xx:88 (10.xx.x.160): index=1 time=517.786 usec
+</code></pre>
+<p>現在 <code>10.xx.x.160</code> 是 jason-1(00:xx:xx:xx:88) 所負責的<br>
+<picture src="/img/user/images/Pasted%20image%2020241122105210.png" alt="Pasted image 20241122105210.png"><source media="(max-width:480px)" srcset="/img/optimized/kCHO-jVCPo-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/kCHO-jVCPo-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/kCHO-jVCPo-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/kCHO-jVCPo-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122105210.png" alt="Pasted image 20241122105210.png" width=""></picture><br>
+查看 arp table</p>
+<pre><code>$ arp -a
+...
+? (10.xx.x.160) at 00:xx:xx:xx:xx:88 [ether] on ens160
+...
+</code></pre>
+<p>關閉 jason-1(Master)<br>
+sudo systemctl stop keepalived<br>
+<picture src="/img/user/images/Pasted%20image%2020241122104314.png" alt="Pasted image 20241122104314.png"><source media="(max-width:480px)" srcset="/img/optimized/2zXVNtsOCn-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/2zXVNtsOCn-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/2zXVNtsOCn-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/2zXVNtsOCn-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122104314.png" alt="Pasted image 20241122104314.png" width=""></picture></p>
+<p>發現 jason-2(Backup) 主機接手 Master 位置<br>
+<picture src="/img/user/images/Pasted%20image%2020251217231432.png" alt="Pasted image 20251217231432.png"><source media="(max-width:480px)" srcset="/img/optimized/EOTNPyZC0Q-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/EOTNPyZC0Q-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/EOTNPyZC0Q-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/EOTNPyZC0Q-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251217231432.png" alt="Pasted image 20251217231432.png" width=""></picture><br>
+到 jason-3 探測機，發現已經迅速切換主備位置了<br>
+<picture src="/img/user/images/Pasted%20image%2020241122104433.png" alt="Pasted image 20241122104433.png"><source media="(max-width:480px)" srcset="/img/optimized/8jD9NfRgAW-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/8jD9NfRgAW-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/8jD9NfRgAW-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/8jD9NfRgAW-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122104433.png" alt="Pasted image 20241122104433.png" width=""></picture></p>
+<p>arp table 也同步更新<br>
+<picture src="/img/user/images/Pasted%20image%2020241122104539.png" alt="Pasted image 20241122104539.png"><source media="(max-width:480px)" srcset="/img/optimized/33-RXLMA0A-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/33-RXLMA0A-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/33-RXLMA0A-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/33-RXLMA0A-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122104539.png" alt="Pasted image 20241122104539.png" width=""></picture></p>
+<p>服務也未中斷<br>
+<picture src="/img/user/images/Pasted%20image%2020241122104608.png" alt="Pasted image 20241122104608.png"><source media="(max-width:480px)" srcset="/img/optimized/3p6NcHyrl1-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/3p6NcHyrl1-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/3p6NcHyrl1-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/3p6NcHyrl1-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241122104608.png" alt="Pasted image 20241122104608.png" width=""></picture></p>
+<h2 id="vrrp-1" tabindex="-1">VRRP工作原理</h2>
+<p>ref: <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/VRRP.html" target="_blank" class="external-link">https://info.support.huawei.com/info-finder/encyclopedia/zh/VRRP.html</a></p>
+<p>當Master設備出現故障時，路由器B和路由器C會選舉出新的Master設備。 新的Master設備開始回應對虛擬IP位址的<a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/ARP.html" title="ARP" target="_blank" class="external-link">ARP</a>回應，並定期發送VRRP通告報文。</p>
+<p>VRRP的詳細工作過程如下：</p>
 <ol>
-<li>max.in.flight.requests.per.connection
-<ol>
-<li>每個 producer 在 broker 回覆 ack 前，最多送幾筆訊息出去</li>
-<li>若設定 = 1
-<ol>
-<li>訊息只會一筆一筆發，會降低效率，但好處是，若訊息需要嚴格的排序(有新增 sort key)，那很重要</li>
-</ol>
-</li>
-</ol>
-</li>
-<li><a href="http://linger.ms" target="_blank" class="external-link">linger.ms</a>
-<ol>
-<li>等待一段 <a href="http://linger.ms" target="_blank" class="external-link">linger.ms</a>，在此期間收到的消息都放在自己的暫存區，若 broker 批處理(batch.size)在 <a href="http://linger.ms" target="_blank" class="external-link">linger.ms</a> 到達之前填滿，則立即批處理暫存區內的訊息，否則達到 <a href="http://linger.ms" target="_blank" class="external-link">linger.ms</a> 才進行批處理</li>
-</ol>
-</li>
-<li>compression.type
-<ol>
-<li>批處理參數，用於 broker 端壓縮訊息使用的算法(e.g. lz4、zstd、gzip...etc)</li>
-</ol>
-</li>
-<li>batch.size
-<ol>
-<li>批處理的單筆 message 大小，若超過，則立即處理該訊息</li>
-</ol>
-</li>
+<li>VRRP備份組中的設備根據優先順序選舉出Master。 Master設備通過發送<a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/ARP.html" title="ARP" target="_blank" class="external-link">免費ARP</a>報文，將虛擬MAC位址通知給與它連接的設備或者主機，從而承擔報文轉發任務。</li>
+<li>Master設備週期性向備份組內所有Backup設備發送VRRP通告報文，通告其配置資訊（優先順序等）和工作狀況。</li>
+<li>如果Master設備出現故障，VRRP備份組中的Backup設備將根據優先順序重新選舉新的Master。</li>
+<li>VRRP備份組狀態切換時，Master設備由一台設備切換為另外一台設備，新的Master設備會立即發送攜帶虛擬路由器的虛擬MAC位址和虛擬IP位址資訊的免費ARP報文，刷新與它連接的設備或者主機的MAC表項，從而把使用者流量引到新的Master設備上來，整個過程對使用者完全透明。</li>
+<li>原Master設備故障恢復時，若該設備為IP位址擁有者（優先順序為255），將直接切換至Master狀態。 若該設備優先順序小於255，將首先切換至Backup狀態，且其優先順序恢復為故障前配置的優先順序。</li>
+<li>Backup設備的優先順序高於Master設備時，由Backup設備的工作方式（搶佔方式和非搶佔方式）決定是否重新選舉Master。</li>
 </ol>
 </main>
 <aside>
 <div class="sidebar">
 <div class="sidebar-container">
+<div class="toc">
+<div class="toc-title-container">
+<div class="toc-title">
+On this page
+</div>
+</div>
+<div class="toc-container">
+<nav class="toc">
+<ol>
+<li><a href="#vrrp-virtual-router-redundancy-protocol">VRRP(Virtual Router Redundancy Protocol)</a>
+<ol>
+<li><a href="#架構圖">架構圖</a>
+</li>
+<li><a href="#安裝">安裝</a>
+<ol>
+<li><a href="#haproxy">haproxy</a>
+</li>
+<li><a href="#keepalived">keepalived</a>
+</li>
+</ol>
+</li>
+<li><a href="#vrrp">VRRP 主備切換環境</a>
+</li>
+<li><a href="#設定檔">設定檔</a>
+<ol>
+<li><a href="#jason-1-master">jason-1(Master)</a>
+</li>
+<li><a href="#jason-2-backup">jason-2(Backup)</a>
+</li>
+</ol>
+</li>
+<li><a href="#執行">執行</a>
+</li>
+<li><a href="#實驗">實驗</a>
+<ol>
+<li><a href="#jason-3">jason-3 觀測機</a>
+</li>
+</ol>
+</li>
+<li><a href="#vrrp-1">VRRP工作原理</a>
+</li>
+</ol>
+</li>
+</ol>
+</nav>
+</div>
+</div>
 <div class="backlinks">
 <div class="backlink-title" style="margin:4px 0!important">Pages mentioning this page</div>
 <div class="backlink-list"><div class="backlink-card">

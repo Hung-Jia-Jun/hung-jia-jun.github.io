@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-17T15:02:38Z</updated>
+    <updated>2025-12-17T15:40:40Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -23,7 +23,7 @@
                 密碼學 - 零知識證明 - 密鑰協商
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/密碼學 - 零知識證明 - 密鑰協商/</id>
             <content type="html">
                 &lt;img src=&quot;https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuNA0inAJI_AB51npCfDJeMod_2GkBbjRXQUjQrvEwtxQt_niwWu5Mriki1e5NJkG0WKhgBH2WOv2keB6qoNBNsnU1LJuegFz-PJvppecF6rjrWGRytBsp6VJTZwViWWe_dnvuyk96u1ge6Otx44n6CAmKdZPkEFPvFQNirOyMmdLef28RltpcNjUDZGgE2hOAcYaQsabQYgeAXHmWUJWIh0OamHJ0RCAQemJr9WaY348TxzOqV5ytVIdhHkVx5hzT7qRo0niBlO6wNV2xWomd2F2xBpyabI5eipqZ18hME00RMZVzNnM2r3jipdDpsVlU3gXXyiXDIy575SG6W00&quot; alt=&quot;uml diagram&quot; /&gt;
@@ -96,7 +96,7 @@ p 夠大時，Eve 幾乎不可能算出 Alice 的私鑰&lt;br /&gt;
                 安裝 Obsidian 語意搜尋套件
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/安裝 Obsidian 語意搜尋套件/</id>
             <content type="html">
                 &lt;p&gt;Plugin repo: &lt;a href=&quot;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&lt;/a&gt;&lt;/p&gt;
@@ -157,7 +157,7 @@ nomic-embed-text:latest    0a109f422b47    274 MB    About an hour ago
                 使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/</id>
             <content type="html">
                 &lt;h1 id=&quot;主旨&quot; tabindex=&quot;-1&quot;&gt;主旨&lt;/h1&gt;
@@ -236,10 +236,86 @@ end:   0x7fe364000000
         </entry>
         <entry>
             <title>
+                GCP dataproc 運行 python scripts
+                
+            </title>
+            <updated>2025-12-17T15:40:24Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/pySpark/GCP dataproc 運行 python scripts/</id>
+            <content type="html">
+                &lt;p&gt;建立 dataproc cluster&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;gcloud dataproc clusters create jason-test-spark-job &#92;
+    --region=us-central1 &#92;
+    --properties=&#39;^#^dataproc:conda.packages=google-cloud-storage==2.18.2#yarn:yarn.scheduler.maximum-allocation-mb=256928#yarn:yarn.nodemanager.resource.memory-mb=256928&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;properties&quot; tabindex=&quot;-1&quot;&gt;properties&lt;/h2&gt;
+&lt;p&gt;在 package 裡面安裝 python package&lt;br /&gt;
+&lt;code&gt;dataproc:conda.packages=google-cloud-storage==2.18.2&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;指定 memory 使用量&lt;br /&gt;
+&lt;code&gt;yarn:yarn.scheduler.maximum-allocation-mb=256928#yarn:yarn.nodemanager.resource.memory-mb=256928&lt;/code&gt;&lt;/p&gt;
+&lt;h1 id=&quot;pyspark-pip-install&quot; tabindex=&quot;-1&quot;&gt;pyspark pip install&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;建立&lt;br /&gt;
+requirements.txt&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;pytest==6.2.5
+pyspark==3.2.0
+google-cloud-storage==1.43.0
+mlflow==1.23.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;寫 pip init 腳本&lt;br /&gt;
+pip_init.py&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+# 1. 確認 requirements.txt 文件是否已經上傳到 GCS 並下載到本地
+GCS_BUCKET_PATH=&amp;quot;gs://dataproc-staging-us-central1-473678078038-tw1bdolx/requirements.txt&amp;quot;
+
+LOCAL_PATH=&amp;quot;/tmp/requirements.txt&amp;quot;
+
+# 下載 requirements.txt
+gsutil cp ${GCS_BUCKET_PATH} ${LOCAL_PATH}
+
+# 使用 pip 安裝依賴
+pip install -r ${LOCAL_PATH}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;上傳檔案&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;gsutil cp requirements.txt gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
+gsutil cp pip_init.sh gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;
+&lt;p&gt;刪除原本的 cluster&lt;br /&gt;
+&lt;code&gt;gcloud dataproc clusters delete jason-test-spark-job --region=us-central1&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;建立 cluster 時運行腳本&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;gcloud dataproc clusters create jason-test-spark-job &#92;
+--region=us-central1 &#92;
+--initialization-actions=gs://dataproc-staging-us-central1-473678078038-tw1bdolx/pip_init.sh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&quot;delete-cluster&quot; tabindex=&quot;-1&quot;&gt;Delete cluster&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;gcloud dataproc clusters delete jason-test-spark-job --region=us-central1&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&quot;submit-job&quot; tabindex=&quot;-1&quot;&gt;Submit job&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;gcloud dataproc jobs submit pyspark test.py --region=us-central1 --cluster jason-test-spark-job&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!IMPORTANT]&lt;br /&gt;
+記得要切換 GCP 環境 (SIT/UAT/PROD)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#python&quot;&gt;#python&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#pyspark&quot;&gt;#pyspark&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#spark&quot;&gt;#spark&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#cluster&quot;&gt;#cluster&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/pySpark/GCP dataproc 運行 python scripts/" >
+        </entry>
+        <entry>
+            <title>
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka 高效率傳輸設定/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
@@ -279,10 +355,102 @@ end:   0x7fe364000000
         </entry>
         <entry>
             <title>
+                kafka  topic 實驗
+                
+            </title>
+            <updated>2025-12-17T15:40:24Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka  topic 實驗/</id>
+            <content type="html">
+                &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#kafka&quot;&gt;#kafka&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;環境設定&quot; tabindex=&quot;-1&quot;&gt;環境設定&lt;/h2&gt;
+&lt;p&gt;docker-compose.yaml&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;version: &#39;2.1&#39;
+services:
+  zoo1:
+    image: confluentinc/cp-zookeeper:7.3.2
+    hostname: zoo1
+    container_name: zoo1
+    ports:
+      - &amp;quot;2181:2181&amp;quot;
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_SERVERS: zoo1:2888:3888
+
+  kafka1:
+    image: confluentinc/cp-kafka:7.3.2
+    hostname: kafka1
+    container_name: kafka1
+    ports:
+      - &amp;quot;9092:9092&amp;quot;
+      - &amp;quot;29092:29092&amp;quot;
+      - &amp;quot;9999:9999&amp;quot;
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: &amp;quot;zoo1:2181&amp;quot;
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: &amp;quot;kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO&amp;quot;
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: &amp;quot;true&amp;quot;
+    depends_on:
+      - zoo1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;docker compose up  -d
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;docker exec -it kafka1 bash
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;刪除 JMX env&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;unset JMX_PORT &amp;amp;&amp;amp; unset KAFKA_JMX_OPTS
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立一個 topic&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kafka-topics --create --topic quickstart-events --bootstrap-server localhost:9092
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;檢查 topic 詳情&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kafka-topics --describe --topic quickstart-events --bootstrap-server localhost:9092
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建一個 producer&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kafka-console-producer --topic quickstart-events --bootstrap-server localhost:9092
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看目前 topic 有多少 message, 顯示的是 offset 的值&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic quickstart-events
+quickstart-events:0:16
+
+$ kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic filebeat
+filebeat:0:0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立一個 訂閱者，訂閱 quickstart-events&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kafka-console-consumer --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;測試 kafka consumer group  消費機制&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kafka-console-producer --topic quickstart-events --bootstrap-server localhost:9092 --group 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;同一個 group 只會有一個 consumer 會消費到一個 topic 的訊息&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;顯示目前 kafka 有多少 topic&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[appuser@kafka1 ~]$ kafka-topics --list --bootstrap-server localhost:9092
+__consumer_offsets
+filebeat
+metricbeat
+my_group2_v2
+quickstart-events
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka  topic 實驗/" >
+        </entry>
+        <entry>
+            <title>
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
@@ -383,10 +551,246 @@ try(openSearchClient; consumer){
         </entry>
         <entry>
             <title>
+                HA proxy VRRP 研究
+                
+            </title>
+            <updated>2025-12-17T15:40:24Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/Proxy/HA proxy VRRP 研究/</id>
+            <content type="html">
+                &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#haproxy&quot;&gt;#haproxy&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#vrrp&quot;&gt;#vrrp&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#linux&quot;&gt;#linux&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#keepalived&quot;&gt;#keepalived&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#proxy&quot;&gt;#proxy&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;vrrp-virtual-router-redundancy-protocol&quot; tabindex=&quot;-1&quot;&gt;VRRP(Virtual Router Redundancy Protocol)&lt;/h1&gt;
+&lt;p&gt;主要實現工具是 keepalived，他會透過 vrrp 廣播 master 的心跳，一但 master 死掉，Backup 就會代替 Master 回覆指定 IP 的 arp request。&lt;br /&gt;
+兩台主機上都有 HA Proxy，接收到請求後會再傳到後端 server&lt;/p&gt;
+&lt;h2 id=&quot;架構圖&quot; tabindex=&quot;-1&quot;&gt;架構圖&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122113609.png&quot; alt=&quot;Pasted image 20241122113609.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;參考教學 : &lt;a href=&quot;https://medium.com/@abhilashkulkarni340/vrrp-and-4-simple-steps-to-set-it-up-on-ubuntu-454c46abb3b4&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://medium.com/@abhilashkulkarni340/vrrp-and-4-simple-steps-to-set-it-up-on-ubuntu-454c46abb3b4&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;安裝&quot; tabindex=&quot;-1&quot;&gt;安裝&lt;/h2&gt;
+&lt;h3 id=&quot;haproxy&quot; tabindex=&quot;-1&quot;&gt;haproxy&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo apt install haproxy
+$ haproxy -v
+HA-Proxy version 2.0.33-0ubuntu0.1 2023/10/31 - https://haproxy.org/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;keepalived&quot; tabindex=&quot;-1&quot;&gt;keepalived&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;$ apt-get install keepalived
+$ systemctl status keepalived
+● keepalived.service - Keepalive Daemon (LVS and VRRP)
+     Loaded: loaded (/lib/systemd/system/keepalived.service; enabled; vendor preset: enabled)
+     Active: inactive (dead)
+  Condition: start condition failed at Thu 2024-11-21 13:47:53 CST; 2h 11min ago
+
+Nov 21 13:47:53 jason-2 systemd[1]: Condition check resulted in Keepalive Daemon (LVS and VRRP) being skipped.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;出現 inactive 是正常的，因為沒有 keepalived 的設定檔&lt;/p&gt;
+&lt;p&gt;所以要從 keepalived config sample 裡面拿到範例設定檔&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ cp /usr/share/doc/keepalived/samples/keepalived.conf.sample /etc/keepalived/keepalived.conf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;vrrp&quot; tabindex=&quot;-1&quot;&gt;VRRP 主備切換環境&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122103718.png&quot; alt=&quot;Pasted image 20241122103718.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;設定檔&quot; tabindex=&quot;-1&quot;&gt;設定檔&lt;/h2&gt;
+&lt;p&gt;jason-1(Master)、jason-2(Backup) 兩台測試機的設定檔都要放&lt;/p&gt;
+&lt;h3 id=&quot;jason-1-master&quot; tabindex=&quot;-1&quot;&gt;jason-1(Master)&lt;/h3&gt;
+&lt;p&gt;/etc/haproxyhaproxy.cfg&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;global
+	log /dev/log	local0
+	log /dev/log	local1 notice
+	chroot /var/lib/haproxy
+	stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+	stats timeout 30s
+	user haproxy
+	group haproxy
+	daemon
+
+	# Default SSL material locations
+	ca-base /etc/ssl/certs
+	crt-base /etc/ssl/private
+
+	# See: https://ssl-config.mozilla.org/#server=haproxy&amp;amp;server-version=2.0.3&amp;amp;config=intermediate
+        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+
+defaults
+	log	global
+	mode	http
+	option	httplog
+	option	dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
+
+frontend firstbalance
+    bind *:80
+    option forwardfor
+    default_backend webservers
+
+backend webservers
+    balance roundrobin
+    server test-2 10.xx.x.154:8080 check &amp;lt;-- 這個要指定後端 server 位置
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;/etc/keepalived/keepalived.conf&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;! Configuration File for keepalived
+
+global_defs {
+   router_id LVS_DEVEL
+}
+
+vrrp_instance VI_1 {
+    state MASTER # 路由器的首選狀態 - MASTER 或 BACKUP
+    interface ens160 # IP 位址綁定的介面。它還必須添加到 virtual_ipaddress 部分
+    unicast_src_ip 10.xx.x.153 # 目前路由器的IP位址
+    unicast_peer{ 
+        10.xx.x.154 # VRRP中其他路由器的IP位址
+    } 
+    virtual_router_id 50
+    # nopreempt # nopreempt允許一個priority比較低的節點作為master，即使有priority更高的節點啟動。
+    priority 101 # 優先權：該路由器在其他路由器中的優先權
+    advert_int 1
+    virtual_ipaddress {
+	    10.xx.x.160 # 此部分用於新增虛擬 IP 位址 (VIP)。請注意它如何與 src_ip 和對等點位於同一網路中。
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;jason-2-backup&quot; tabindex=&quot;-1&quot;&gt;jason-2(Backup)&lt;/h3&gt;
+&lt;p&gt;/etc/haproxyhaproxy.cfg&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;global
+	log /dev/log	local0
+	log /dev/log	local1 notice
+	chroot /var/lib/haproxy
+	stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+	stats timeout 30s
+	user haproxy
+	group haproxy
+	daemon
+
+	# Default SSL material locations
+	ca-base /etc/ssl/certs
+	crt-base /etc/ssl/private
+
+	# See: https://ssl-config.mozilla.org/#server=haproxy&amp;amp;server-version=2.0.3&amp;amp;config=intermediate
+        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+
+defaults
+	log	global
+	mode	http
+	option	httplog
+	option	dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
+frontend firstbalance
+    bind *:80
+    option forwardfor
+    default_backend webservers
+
+backend webservers
+    server test-2 172.xx.x.1:8080 check
+    # option httpchk
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;/etc/keepalived/keepalived.conf&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;! Configuration File for keepalived
+
+global_defs {
+   router_id LVS_DEVEL
+}
+vrrp_instance VI_1 {
+    interface ens160
+    state BACKUP
+    unicast_src_ip 10.xx.x.154
+    unicast_peer{ 
+        10.xx.x.153
+    } 
+    virtual_router_id 50
+    # nopreempt
+    priority 101
+    advert_int 1
+    virtual_ipaddress {
+	    10.xx.x.160
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!TIP] Tip: nopreempt&lt;br /&gt;
+允許一個priority比較低的節點作為master，即使有priority更高的節點啟動。&lt;br /&gt;
+發生情境:&lt;br /&gt;
+其中一台設置為master，一台設置為backup。 當master出現異常后，backup自動切換為master。 當backup成為master后，master恢復正常后會再次搶佔成為master，導致不必要的主備切換。 因此可以將兩台keepalived初始狀態均配置為backup，設置不同的優先順序，優先順序高的設置nopreempt解決異常恢復后再次搶佔的問題。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;執行&quot; tabindex=&quot;-1&quot;&gt;執行&lt;/h2&gt;
+&lt;p&gt;jason-1(Master)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo systemctl restart keepalived
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;jason-2(Backup)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo systemctl restart keepalived
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;jason-2 這台目前是 BACKUP mode&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241121162744.png&quot; alt=&quot;Pasted image 20241121162744.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;實驗&quot; tabindex=&quot;-1&quot;&gt;實驗&lt;/h2&gt;
+&lt;p&gt;目前狀態&lt;/p&gt;
+&lt;p&gt;jason-1 - Master&lt;br /&gt;
+jason-2 - Backup&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241121163855.png&quot; alt=&quot;Pasted image 20241121163855.png&quot; /&gt;&lt;/p&gt;
+&lt;h4 id=&quot;jason-3&quot; tabindex=&quot;-1&quot;&gt;jason-3 觀測機&lt;/h4&gt;
+&lt;p&gt;arp table 測試&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo arping 10.xx.x.160
+60 bytes from 00:xx:xx:xx:xx:88 (10.xx.x.160): index=1 time=517.786 usec
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;現在 &lt;code&gt;10.xx.x.160&lt;/code&gt; 是 jason-1(00:xx:xx:xx:88) 所負責的&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122105210.png&quot; alt=&quot;Pasted image 20241122105210.png&quot; /&gt;&lt;br /&gt;
+查看 arp table&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ arp -a
+...
+? (10.xx.x.160) at 00:xx:xx:xx:xx:88 [ether] on ens160
+...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;關閉 jason-1(Master)&lt;br /&gt;
+sudo systemctl stop keepalived&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122104314.png&quot; alt=&quot;Pasted image 20241122104314.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;發現 jason-2(Backup) 主機接手 Master 位置&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217231432.png&quot; alt=&quot;Pasted image 20251217231432.png&quot; /&gt;&lt;br /&gt;
+到 jason-3 探測機，發現已經迅速切換主備位置了&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122104433.png&quot; alt=&quot;Pasted image 20241122104433.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;arp table 也同步更新&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122104539.png&quot; alt=&quot;Pasted image 20241122104539.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;服務也未中斷&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241122104608.png&quot; alt=&quot;Pasted image 20241122104608.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;vrrp-1&quot; tabindex=&quot;-1&quot;&gt;VRRP工作原理&lt;/h2&gt;
+&lt;p&gt;ref: &lt;a href=&quot;https://info.support.huawei.com/info-finder/encyclopedia/zh/VRRP.html&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://info.support.huawei.com/info-finder/encyclopedia/zh/VRRP.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;當Master設備出現故障時，路由器B和路由器C會選舉出新的Master設備。 新的Master設備開始回應對虛擬IP位址的&lt;a href=&quot;https://info.support.huawei.com/info-finder/encyclopedia/zh/ARP.html&quot; title=&quot;ARP&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;ARP&lt;/a&gt;回應，並定期發送VRRP通告報文。&lt;/p&gt;
+&lt;p&gt;VRRP的詳細工作過程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;VRRP備份組中的設備根據優先順序選舉出Master。 Master設備通過發送&lt;a href=&quot;https://info.support.huawei.com/info-finder/encyclopedia/zh/ARP.html&quot; title=&quot;ARP&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;免費ARP&lt;/a&gt;報文，將虛擬MAC位址通知給與它連接的設備或者主機，從而承擔報文轉發任務。&lt;/li&gt;
+&lt;li&gt;Master設備週期性向備份組內所有Backup設備發送VRRP通告報文，通告其配置資訊（優先順序等）和工作狀況。&lt;/li&gt;
+&lt;li&gt;如果Master設備出現故障，VRRP備份組中的Backup設備將根據優先順序重新選舉新的Master。&lt;/li&gt;
+&lt;li&gt;VRRP備份組狀態切換時，Master設備由一台設備切換為另外一台設備，新的Master設備會立即發送攜帶虛擬路由器的虛擬MAC位址和虛擬IP位址資訊的免費ARP報文，刷新與它連接的設備或者主機的MAC表項，從而把使用者流量引到新的Master設備上來，整個過程對使用者完全透明。&lt;/li&gt;
+&lt;li&gt;原Master設備故障恢復時，若該設備為IP位址擁有者（優先順序為255），將直接切換至Master狀態。 若該設備優先順序小於255，將首先切換至Backup狀態，且其優先順序恢復為故障前配置的優先順序。&lt;/li&gt;
+&lt;li&gt;Backup設備的優先順序高於Master設備時，由Backup設備的工作方式（搶佔方式和非搶佔方式）決定是否重新選舉Master。&lt;/li&gt;
+&lt;/ol&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/Proxy/HA proxy VRRP 研究/" >
+        </entry>
+        <entry>
+            <title>
                 CVE-2025-55182 漏洞研究
                 
             </title>
-            <updated>2025-12-17T15:02:21Z</updated>
+            <updated>2025-12-17T15:40:24Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code&gt;npm create next-app@16.0.6
