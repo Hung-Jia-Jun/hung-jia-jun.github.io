@@ -1,5 +1,5 @@
 ---
-{"tags":["kafka"],"dg-publish":true,"dg-home":false,"permalink":"//apache-kafka/kafka/","dgPassFrontmatter":true}
+{"tags":["kafka"],"dg-publish":true,"dg-home":false,"permalink":"/技術文件/apache_kafka/kafka 高效率傳輸設定/","dgPassFrontmatter":true}
 ---
 
 訂閱 kafka 消息
