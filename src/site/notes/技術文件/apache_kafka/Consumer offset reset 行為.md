@@ -1,5 +1,5 @@
 ---
-{"tags":["kafka","java","gardenEntry"],"dg-home":true,"dg-publish":true,"permalink":"//apache-kafka/consumer-offset-reset/","dgPassFrontmatter":true}
+{"tags":["kafka","java"],"dg-home":false,"dg-publish":true,"permalink":"//apache-kafka/consumer-offset-reset/","dgPassFrontmatter":true}
 ---
 
 # 情境
