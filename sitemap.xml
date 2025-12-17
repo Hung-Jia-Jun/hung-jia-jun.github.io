@@ -2,8 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>/daily-note/2025-12-17/</loc>
+            <lastmod>2025-12-17T00:00:00.000Z</lastmod>
+        </url>
+    
+        <url>
             <loc>/404.html</loc>
-            <lastmod>2025-12-17T13:49:43.818Z</lastmod>
+            <lastmod>2025-12-17T14:27:46.850Z</lastmod>
+        </url>
+    
+        <url>
+            <loc>/apache-kafka/consumer-offset-reset/</loc>
+            <lastmod>2025-12-17T14:27:46.852Z</lastmod>
+        </url>
+    
+        <url>
+            <loc>/</loc>
+            <lastmod>2025-12-17T14:27:46.853Z</lastmod>
         </url>
     
 </urlset>
