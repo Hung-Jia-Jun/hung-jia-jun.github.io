@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://hung-jia-jun.github.io">
+    <title>Digital Garden</title>
+    <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
+    <link href="https://hung-jia-jun.github.io" >
+    <updated>2025-12-17T14:32:55Z</updated>
+    <id>https://hung-jia-jun.github.io</id>
+        <entry>
+            <title>
+                kafka 高效率傳輸設定
+                
+            </title>
+            <updated>2025-12-17T14:32:46Z</updated>
+            <id>https://hung-jia-jun.github.io/apache-kafka/kafka/</id>
+            <content type="html">
+                &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kafka-console-consumer --bootstrap-server 127.0.0.1:19092 --topic wikimedia.recentchange
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;高效率傳輸時，可考慮以下設定&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;max.in.flight.requests.per.connection
+&lt;ol&gt;
+&lt;li&gt;每個 producer 在 broker 回覆 ack 前，最多送幾筆訊息出去&lt;/li&gt;
+&lt;li&gt;若設定 = 1
+&lt;ol&gt;
+&lt;li&gt;訊息只會一筆一筆發，會降低效率，但好處是，若訊息需要嚴格的排序(有新增 sort key)，那很重要&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://linger.ms/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;linger.ms&lt;/a&gt;
+&lt;ol&gt;
+&lt;li&gt;等待一段 &lt;a href=&quot;http://linger.ms/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;linger.ms&lt;/a&gt;，在此期間收到的消息都放在自己的暫存區，若 broker 批處理(batch.size)在 &lt;a href=&quot;http://linger.ms/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;linger.ms&lt;/a&gt; 到達之前填滿，則立即批處理暫存區內的訊息，否則達到 &lt;a href=&quot;http://linger.ms/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;linger.ms&lt;/a&gt; 才進行批處理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;compression.type
+&lt;ol&gt;
+&lt;li&gt;批處理參數，用於 broker 端壓縮訊息使用的算法(e.g. lz4、zstd、gzip...etc)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;batch.size
+&lt;ol&gt;
+&lt;li&gt;批處理的單筆 message 大小，若超過，則立即處理該訊息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/apache-kafka/kafka/" >
+        </entry>
+        <entry>
+            <title>
+                Consumer offset reset 行為
+                
+            </title>
+            <updated>2025-12-17T14:32:46Z</updated>
+            <id>https://hung-jia-jun.github.io/apache-kafka/consumer-offset-reset/</id>
+            <content type="html">
+                &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;consumer 預期會從 kafka 持續讀取 log，但如果 consumer crash，kafka 會保存 commited offset 7 天&lt;/p&gt;
+&lt;p&gt;也說明，若 consumer 停機超過 7 天，之前消費的位置將會被重置&lt;/p&gt;
+&lt;h1 id=&quot;參數&quot; tabindex=&quot;-1&quot;&gt;參數&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;ul&gt;
+&lt;li&gt;auto.offset.reset=latest: 會從 kafka topic 最末端讀取 log&lt;/li&gt;
+&lt;li&gt;auto.offset.reset=earliest: 從最早的地方開始讀 log&lt;/li&gt;
+&lt;li&gt;auto.offset.reset=none: 若沒有 offset 資訊，將會拋出 exception&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;log-consumer&quot; tabindex=&quot;-1&quot;&gt;重播 log 給 consumer&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;步驟如下:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;關閉該 consumer group 底下所有的 consumer&lt;/li&gt;
+&lt;li&gt;使用 kafka-consumer-groups 重置你想重置的 offset 位置&lt;/li&gt;
+&lt;li&gt;重啟 consumer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&quot;java-code&quot; tabindex=&quot;-1&quot;&gt;Java code&lt;/h1&gt;
+&lt;p&gt;透過 addShutdownHook 偵測 shutdown event&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;...
+// get a reference  
+final Thread mainThread = Thread.currentThread();  
+  
+Runtime.getRuntime().addShutdownHook(new Thread(){  
+    public void run(){  
+        log.info(&amp;quot;Detected a shutdown event&amp;quot;);  
+        consumer.wakeup();  
+  
+        try {  
+            mainThread.join();  
+        } catch (InterruptedException e) {  
+            e.printStackTrace();  
+        }  
+    }  
+});
+...
+try(openSearchClient; consumer){  
+    boolean indexExists = openSearchClient.indices().exists(new GetIndexRequest(indexName), RequestOptions.DEFAULT);  
+    if (!indexExists){  
+        // we need to create the index on opensearch if it doesn&#39;t exist already  
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);  
+        openSearchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);  
+        log.info(&amp;quot;The wikimedia index has been created&amp;quot;);  
+    } else {  
+        log.info(&amp;quot;The wikimedia index already exists&amp;quot;);  
+    }  
+  
+    while (true){  
+        ConsumerRecords&amp;lt;String, String&amp;gt; records = consumer.poll(Duration.ofMillis(3000));  
+  
+        int recordCount = records.count();  
+        log.info(&amp;quot;Received &amp;quot; + recordCount + &amp;quot; record(s)&amp;quot;);  
+        BulkRequest bulkRequest = new BulkRequest();  
+        for (ConsumerRecord&amp;lt;String, String&amp;gt; record : records){  
+            try{  
+                String id = extractId(record.value());  
+                // send the record into opensearch  
+                IndexRequest indexRequest = new IndexRequest(indexName)  
+                        .source(record.value(), XContentType.JSON)  
+                        .id(id);  
+                //IndexResponse indexResponse = openSearchClient.index(indexRequest, RequestOptions.DEFAULT);  
+                bulkRequest.add(indexRequest);  
+            } catch (Exception e){  
+  
+            }  
+        }  
+        if (bulkRequest.numberOfActions() &amp;gt; 0){  
+            BulkResponse bulkResponse = openSearchClient.bulk(bulkRequest, RequestOptions.DEFAULT);  
+            log.info(&amp;quot;Inserted &amp;quot; + bulkResponse.getItems().length + &amp;quot; record(s).&amp;quot;);  
+            try {  
+                Thread.sleep(1000);  
+            } catch (InterruptedException e) {  
+                e.printStackTrace();  
+            }  
+  
+        }  
+  
+        consumer.commitAsync();  
+        log.info(&amp;quot;offset have been committed!&amp;quot;);  
+    }  
+} catch (WakeupException e){  
+    log.info(&amp;quot;Consumer is starting to shutdown&amp;quot;);  
+} catch (Exception e){  
+    log.error(&amp;quot;unexpected exception: &amp;quot;, e);  
+} finally {  
+    consumer.close(); // close the consumer, this will also commit offest to kafka.  
+    openSearchClient.close();  
+    log.info(&amp;quot;The consumer is now gracefully shut down&amp;quot;);  
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/apache-kafka/consumer-offset-reset/" >
+        </entry>
+</feed>
