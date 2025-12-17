@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://hung-jia-jun.github.io/">
-    <title>Digital Garden</title>
-    <link href="https://hung-jia-jun.github.io//feed.xml" rel="self" >
-    <link href="https://hung-jia-jun.github.io/" >
-    <updated>2025-12-17T14:36:20Z</updated>
-    <id>https://hung-jia-jun.github.io/</id>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://hung-jia-jun.github.io">
+    <title>Jason&#39;s tech blog</title>
+    <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
+    <link href="https://hung-jia-jun.github.io" >
+    <updated>2025-12-17T14:36:42Z</updated>
+    <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-17T14:36:03Z</updated>
-            <id>https://hung-jia-jun.github.io//apache-kafka/kafka/</id>
+            <updated>2025-12-17T14:36:31Z</updated>
+            <id>https://hung-jia-jun.github.io/apache-kafka/kafka/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;kafka-console-consumer --bootstrap-server 127.0.0.1:19092 --topic wikimedia.recentchange
@@ -46,15 +46,15 @@
 &lt;/ol&gt;
 
             </content>
-            <link href="https://hung-jia-jun.github.io//apache-kafka/kafka/" >
+            <link href="https://hung-jia-jun.github.io/apache-kafka/kafka/" >
         </entry>
         <entry>
             <title>
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T14:36:03Z</updated>
-            <id>https://hung-jia-jun.github.io//apache-kafka/consumer-offset-reset/</id>
+            <updated>2025-12-17T14:36:31Z</updated>
+            <id>https://hung-jia-jun.github.io/apache-kafka/consumer-offset-reset/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
 &lt;hr /&gt;
@@ -150,6 +150,6 @@ try(openSearchClient; consumer){
 &lt;/code&gt;&lt;/pre&gt;
 
             </content>
-            <link href="https://hung-jia-jun.github.io//apache-kafka/consumer-offset-reset/" >
+            <link href="https://hung-jia-jun.github.io/apache-kafka/consumer-offset-reset/" >
         </entry>
 </feed>
