@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-17T15:40:40Z</updated>
+    <updated>2025-12-17T15:42:56Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -23,7 +23,7 @@
                 密碼學 - 零知識證明 - 密鑰協商
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/密碼學 - 零知識證明 - 密鑰協商/</id>
             <content type="html">
                 &lt;img src=&quot;https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuNA0inAJI_AB51npCfDJeMod_2GkBbjRXQUjQrvEwtxQt_niwWu5Mriki1e5NJkG0WKhgBH2WOv2keB6qoNBNsnU1LJuegFz-PJvppecF6rjrWGRytBsp6VJTZwViWWe_dnvuyk96u1ge6Otx44n6CAmKdZPkEFPvFQNirOyMmdLef28RltpcNjUDZGgE2hOAcYaQsabQYgeAXHmWUJWIh0OamHJ0RCAQemJr9WaY348TxzOqV5ytVIdhHkVx5hzT7qRo0niBlO6wNV2xWomd2F2xBpyabI5eipqZ18hME00RMZVzNnM2r3jipdDpsVlU3gXXyiXDIy575SG6W00&quot; alt=&quot;uml diagram&quot; /&gt;
@@ -96,7 +96,7 @@ p 夠大時，Eve 幾乎不可能算出 Alice 的私鑰&lt;br /&gt;
                 安裝 Obsidian 語意搜尋套件
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/安裝 Obsidian 語意搜尋套件/</id>
             <content type="html">
                 &lt;p&gt;Plugin repo: &lt;a href=&quot;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&lt;/a&gt;&lt;/p&gt;
@@ -154,92 +154,10 @@ nomic-embed-text:latest    0a109f422b47    274 MB    About an hour ago
         </entry>
         <entry>
             <title>
-                使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學
-                
-            </title>
-            <updated>2025-12-17T15:40:24Z</updated>
-            <id>https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/</id>
-            <content type="html">
-                &lt;h1 id=&quot;主旨&quot; tabindex=&quot;-1&quot;&gt;主旨&lt;/h1&gt;
-&lt;pre&gt;&lt;code&gt;本教學示範如何透過 Linux 的 pmap、/proc/&amp;lt;pid&amp;gt;/smaps 與 gdb 取得指定 process 的匿名記憶體區段，並導出成 dump 檔供後續分析。
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr /&gt;
-&lt;h2 id=&quot;0-nginx-process&quot; tabindex=&quot;-1&quot;&gt;0. 找出 nginx process&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251110210252.png&quot; alt=&quot;Pasted image 20251110210252.png&quot; /&gt;&lt;/p&gt;
-&lt;h2 id=&quot;1&quot; tabindex=&quot;-1&quot;&gt;1. 找出記憶體佔用最高的區段&lt;/h2&gt;
-&lt;p&gt;首先使用 pmap 檢查 Nginx worker 的 memory map，並依 RSS 由大到小排序：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ pmap -x 135 | sort -k 3 -n -r | head -3
-total kB         2709340  412896  407496
-00007fe347600000  468992  393644  393644 rw---   [ anon ]
-00007fe3423ee000    5632    3860    3860 rw---   [ anon ]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;重點：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;RSS&lt;/code&gt; 欄位表示實際佔用的實體記憶體。&lt;/li&gt;
-&lt;li&gt;第一筆最大者：&lt;code&gt;00007fe347600000&lt;/code&gt;，RSS 約 393MB。&lt;/li&gt;
-&lt;li&gt;標記為 &lt;code&gt;[ anon ]&lt;/code&gt;，通常代表匿名 mmap 或 GC heap、buffer、cache 等。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;h2 id=&quot;2-smaps&quot; tabindex=&quot;-1&quot;&gt;2. 用 smaps 確認該地址區段的完整範圍&lt;/h2&gt;
-&lt;p&gt;pmap 顯示的是區段起始地址，但實際區段長度需從 smaps 查詢。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ cat /proc/135/smaps | grep 7fe347600000
-7fe34296e000-7fe347600000 r--s 00000000 00:36 2640400 /data/nginx/ip2proxy/PX2_CUSTOMER.mmdb
-7fe347600000-7fe364000000 rw-p 00000000 00:00 0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;解讀：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;第一段：&lt;code&gt;7fe34296e000-7fe347600000&lt;/code&gt; 是 memory-mapped file (&lt;code&gt;PX2_CUSTOMER.mmdb&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;第二段：&lt;code&gt;7fe347600000-7fe364000000&lt;/code&gt; 是匿名記憶體 (&lt;code&gt;rw-p ... 0&lt;/code&gt;)&lt;br /&gt;
-這就是 pmap 顯示為 &lt;code&gt;[ anon ]&lt;/code&gt; 的那一段。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;因此要 dump 的實際區段範圍為：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;start: 0x7fe347600000 
-end:   0x7fe364000000
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr /&gt;
-&lt;h2 id=&quot;3-gdb-attach&quot; tabindex=&quot;-1&quot;&gt;3. 使用 gdb attach 進程&lt;/h2&gt;
-&lt;p&gt;進入 gdb：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;$ gdb -pid 135&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;若出現權限問題，需確認：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;容器需加上 &lt;code&gt;--cap-add=SYS_PTRACE --security-opt seccomp=unconfined&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;或需在宿主機設置 &lt;code&gt;kernel.yama.ptrace_scope=0&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;h2 id=&quot;4-gdb-dump&quot; tabindex=&quot;-1&quot;&gt;4. 在 gdb 裡 dump 出記憶體檔案&lt;/h2&gt;
-&lt;p&gt;進入 gdb 之後，執行：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;(gdb) dump memory /tmp/memdump_1 0x7fe347600000 0x7fe364000000&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;說明：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;/tmp/memdump_1&lt;/code&gt; 為輸出檔案路徑&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;開始地址與結束地址對應 smaps 的匿名記憶體範圍&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;假如 dump 成功，會在 &lt;code&gt;/tmp&lt;/code&gt; 看到數百 MB 至數 GB 的檔案。&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2 id=&quot;5-dump&quot; tabindex=&quot;-1&quot;&gt;5. 後續分析 dump 檔案&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;讀取可見字串：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;$ strings /tmp/memdump_1 | less&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251110210134.png&quot; alt=&quot;Pasted image 20251110210134.png&quot; /&gt;&lt;/p&gt;
-
-            </content>
-            <link href="https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/" >
-        </entry>
-        <entry>
-            <title>
                 GCP dataproc 運行 python scripts
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/pySpark/GCP dataproc 運行 python scripts/</id>
             <content type="html">
                 &lt;p&gt;建立 dataproc cluster&lt;/p&gt;
@@ -315,7 +233,7 @@ gsutil cp pip_init.sh gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka 高效率傳輸設定/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
@@ -358,7 +276,7 @@ gsutil cp pip_init.sh gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
                 kafka  topic 實驗
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka  topic 實驗/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#kafka&quot;&gt;#kafka&lt;/a&gt;&lt;/p&gt;
@@ -450,7 +368,7 @@ quickstart-events
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
@@ -554,7 +472,7 @@ try(openSearchClient; consumer){
                 HA proxy VRRP 研究
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/Proxy/HA proxy VRRP 研究/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#haproxy&quot;&gt;#haproxy&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#vrrp&quot;&gt;#vrrp&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#linux&quot;&gt;#linux&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#keepalived&quot;&gt;#keepalived&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#proxy&quot;&gt;#proxy&lt;/a&gt;&lt;/p&gt;
@@ -790,7 +708,7 @@ sudo systemctl stop keepalived&lt;br /&gt;
                 CVE-2025-55182 漏洞研究
                 
             </title>
-            <updated>2025-12-17T15:40:24Z</updated>
+            <updated>2025-12-17T15:42:44Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code&gt;npm create next-app@16.0.6
