@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"//apache-kafka/kafka/","tags":["kafka"]}
+{"tags":["kafka"],"dg-publish":true,"dg-home":false,"permalink":"//apache-kafka/kafka/","dgPassFrontmatter":true}
 ---
 
 訂閱 kafka 消息
