@@ -58,3 +58,5 @@ STREAMS other-stream 0 # 失敗 -> No Permissions to access a key
 ![Pasted image 20251218140855.png](/img/user/images/Pasted%20image%2020251218140855.png)
 
 最後記得 `acl save`  持久化保存
+如何做 ACL 持久化請參閱
+[[技術文件/Redis/Redis ACL 持久化\|Redis ACL 持久化]]
