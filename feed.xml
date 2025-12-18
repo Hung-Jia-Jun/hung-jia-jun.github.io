@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-18T06:13:29Z</updated>
+    <updated>2025-12-18T06:26:07Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -23,7 +23,7 @@
                 密碼學 - 零知識證明 - 密鑰協商
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/密碼學 - 零知識證明 - 密鑰協商/</id>
             <content type="html">
                 &lt;img src=&quot;https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuNA0inAJI_AB51npCfDJeMod_2GkBbjRXQUjQrvEwtxQt_niwWu5Mriki1e5NJkG0WKhgBH2WOv2keB6qoNBNsnU1LJuegFz-PJvppecF6rjrWGRytBsp6VJTZwViWWe_dnvuyk96u1ge6Otx44n6CAmKdZPkEFPvFQNirOyMmdLef28RltpcNjUDZGgE2hOAcYaQsabQYgeAXHmWUJWIh0OamHJ0RCAQemJr9WaY348TxzOqV5ytVIdhHkVx5hzT7qRo0niBlO6wNV2xWomd2F2xBpyabI5eipqZ18hME00RMZVzNnM2r3jipdDpsVlU3gXXyiXDIy575SG6W00&quot; alt=&quot;uml diagram&quot; /&gt;
@@ -96,7 +96,7 @@ p 夠大時，Eve 幾乎不可能算出 Alice 的私鑰&lt;br /&gt;
                 安裝 Obsidian 語意搜尋套件
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/安裝 Obsidian 語意搜尋套件/</id>
             <content type="html">
                 &lt;p&gt;Plugin repo: &lt;a href=&quot;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://github.com/bbawj/obsidian-semantic-search?tab=readme-ov-file#demo&lt;/a&gt;&lt;/p&gt;
@@ -157,7 +157,7 @@ nomic-embed-text:latest    0a109f422b47    274 MB    About an hour ago
                 使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/</id>
             <content type="html">
                 &lt;h1 id=&quot;主旨&quot; tabindex=&quot;-1&quot;&gt;主旨&lt;/h1&gt;
@@ -239,7 +239,7 @@ end:   0x7fe364000000
                 GCP dataproc 運行 python scripts
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/pySpark/GCP dataproc 運行 python scripts/</id>
             <content type="html">
                 &lt;p&gt;建立 dataproc cluster&lt;/p&gt;
@@ -315,7 +315,7 @@ gsutil cp pip_init.sh gs://dataproc-staging-us-central1-473678078038-tw1bdolx/
                 Cloudflare tunnel 研究
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/other/Cloudflare tunnel 研究/</id>
             <content type="html">
                 &lt;h1 id=&quot;目的&quot; tabindex=&quot;-1&quot;&gt;目的&lt;/h1&gt;
@@ -379,7 +379,7 @@ ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
                 kafka 高效率傳輸設定
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka 高效率傳輸設定/</id>
             <content type="html">
                 &lt;p&gt;訂閱 kafka 消息&lt;/p&gt;
@@ -422,7 +422,7 @@ ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
                 kafka  topic 實驗
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/kafka  topic 實驗/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#kafka&quot;&gt;#kafka&lt;/a&gt;&lt;/p&gt;
@@ -514,7 +514,7 @@ quickstart-events
                 Kafka 冪等 Producer
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka 冪等 Producer/</id>
             <content type="html">
                 &lt;h1 id=&quot;冪等定義&quot; tabindex=&quot;-1&quot;&gt;冪等定義&lt;/h1&gt;
@@ -535,7 +535,7 @@ Producer 就不會收到 ACK 通知，就會觸發 Retry 機制&lt;br /&gt;
                 Kafka rebalance 機制 - Eager Rebalance
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/</id>
             <content type="html">
                 &lt;h1 id=&quot;eager-rebalance-rebalance&quot; tabindex=&quot;-1&quot;&gt;Eager Rebalance(此 rebalance 會造成世界停止)&lt;/h1&gt;
@@ -586,7 +586,7 @@ Producer 就不會收到 ACK 通知，就會觸發 Retry 機制&lt;br /&gt;
                 Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/</id>
             <content type="html">
                 &lt;h1 id=&quot;背景故事&quot; tabindex=&quot;-1&quot;&gt;背景故事&lt;/h1&gt;
@@ -615,7 +615,7 @@ Cooperative Rebalance 就是為了解決這個問題&lt;br /&gt;
                 Kafka leader partition 機制研究
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka leader partition 機制研究/</id>
             <content type="html">
                 &lt;h1 id=&quot;leader-partition&quot; tabindex=&quot;-1&quot;&gt;leader partition 概念&lt;/h1&gt;
@@ -641,7 +641,7 @@ kafka 分片分配規則&lt;/p&gt;
                 Kafka key hashing
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka key hashing/</id>
             <content type="html">
                 &lt;p&gt;Producer 預設的 Partition  邏輯使用 murmur2 進行邏輯分區，需要輸入 key，再根據 key 去切分此筆 message 該去哪個 partition，這帶來一個好處，只要是相同的 key，那他的分區位置就是可預測的，並且 kafka 保證分區內的 message 是有序性的，這點用於序列化資料是很重要的。&lt;/p&gt;
@@ -677,7 +677,7 @@ kafka 分片分配規則&lt;/p&gt;
                 Kafka consumer group 與 rebalance 機制
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/</id>
             <content type="html">
                 &lt;p&gt;Topic 可以切分多個 Partition&lt;br /&gt;
@@ -798,7 +798,7 @@ Generation 用於追蹤目前 Group 的狀態，避免舊的成員提交 offset�
                 Kafka Topic Availability
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Kafka Topic Availability/</id>
             <content type="html">
                 &lt;h1 id=&quot;producer-ack&quot; tabindex=&quot;-1&quot;&gt;Producer ACK 機制說明&lt;/h1&gt;
@@ -837,7 +837,7 @@ Generation 用於追蹤目前 Group 的狀態，避免舊的成員提交 offset�
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
@@ -941,7 +941,7 @@ try(openSearchClient; consumer){
                 Redis stream 訂閱權限設定
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/Redis/Redis stream 訂閱權限設定/</id>
             <content type="html">
                 &lt;p&gt;Redis ACL&lt;br /&gt;
@@ -995,7 +995,7 @@ STREAMS other-stream 0 # 失敗 -&amp;gt; No Permissions to access a key
                 HA proxy VRRP 研究
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/Proxy/HA proxy VRRP 研究/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#haproxy&quot;&gt;#haproxy&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#vrrp&quot;&gt;#vrrp&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#linux&quot;&gt;#linux&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#keepalived&quot;&gt;#keepalived&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#proxy&quot;&gt;#proxy&lt;/a&gt;&lt;/p&gt;
@@ -1231,7 +1231,7 @@ sudo systemctl stop keepalived&lt;br /&gt;
                 docker 特權逃逸
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/Docker/docker 特權逃逸/</id>
             <content type="html">
                 &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#docker&quot;&gt;#docker&lt;/a&gt;&lt;/p&gt;
@@ -1324,7 +1324,7 @@ containerd          docker              kubelet-plugins     machine-id          
                 CVE-2025-55182 漏洞研究
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/CVE-2025-55182 漏洞研究/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code&gt;npm create next-app@16.0.6
@@ -1377,7 +1377,7 @@ print(res.text)
                 野指針
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/野指針/</id>
             <content type="html">
                 &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818215631.png&quot; alt=&quot;Pasted image 20250818215631.png&quot; /&gt;&lt;/p&gt;
@@ -1542,7 +1542,7 @@ output:
                 聲明結構體練習
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/聲明結構體練習/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
@@ -1616,7 +1616,7 @@ int main()
                 結構體訪問 - 課後練習
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體訪問 - 課後練習/</id>
             <content type="html">
                 &lt;p&gt;題目:&lt;br /&gt;
@@ -1672,7 +1672,7 @@ output:
                 結構體複製 - pass by value
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體複製 - pass by value/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
@@ -1736,7 +1736,7 @@ int main()
                 結構體數組訪問
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體數組訪問/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
@@ -1793,7 +1793,7 @@ int main()
                 結構體指針變數傳遞
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針變數傳遞/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
@@ -1839,7 +1839,7 @@ int main()
                 結構體指針變數使用
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針變數使用/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
@@ -1876,7 +1876,7 @@ int main()
                 結構體指針傳遞練習題 1
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/結構體指針傳遞練習題 1/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;string.h&amp;gt;
@@ -1932,7 +1932,7 @@ int main()
                 數組反轉操作
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/數組反轉操作/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
@@ -1973,7 +1973,7 @@ int main()
                 指針的自增自減運算
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/指針的自增自減運算/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
@@ -2020,7 +2020,7 @@ int main(){
                 字符數組
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/字符數組/</id>
             <content type="html">
                 &lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#include&quot;&gt;#include&lt;/a&gt; &amp;lt;stdio.h&amp;gt;
@@ -2105,7 +2105,7 @@ int main()
                 同類指針相減運算
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/同類指針相減運算/</id>
             <content type="html">
                 &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250818180158.png&quot; alt=&quot;Pasted image 20250818180158.png&quot; /&gt;&lt;/p&gt;
@@ -2143,7 +2143,7 @@ int main(){
                 二級指針(多重指針)
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/二級指針(多重指針)/</id>
             <content type="html">
                 &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250819212809.png&quot; alt=&quot;Pasted image 20250819212809.png&quot; /&gt;&lt;/p&gt;
@@ -2259,7 +2259,7 @@ int main(){
                 malloc 內存分配
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/malloc 內存分配/</id>
             <content type="html">
                 &lt;p&gt;malloc&lt;br /&gt;
@@ -2279,7 +2279,7 @@ int main(){
                 malloc 內存分配 - void 指針
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/malloc 內存分配 - void 指針/</id>
             <content type="html">
                 &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020250830184511.png&quot; alt=&quot;Pasted image 20250830184511.png&quot; /&gt;&lt;/p&gt;
@@ -2320,7 +2320,7 @@ int main()
                 C 語言 pass by value
                 
             </title>
-            <updated>2025-12-18T06:13:16Z</updated>
+            <updated>2025-12-18T06:25:57Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/C 語言學習/C 語言 pass by value/</id>
             <content type="html">
                 &lt;p&gt;C 語言沒有 pass by reference, 只有 pass by value，這是語言特性&lt;/p&gt;
