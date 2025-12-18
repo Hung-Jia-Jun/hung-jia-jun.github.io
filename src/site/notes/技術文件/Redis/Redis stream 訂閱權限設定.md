@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/Redis/Redis stream 訂閱權限設定/","tags":["Redis","redis-stream","auth","acl"]}
+{"tags":["Redis","redis-stream","auth","acl"],"dg-publish":true,"dg-draft":false,"permalink":"/技術文件/Redis/Redis stream 訂閱權限設定/","dgPassFrontmatter":true}
 ---
 
 Redis ACL
