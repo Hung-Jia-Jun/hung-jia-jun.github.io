@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Cloudflare tunnel 研究</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script async type="module">import mermaid from"https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-sv0slik/5O0JIPdLBCR2A3XDg/1U3WuDEheZfI/DI5n8Yqc3h5kjrnr46FGBNiUAJF7rE4LHKwQ/SoSLRKAxEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async src="https://cdn.jsdelivr.net/npm/lucide@0.115.0/dist/umd/lucide.min.js"></script>
+<script>window.addEventListener("load",(()=>{document.querySelectorAll(".callout").forEach((e=>{const t=getComputedStyle(e).getPropertyValue("--callout-icon"),l=t&&t.trim().replace(/^lucide-/,"");if(l){const t=e.querySelector(".callout-title");if(t){const e=document.createElement("div"),c=document.createElement("i");e.appendChild(c),c.setAttribute("icon-name",l),e.setAttribute("class","callout-icon"),t.insertBefore(e,t.firstChild)}}})),lucide.createIcons(),Array.from(document.querySelectorAll(".callout.is-collapsible")).forEach((e=>{e.querySelector(".callout-title").addEventListener("click",(t=>{e.classList.contains("is-collapsed")?e.classList.remove("is-collapsed"):e.classList.add("is-collapsed")}))}))}))</script>
+<script async src="https://fastly.jsdelivr.net/npm/force-graph@1.43.0/dist/force-graph.min.js"></script>
+<script async src="https://fastly.jsdelivr.net/npm/@alpinejs/persist@3.11.1/dist/cdn.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/alpinejs@3.11.1/dist/cdn.min.js" async></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" referrerpolicy="no-referrer" async>
+<script src="https://fastly.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" async></script>
+<link href="/styles/digital-garden-base.css" rel="stylesheet">
+<link href="/styles/obsidian-base.css" rel="stylesheet">
+<link href="/styles/_theme.d92311c2.css" rel="stylesheet">
+<link href="/styles/custom-style.css" rel="stylesheet">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<style></style>
+</head>
+<body class="theme-dark markdown-preview-view markdown-rendered markdown-preview-section">
+<nav class="navbar">
+<div class="navbar-inner">
+<a href="/" style="text-decoration:none">
+<h1 style="margin:15px!important">Digital Garden</h1>
+</a>
+</div>
+</nav>
+<main class="content cm-s-obsidian">
+<header>
+<div class="header-meta">
+</div>
+</header>
+<h1 id="目的" tabindex="-1">目的</h1>
+<p>手上有一台 respberry pi 3 b+<br>
+想在外網使用 ssh 連入進行個人機開發 or 實驗</p>
+<p>參考網站<br>
+<a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-cloudflared-authentication/?utm_source=chatgpt.com" target="_blank" class="external-link">https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-cloudflared-authentication/?utm_source=chatgpt.com</a></p>
+<h2 id="流程解釋(來自官網)" tabindex="-1">流程解釋(來自官網)</h2>
+<p>使用者可以透過在原生終端機中驗證 <code>cloudflared</code> ，連接到 SSH 伺服器，而無需 WARP 客户端。 此方法需要伺服器和客户端兩者都已安裝 <code>cloudflared</code> ，以及 Cloudflare 上的活躍 Zone。 流量會透過此連線被 Proxy，使用者會使用 Cloudflare Access 憑證登入伺服器。</p>
+<p>來到 cloudflare <code>Overview/Tunnels</code> 按下「新增通道」<br>
+<picture src="/img/user/images/Pasted%20image%2020251218100540.png" alt="Pasted image 20251218100540.png"><source media="(max-width:480px)" srcset="/img/optimized/a60mV8b1Ox-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/a60mV8b1Ox-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/a60mV8b1Ox-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/a60mV8b1Ox-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218100540.png" alt="Pasted image 20251218100540.png" width=""></picture></p>
+<p>使用 Cloudflared 的方案<br>
+<picture src="/img/user/images/Pasted%20image%2020251218100617.png" alt="Pasted image 20251218100617.png"><source media="(max-width:480px)" srcset="/img/optimized/QDPEUncPgI-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/QDPEUncPgI-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/QDPEUncPgI-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/QDPEUncPgI-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218100617.png" alt="Pasted image 20251218100617.png" width=""></picture></p>
+<p>設定通道名稱<br>
+<picture src="/img/user/images/Pasted%20image%2020251218100643.png" alt="Pasted image 20251218100643.png"><source media="(max-width:480px)" srcset="/img/optimized/eMao0Snuyo-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/eMao0Snuyo-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/eMao0Snuyo-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/eMao0Snuyo-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218100643.png" alt="Pasted image 20251218100643.png" width=""></picture></p>
+<p>選擇 Respberrry pi 的 Debian 作業系統的選項<br>
+<picture src="/img/user/images/Pasted%20image%2020251218102645.png" alt="Pasted image 20251218102645.png"><source media="(max-width:480px)" srcset="/img/optimized/b3xOrEJz3T-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/b3xOrEJz3T-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/b3xOrEJz3T-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/b3xOrEJz3T-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218102645.png" alt="Pasted image 20251218102645.png" width=""></picture></p>
+<p>複製安裝指令<br>
+<picture src="/img/user/images/Pasted%20image%2020251218102723.png" alt="Pasted image 20251218102723.png"><source media="(max-width:480px)" srcset="/img/optimized/ggiU0tt_5o-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/ggiU0tt_5o-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/ggiU0tt_5o-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/ggiU0tt_5o-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218102723.png" alt="Pasted image 20251218102723.png" width=""></picture></p>
+<p>ssh 登入到本地的 Respberry pi 機器<br>
+並貼上安裝指令碼<br>
+<picture src="/img/user/images/Pasted%20image%2020250717152029.png" alt="Pasted image 20250717152029.png"><source media="(max-width:480px)" srcset="/img/optimized/VcGXUOQICo-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/VcGXUOQICo-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/VcGXUOQICo-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/VcGXUOQICo-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020250717152029.png" alt="Pasted image 20250717152029.png" width=""></picture></p>
+<p>安裝後啟動 cloudflared 服務<br>
+<picture src="/img/user/images/Pasted%20image%2020251218104151.png" alt="Pasted image 20251218104151.png"><source media="(max-width:480px)" srcset="/img/optimized/o2iKT02iIZ-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/o2iKT02iIZ-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/o2iKT02iIZ-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/o2iKT02iIZ-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218104151.png" alt="Pasted image 20251218104151.png" width=""></picture></p>
+<p>註冊完成<br>
+<picture src="/img/user/images/Pasted%20image%2020251218104238.png" alt="Pasted image 20251218104238.png"><source media="(max-width:480px)" srcset="/img/optimized/ZLYkcBqTNy-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/ZLYkcBqTNy-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/ZLYkcBqTNy-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/ZLYkcBqTNy-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218104238.png" alt="Pasted image 20251218104238.png" width=""></picture></p>
+<p>cloudflare 儀表板已出現註冊的機器<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111615.png" alt="Pasted image 20251218111615.png"><source media="(max-width:480px)" srcset="/img/optimized/-t4FE7I8W0-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/-t4FE7I8W0-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/-t4FE7I8W0-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/-t4FE7I8W0-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111615.png" alt="Pasted image 20251218111615.png" width=""></picture></p>
+<p>按「下一步」<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111632.png" alt="Pasted image 20251218111632.png"><source media="(max-width:480px)" srcset="/img/optimized/vpZjg_JsKk-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/vpZjg_JsKk-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/vpZjg_JsKk-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/vpZjg_JsKk-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111632.png" alt="Pasted image 20251218111632.png" width=""></picture></p>
+<p>輸入下列資訊，並按下「完成設定」<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111700.png" alt="Pasted image 20251218111700.png"><source media="(max-width:480px)" srcset="/img/optimized/u0uIffNwg1-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/u0uIffNwg1-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/u0uIffNwg1-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/u0uIffNwg1-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111700.png" alt="Pasted image 20251218111700.png" width=""></picture></p>
+<p>現在已建立完通道，主機端連線設定已完成<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111725.png" alt="Pasted image 20251218111725.png"><source media="(max-width:480px)" srcset="/img/optimized/QWT9N1RDpa-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/QWT9N1RDpa-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/QWT9N1RDpa-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/QWT9N1RDpa-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111725.png" alt="Pasted image 20251218111725.png" width=""></picture></p>
+<hr>
+<h1 id="client" tabindex="-1">client 連線端設定</h1>
+<p>參考資料: <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/#macos" target="_blank" class="external-link">https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/#macos</a></p>
+<p>mac 上面安裝</p>
+<pre><code>brew install cloudflared
+</code></pre>
+<p>在 SSH 設定檔中變更：</p>
+<pre><code>vim ~/.ssh/config
+</code></pre>
+<p>輸入以下值<br>
+my-ssh.xxx.ltd 為此次 tunnel 的位置</p>
+<pre><code>Host my-ssh.xxx.ltd
+ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+</code></pre>
+<p>連線成功<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111840.png" alt="Pasted image 20251218111840.png"><source media="(max-width:480px)" srcset="/img/optimized/3RprS5Drf2-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/3RprS5Drf2-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/3RprS5Drf2-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/3RprS5Drf2-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111840.png" alt="Pasted image 20251218111840.png" width=""></picture></p>
+<p>切換網路到外網環境<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111902.png" alt="Pasted image 20251218111902.png"><source media="(max-width:480px)" srcset="/img/optimized/zaGW7ON8R--500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/zaGW7ON8R--500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/zaGW7ON8R--700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/zaGW7ON8R--700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111902.png" alt="Pasted image 20251218111902.png" width=""></picture></p>
+<p>一樣是可以連線到 <code>my-ssh.xxx.ltd</code> 的 ssh 機器<br>
+<picture src="/img/user/images/Pasted%20image%2020251218111922.png" alt="Pasted image 20251218111922.png"><source media="(max-width:480px)" srcset="/img/optimized/AOFDm9PYrC-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/AOFDm9PYrC-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/AOFDm9PYrC-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/AOFDm9PYrC-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251218111922.png" alt="Pasted image 20251218111922.png" width=""></picture></p>
+</main>
+<script>window.location.hash&&document.getElementById(window.location.hash.slice(1)).classList.add("referred"),window.addEventListener("hashchange",(e=>{const t=e.oldURL.split("#");t[1]&&document.getElementById(t[1]).classList.remove("referred");const n=e.newURL.split("#");n[1]&&document.getElementById(n[1]).classList.add("referred")}),!1);const url_parts=window.location.href.split("#"),url=url_parts[0],referrence=url_parts[1];document.querySelectorAll(".cm-s-obsidian > *[id]").forEach((function(e){e.ondblclick=function(e){const t=url+"#"+e.target.id;navigator.clipboard.writeText(t)}}))</script>
+<script src="https://fastly.jsdelivr.net/npm/luxon@3.2.1/build/global/luxon.min.js"></script>
+<script defer="defer">TIMESTAMP_FORMAT="MMM dd, yyyy h:mm a",document.querySelectorAll(".human-date").forEach((function(e){date=e.getAttribute("data-date")||e.innerText,parsed_date=luxon.DateTime.fromISO(date),null!=parsed_date.invalid&&(parsed_date=luxon.DateTime.fromSQL(date)),null!=parsed_date.invalid&&(parsed_date=luxon.DateTime.fromHTML(date)),e.innerHTML=parsed_date.toFormat(TIMESTAMP_FORMAT)}))</script>
+<script>lucide.createIcons({attrs:{class:["svg-icon"]}})</script>
+</body>
+</html>
