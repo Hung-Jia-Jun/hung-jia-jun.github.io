@@ -1,5 +1,5 @@
 ---
-{"tags":["vrrp","haproxy"],"dg-publish":true,"permalink":"/技術文件/Proxy/HA proxy VRRP 研究/","dgPassFrontmatter":true}
+{"dg-publish":true,"permalink":"/技術文件/Proxy/HA proxy VRRP 研究/","tags":["vrrp","haproxy"],"created":"2025-12-18T21:27:34.275+08:00","updated":"2025-12-18T21:27:34.275+08:00"}
 ---
 
 

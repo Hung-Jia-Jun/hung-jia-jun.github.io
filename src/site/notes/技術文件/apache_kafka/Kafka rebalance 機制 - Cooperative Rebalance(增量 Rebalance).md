@@ -1,5 +1,5 @@
 ---
-{"tags":["kafka"],"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/","dgPassFrontmatter":true}
+{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/","tags":["kafka"],"created":"2025-12-18T21:27:34.277+08:00","updated":"2025-12-18T21:27:34.277+08:00"}
 ---
 
 # 背景故事

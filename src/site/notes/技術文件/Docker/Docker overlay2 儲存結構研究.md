@@ -1,5 +1,5 @@
 ---
-{"tags":["docker","overlay2"],"dg-publish":true,"permalink":"/技術文件/Docker/Docker overlay2 儲存結構研究/","dgPassFrontmatter":true}
+{"dg-publish":true,"permalink":"/技術文件/Docker/Docker overlay2 儲存結構研究/","tags":["docker","overlay2"],"created":"2025-12-18T21:27:34.274+08:00","updated":"2025-12-18T21:27:34.274+08:00"}
 ---
 
 `docker info` 查看storage driver
