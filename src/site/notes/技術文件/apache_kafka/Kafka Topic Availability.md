@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka Topic Availability/","tags":["kafka"],"created":"2025-12-18T21:27:34.276+08:00","updated":"2025-12-18T21:27:34.276+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka Topic Availability/","tags":["kafka"],"created":"2025-12-07T18:19:45.827+08:00","updated":"2025-12-18T00:19:05.856+08:00"}
 ---
 
 # Producer ACK 機制說明

@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/Redis/Redis stream 訂閱權限設定/","tags":["Redis","redis-stream","auth","acl"],"created":"2025-12-18T13:51:21.600+08:00","updated":"2025-12-18T14:21:19.110+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/Redis/Redis stream 訂閱權限設定/","tags":["Redis","redis-stream","auth","acl"],"created":"2025-12-18T20:28:27.052+08:00","updated":"2025-12-18T20:28:27.052+08:00"}
 ---
 
 Redis ACL

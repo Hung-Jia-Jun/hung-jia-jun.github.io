@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/C 語言學習/malloc 內存分配/","tags":["C-lang"],"created":"2025-12-18T21:27:34.271+08:00","updated":"2025-12-18T21:27:34.271+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/C 語言學習/malloc 內存分配/","tags":["C-lang"],"created":"2025-08-30T20:55:20.341+08:00","updated":"2025-12-18T00:22:43.020+08:00"}
 ---
 
 malloc

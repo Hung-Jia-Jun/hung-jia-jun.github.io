@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/kafka 高效率傳輸設定/","tags":["kafka"],"created":"2025-12-18T21:27:34.278+08:00","updated":"2025-12-18T21:27:34.278+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/apache_kafka/kafka 高效率傳輸設定/","tags":["kafka"],"created":"2025-12-13T13:58:37.953+08:00","updated":"2025-12-17T22:29:48.897+08:00"}
 ---
 
 訂閱 kafka 消息

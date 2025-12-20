@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/","tags":["kafka"],"created":"2025-12-18T21:27:34.277+08:00","updated":"2025-12-18T21:27:34.277+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/","tags":["kafka"],"created":"2025-11-29T15:19:58.289+08:00","updated":"2025-12-18T00:18:52.925+08:00"}
 ---
 
 

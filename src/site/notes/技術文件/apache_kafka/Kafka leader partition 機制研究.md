@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka leader partition 機制研究/","tags":["kafka"],"created":"2025-12-18T21:27:34.277+08:00","updated":"2025-12-18T21:27:34.277+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka leader partition 機制研究/","tags":["kafka"],"created":"2025-12-07T16:12:11.725+08:00","updated":"2025-12-18T00:15:57.404+08:00"}
 ---
 
 

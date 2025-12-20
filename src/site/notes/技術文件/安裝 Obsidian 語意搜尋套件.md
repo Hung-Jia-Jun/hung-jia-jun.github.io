@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/安裝 Obsidian 語意搜尋套件/","tags":["obsidian"],"created":"2025-12-18T21:27:34.279+08:00","updated":"2025-12-18T21:27:34.279+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/安裝 Obsidian 語意搜尋套件/","tags":["obsidian"],"created":"2025-12-17T21:20:25.602+08:00","updated":"2025-12-17T22:59:46.961+08:00"}
 ---
 
 

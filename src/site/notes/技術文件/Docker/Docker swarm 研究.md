@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/Docker/Docker swarm 研究/","tags":["docker-swarm"],"created":"2025-12-18T21:27:34.274+08:00","updated":"2025-12-18T21:27:34.274+08:00"}
+{"dg-publish":true,"permalink":"/技術文件/Docker/Docker swarm 研究/","tags":["docker-swarm"],"created":"2024-12-02T23:11:42.899+08:00","updated":"2025-12-18T00:25:11.502+08:00"}
 ---
 
 #docker #docker-swarm
