@@ -3,7 +3,7 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-22T02:01:29Z</updated>
+    <updated>2025-12-22T02:10:14Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
@@ -837,7 +837,7 @@ Generation 用於追蹤目前 Group 的狀態，避免舊的成員提交 offset�
                 Consumer offset reset 行為
                 
             </title>
-            <updated>2025-12-17T14:43:36.045Z</updated>
+            <updated>2025-12-22T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/apache_kafka/Consumer offset reset 行為/</id>
             <content type="html">
                 &lt;h1 id=&quot;情境&quot; tabindex=&quot;-1&quot;&gt;情境&lt;/h1&gt;
