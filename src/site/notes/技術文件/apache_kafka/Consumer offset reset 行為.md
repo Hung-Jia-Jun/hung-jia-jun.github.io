@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Consumer offset reset 行為/","tags":["kafka","java"],"created":"2025-12-16T21:16:09.446+08:00","updated":"2025-12-17T22:43:36.045+08:00"}
+{"tags":["kafka","java"],"dg-home":false,"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/Consumer offset reset 行為/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 # 情境
