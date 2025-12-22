@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/C 語言學習/結構體複製 - pass by value/","tags":["C-lang"],"created":"2025-08-27T08:38:57.078+08:00","updated":"2025-12-18T00:22:21.131+08:00"}
+{"tags":["C-lang"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/C 語言學習/結構體複製 - pass by value/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 ``` C

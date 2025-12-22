@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/","tags":["kafka"],"created":"2025-11-29T13:36:29.807+08:00","updated":"2025-12-18T00:15:30.683+08:00"}
+{"tags":["kafka"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 

@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/","tags":["nginx","linux","gdb"],"created":"2025-11-16T00:17:52.635+08:00","updated":"2025-12-17T23:42:44.379+08:00"}
+{"tags":["nginx","linux","gdb"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 

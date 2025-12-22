@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka key hashing/","tags":["kafka"],"created":"2025-12-13T13:57:07.025+08:00","updated":"2025-12-18T00:15:45.263+08:00"}
+{"tags":["kafka"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/Kafka key hashing/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 

@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/kafka  topic 實驗/","tags":["kafka"],"created":"2024-12-02T23:11:42.903+08:00","updated":"2025-12-17T23:03:29.386+08:00"}
+{"tags":["kafka"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/kafka  topic 實驗/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 #kafka

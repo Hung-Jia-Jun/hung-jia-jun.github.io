@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"permalink":"/技術文件/apache_kafka/Kafka 冪等 Producer/","tags":["kafka"],"created":"2025-12-07T23:44:53.050+08:00","updated":"2025-12-18T00:14:52.197+08:00"}
+{"tags":["kafka"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/Kafka 冪等 Producer/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
 ---
 
 
