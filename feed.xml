@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-25T15:18:23Z</updated>
+    <updated>2025-12-25T16:14:07Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-25T15:18:08Z</updated>
+            <updated>2025-12-25T16:13:55Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -474,6 +474,946 @@ ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/other/Cloudflare tunnel 研究/" >
+        </entry>
+        <entry>
+            <title>
+                搭建 Ceph cluster
+                
+            </title>
+            <updated>2025-12-25T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/搭建 Ceph cluster/</id>
+            <content type="html">
+                &lt;h2 id=&quot;前言&quot; tabindex=&quot;-1&quot;&gt;前言&lt;/h2&gt;
+&lt;p&gt;在眾多搭建 ceph 的方法中，最適合 POC 測試的就是用 docker 搭建 ceph 集群，如果是生產環境，可以使用官方推薦的 cephadm 或是 ceph-ansible。&lt;/p&gt;
+&lt;h2 id=&quot;目的&quot; tabindex=&quot;-1&quot;&gt;目的&lt;/h2&gt;
+&lt;p&gt;用 Docker 建立 ceph cluster，並且支援 aws S3 儲存 API 以及 cephfs&lt;/p&gt;
+&lt;h2 id=&quot;環境準備&quot; tabindex=&quot;-1&quot;&gt;環境準備&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;os: ubuntu&lt;/li&gt;
+&lt;li&gt;一台有安裝 docker 的電腦&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;節點角色解釋&quot; tabindex=&quot;-1&quot;&gt;節點角色解釋&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;MON（Monitor 節點）
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;負責存儲集群的核心數據，例如集群狀態、配置、訪問權限等。&lt;/li&gt;
+&lt;li&gt;提供其他節點（OSD、MGR 等）與客戶端的集群狀態信息。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;是 Ceph 集群的基礎，沒有 MON 節點，集群無法正常運作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;節點失效情況 :
+&lt;ul&gt;
+&lt;li&gt;無法讀寫資料&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;OSD（Object Storage Daemon 節點）
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;負責實際存儲數據，並管理數據副本的一致性。&lt;/li&gt;
+&lt;li&gt;根據 CRUSH 算法決定數據應存放的物理位置。&lt;/li&gt;
+&lt;li&gt;提供數據讀取與寫入服務，並定期回報狀態給 MON。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;Ceph 中的數據存儲骨幹，所有的物件數據都存放在 OSD 中。&lt;/li&gt;
+&lt;li&gt;通常一個 OSD 容器或 Process 對應一個物理磁碟。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;節點失效情況 :
+&lt;ul&gt;
+&lt;li&gt;如果 data pool 內的資料沒有設定 replica，在該 OSD 上的資料會有遺失風險&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MGR（Manager 節點）
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;提供集群的內部狀態監控&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;確保集群監控與健康狀態的即時性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;節點失效情況 :
+&lt;ul&gt;
+&lt;li&gt;因為無法正常管理 OSD 節點加入與移除，無法掛載 cephfs，整體集群無法訪問&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;RGW（RADOS Gateway 節點）
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;為 Ceph 提供對象存儲服務的接口，兼容 S3 和 Swift 協議。&lt;/li&gt;
+&lt;li&gt;管理存儲桶（bucket）與對象，用於存儲環境的數據操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;用於提供對象存儲功能，類似於 AWS S3 的操作方式。&lt;/li&gt;
+&lt;li&gt;支援數據訪問的多租戶模式（multi-tenancy）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;節點失效情況 :
+&lt;ul&gt;
+&lt;li&gt;應用程式無法使用 S3 API 存取資料，但不會有資料遺失風險&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MDS (metadata server) 節點
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;為 Ceph 提供 NFS 接口。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;處理 node 掛載請求&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;節點失效情況 :
+&lt;ul&gt;
+&lt;li&gt;應用程式無法掛載 NFS 資料夾，導致應用程式無法存取資料，但資料沒有遺失風險&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;demo&quot; tabindex=&quot;-1&quot;&gt;Demo&lt;/h2&gt;
+&lt;p&gt;docker-compose.yaml&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;version: &#39;3.9&#39;
+
+services:
+  ceph-mon:
+    image: ceph/daemon:latest-luminous
+    container_name: ceph-mon
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_IP=192.168.1.55
+      - MON_NAME=ceph-mon
+      - CEPH_PUBLIC_NETWORK=0.0.0.0/0
+    network_mode: &amp;quot;host&amp;quot;
+    volumes:
+      - /etc/ceph:/etc/ceph
+      - /var/lib/ceph:/var/lib/ceph
+      - /var/log/ceph:/var/log/ceph
+    ports:
+      - &amp;quot;6789:6789&amp;quot;
+    restart: unless-stopped
+    command: mon
+
+  ceph-mgr:
+    image: ceph/daemon:latest-luminous
+    container_name: ceph-mgr
+    privileged: true
+    environment:
+      - CLUSTER=ceph
+    network_mode: &amp;quot;host&amp;quot;
+    depends_on:
+      - ceph-mon
+    pid: &amp;quot;container:ceph-mon&amp;quot;
+    volumes:
+      - /etc/ceph:/etc/ceph
+      - /var/lib/ceph:/var/lib/ceph
+    ports:
+      - &amp;quot;7000:7000&amp;quot;
+    restart: unless-stopped
+    command: mgr
+
+  ceph-mds:
+    image: ceph/daemon:latest-luminous
+    container_name: ceph-mds
+    privileged: true
+    environment:
+      - CLUSTER=ceph
+      - CEPHFS_CREATE=1
+    network_mode: &amp;quot;host&amp;quot;
+    depends_on:
+      - ceph-mon
+    pid: &amp;quot;container:ceph-mon&amp;quot;
+    volumes:
+      - /etc/ceph:/etc/ceph
+      - /var/lib/ceph:/var/lib/ceph
+    restart: unless-stopped
+    command: mds
+
+  ceph-osd-1:
+    image: ceph/daemon:latest-luminous
+    container_name: ceph-osd-1
+    privileged: true
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_NAME=ceph-mon
+      - MON_IP=127.0.0.1
+      - OSD_TYPE=directory
+    network_mode: &amp;quot;host&amp;quot;
+    depends_on:
+      - ceph-mon
+    volumes:
+      - /etc/ceph:/etc/ceph
+      - /var/lib/ceph:/var/lib/ceph
+      - /var/lib/ceph/osd/1:/var/lib/ceph/osd
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    command: osd
+
+  ceph-osd-2:
+    image: ceph/daemon:latest-luminous
+    container_name: ceph-osd-2
+    privileged: true
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_NAME=ceph-mon
+      - MON_IP=127.0.0.1
+      - OSD_TYPE=directory
+    network_mode: &amp;quot;host&amp;quot;
+    depends_on:
+      - ceph-mon
+    volumes:
+      - /etc/ceph:/etc/ceph
+      - /var/lib/ceph:/var/lib/ceph
+      - /var/lib/ceph/osd/2:/var/lib/ceph/osd
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    command: osd
+
+  ceph-osd-3:
+    image: ceph/daemon:latest-luminous
+    container_name: ceph-osd-3
+    privileged: true
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_NAME=ceph-mon
+      - MON_IP=127.0.0.1
+      - OSD_TYPE=directory
+    network_mode: &amp;quot;host&amp;quot;
+    depends_on:
+      - ceph-mon
+    volumes:
+      - /etc/ceph:/etc/ceph
+      - /var/lib/ceph:/var/lib/ceph
+      - /var/lib/ceph/osd/3:/var/lib/ceph/osd
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    command: osd
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立 osd 節點的 token&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker exec ceph-mon ceph auth get client.bootstrap-osd -o /var/lib/ceph/bootstrap-osd/ceph.keyring
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;修改設定檔以支援 etx4 硬碟&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo vi /etc/ceph/ceph.conf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在文件末尾添加&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;osd max object name len = 256
+osd max object namespace len = 64
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;osd&quot; tabindex=&quot;-1&quot;&gt;啟動 osd 節點&lt;/h2&gt;
+&lt;p&gt;因為寫入 OSD 需要過半數才能算是寫入成功，如果寫入的 OSD 數量未達「最少寫入共識」就會停止這次寫入，如果持續發生寫入失敗 Ceph 集群就會 crash，而「允許離線數量」表達的是在目前「OSD 數量」下，可以允許最多幾個 OSD 節點下線&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;OSD 數量&lt;/th&gt;
+&lt;th&gt;最少寫入共識&lt;/th&gt;
+&lt;th&gt;允許離線數量&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;所以建議最佳 OSD 數量為 3 或 5 個。&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&quot;ceph&quot; tabindex=&quot;-1&quot;&gt;查看 Ceph 狀態&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo ceph status
+  cluster:
+    id:     f84157cf-dd8e-497b-b8f3-fbc2f597eed2
+    health: HEALTH_WARN
+            46/69 objects misplaced (66.667%)
+
+  services:
+    mon: 1 daemons, quorum ceph-mon
+    mgr: jason-loges(active)
+    mds: cephfs-1/1/1 up  {0=jason-loges=up:active}
+    osd: 3 osds: 3 up, 3 in; 192 remapped pgs
+
+  data:
+    pools:   2 pools, 192 pgs
+    objects: 23 objects, 139KiB
+    usage:   24.2GiB used, 62.5GiB / 86.7GiB avail
+    pgs:     46/69 objects misplaced (66.667%)
+             192 active+clean+remapped
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241127102210.png&quot; alt=&quot;Pasted image 20241127102210.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;使用 docker ps 查看 ceph 運行狀態&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241127102231.png&quot; alt=&quot;Pasted image 20241127102231.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;ref: &lt;a href=&quot;https://blog.csdn.net/aslifeih/article/details/135140411&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://blog.csdn.net/aslifeih/article/details/135140411&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;環境清理&quot; tabindex=&quot;-1&quot;&gt;環境清理&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;$ rm -r /etc/ceph
+$ rm -r /var/lib/ceph/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;next&quot; tabindex=&quot;-1&quot;&gt;Next&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ceph/Ceph%20cluster%20%E8%B3%87%E6%96%99%E5%AF%AB%E5%85%A5%E7%AF%87%20-%20ceph%20S3/&quot;&gt;Ceph cluster 資料寫入篇 - ceph S3&lt;/a&gt;&lt;br /&gt;
+&lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ceph/Ceph%20cluster%20%E8%B3%87%E6%96%99%E5%AF%AB%E5%85%A5%E7%AF%87%20-%20RBD/&quot;&gt;Ceph cluster 資料寫入篇 - RBD&lt;/a&gt;&lt;br /&gt;
+&lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ceph/Ceph%20cluster%20%E8%B3%87%E6%96%99%E5%AF%AB%E5%85%A5%E7%AF%87%20-%20CephFS/&quot;&gt;Ceph cluster 資料寫入篇 - CephFS&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/搭建 Ceph cluster/" >
+        </entry>
+        <entry>
+            <title>
+                cephadm 搭建 ceph 集群
+                
+            </title>
+            <updated></updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/</id>
+            <content type="html">
+                &lt;h2 id=&quot;firewall&quot; tabindex=&quot;-1&quot;&gt;Firewall&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Entity&lt;/th&gt;
+&lt;th&gt;Port&lt;/th&gt;
+&lt;th&gt;direction&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;ceph-cluster-01、ceph-cluster-02、ceph-cluster-03&lt;/td&gt;
+&lt;td&gt;8443&lt;/td&gt;
+&lt;td&gt;inbound&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;3300&lt;/td&gt;
+&lt;td&gt;inbound&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;6789&lt;/td&gt;
+&lt;td&gt;inbound&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;6800~7568&lt;/td&gt;
+&lt;td&gt;inbound&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;ref: &lt;a href=&quot;https://docs.ceph.com/en/reef/cephadm/install/#cephadm-deploying-new-cluster&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://docs.ceph.com/en/reef/cephadm/install/#cephadm-deploying-new-cluster&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;前置條件&quot; tabindex=&quot;-1&quot;&gt;前置條件&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;ceph cluster 內，master 機器都可以用 ssh key 登入每台 VM 的 root 用戶&lt;/li&gt;
+&lt;li&gt;ceph master 主機需要允許 port  &lt;code&gt;8443&lt;/code&gt;(ceph web ui)&lt;/li&gt;
+&lt;li&gt;每台機器都要安裝 docker&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;apt install -y cephadm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;cephadm add-repo --release reef
+cephadm install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;透過執行&lt;code&gt;which&lt;/code&gt;確認&lt;code&gt;cephadm&lt;/code&gt;現在位於您的 PATH 中&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;which cephadm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;成功&lt;code&gt;which cephadm&lt;/code&gt;指令將傳回以下內容：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/usr/sbin/cephadm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;引導 ceph 集群建立&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cephadm bootstrap --mon-ip 10.0.0.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;登入資訊&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Ceph Dashboard is now available at:
+
+	     URL: https://10.0.0.2:8443/
+	    User: admin
+	Password: test
+
+You can access the Ceph CLI with:
+
+	sudo /usr/sbin/cephadm shell --fsid a90fc58e-b38f-11ef-b557-732197d2d654 -c /etc/ceph/ceph.conf -k /etc/ceph/ceph.client.admin.keyring
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;打開 dashboard&lt;br /&gt;
+&lt;a href=&quot;https://10.0.0.2:8443/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://10.0.0.2:8443/&lt;/a&gt;&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241206183226.png&quot; alt=&quot;Pasted image 20241206183226.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;進入 cephadm shell&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ cephadm shell
+
+Inferring fsid a90fc58e-b38f-11ef-b557-732197d2d654
+Inferring config /var/lib/ceph/a90fc58e-b38f-11ef-b557-732197d2d654/mon.ceph-cluster-01/config
+Using recent ceph image quay.io/ceph/ceph@sha256:c08064dde4bba4e72a1f55d90ca32df9ef5aafab82efe2e0a0722444a5aaacca
+root@ceph-cluster-01:/# 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;host-ceph-cluster&quot; tabindex=&quot;-1&quot;&gt;加入 host 到 ceph cluster&lt;/h2&gt;
+&lt;p&gt;確認完可以用 ssh key 登入目標主機成為 root 後，就可以新增 ceph node 了&lt;br /&gt;
+這邊附上卡住的問題記錄 &lt;a class=&quot;internal-link is-unresolved&quot; href=&quot;https://hung-jia-jun.github.io/404&quot; target=&quot;&quot;&gt;踩坑日記 - 遠端用 SSH key 登入 root 權限問題&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;設定 &lt;code&gt;/etc/hosts&lt;/code&gt;&lt;br /&gt;
+每台電腦都要&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# ceph-cluster-01
+127.0.1.1 ceph-cluster-01
+10.94.1.21 ceph-cluster-02
+10.94.1.22 ceph-cluster-03
+
+# ceph-cluster-02
+0.94.1.20 ceph-cluster-01
+127.0.1.1 ceph-cluster-02
+10.94.1.22 ceph-cluster-03
+
+# ceph-cluster-03
+10.0.0.2 ceph-cluster-01
+10.94.1.21 ceph-cluster-02
+127.0.1.1 ceph-cluster-03
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;使用 &lt;code&gt;ceph orch host add&lt;/code&gt;  指令來新增 host&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;test@ceph-cluster-01:~$ sudo cephadm shell ceph orch host add ceph-cluster-02 10.94.1.21
+
+Inferring fsid a90fc58e-b38f-11ef-b557-732197d2d654
+Inferring config /var/lib/ceph/a90fc58e-b38f-11ef-b557-732197d2d654/mon.ceph-cluster-01/config
+Using recent ceph image quay.io/ceph/ceph@sha256:c08064dde4bba4e72a1f55d90ca32df9ef5aafab82efe2e0a0722444a5aaacca
+Added host &#39;ceph-cluster-02&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ceph-cluster-02 身上的 docker container&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226001117.png&quot; alt=&quot;Pasted image 20251226001117.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;其餘的機器也照同樣的 [[#加入 host 到 ceph cluster]] 流程走&lt;/p&gt;
+&lt;p&gt;加上 label 到 master ceph node (介面上就會顯示哪台機器是 master 了)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;test@ceph-cluster-01:~$ sudo ceph orch host label add ceph-cluster-01 master
+Added label master to host ceph-cluster-01
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;完成&quot; tabindex=&quot;-1&quot;&gt;完成&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241206184354.png&quot; alt=&quot;Pasted image 20241206184354.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;next&quot; tabindex=&quot;-1&quot;&gt;Next&lt;/h1&gt;
+&lt;p&gt;&lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ceph/cephadm/ceph%20%E6%96%B0%E5%A2%9E%20OSD/&quot;&gt;ceph 新增 OSD&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/" >
+        </entry>
+        <entry>
+            <title>
+                ceph 新增 OSD
+                
+            </title>
+            <updated></updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/cephadm/ceph 新增 OSD/</id>
+            <content type="html">
+                &lt;p&gt;確認 orch 服務正常運行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;root@ceph-cluster-01:/home/# ceph orch status
+Backend: cephadm
+Available: True
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;嘗試列出所有可用設備，目前會是空的，因為還沒建立&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ceph orch device ls
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207225601.png&quot; alt=&quot;Pasted image 20241207225601.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;查看 block，目前只有一個 sda2 給系統使用&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;lsblk -f 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000701.png&quot; alt=&quot;Pasted image 20251226000701.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;部署要求&quot; tabindex=&quot;-1&quot;&gt;部署要求&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;設備必須沒有分區。&lt;/li&gt;
+&lt;li&gt;設備不得具有任何 LVM 狀態。&lt;/li&gt;
+&lt;li&gt;不得安裝設備。&lt;/li&gt;
+&lt;li&gt;設備不能包含檔案系統。&lt;/li&gt;
+&lt;li&gt;設備不得包含 Ceph BlueStore OSD。&lt;/li&gt;
+&lt;li&gt;設備必須大於 5 GB。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;es-xi&quot; tabindex=&quot;-1&quot;&gt;ESXi 新增磁碟空間&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207230318.png&quot; alt=&quot;Pasted image 20241207230318.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;儲存&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000720.png&quot; alt=&quot;Pasted image 20251226000720.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;重新開機&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207230456.png&quot; alt=&quot;Pasted image 20241207230456.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;重新開機後，/dev/sdb 磁碟區出現&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000748.png&quot; alt=&quot;Pasted image 20251226000748.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;lvm&quot; tabindex=&quot;-1&quot;&gt;建立 LVM 分區&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000812.png&quot; alt=&quot;Pasted image 20251226000812.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;ceph-device&quot; tabindex=&quot;-1&quot;&gt;Ceph 新增 device&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p DEVICE=&quot;&quot;&gt;ceph orch daemon add osd {HOST_NAME}:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;只要在 ceph-cluster-01 這台機器輸入 ceph osd daemon 部署指令就好&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;root@ceph-cluster-01:/home# sudo ceph orch daemon add osd ceph-cluster-02:/dev/ceph-vg/ceph-lv-1
+Created osd(s) 0 on host &#39;ceph-cluster-02&#39;
+
+root@ceph-cluster-01:/home# sudo ceph orch daemon add osd ceph-cluster-02:/dev/ceph-vg/ceph-lv-2
+Created osd(s) 1 on host &#39;ceph-cluster-02&#39;
+
+root@ceph-cluster-01:/home# sudo ceph orch daemon add osd ceph-cluster-03:/dev/ceph-vg/ceph-lv-3
+Created osd(s) 2 on host &#39;ceph-cluster-03&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000904.png&quot; alt=&quot;Pasted image 20251226000904.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241210120104.png&quot; alt=&quot;Pasted image 20241210120104.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/cephadm/ceph 新增 OSD/" >
+        </entry>
+        <entry>
+            <title>
+                ceph 建立 filesystem
+                
+            </title>
+            <updated></updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/cephadm/ceph 建立 filesystem/</id>
+            <content type="html">
+                &lt;h1 id=&quot;背景&quot; tabindex=&quot;-1&quot;&gt;背景&lt;/h1&gt;
+&lt;p&gt;mds service 需要有一個 datapool，才能將這個 datapool 掛載成 nfs&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!IMPORTANT]&lt;br /&gt;
+以下操作指令只需要在 master 主機完成&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;為了可以使用 cephfs，所以需要先建立 data pool&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ ceph fs volume create cephfs-data
+$ ceph fs volume ls
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000547.png&quot; alt=&quot;Pasted image 20251226000547.png&quot; /&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!TIP] Optional&lt;br /&gt;
+在 master 主機下指令開啟 datapool 刪除權限&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ceph config set mon mon_allow_pool_delete true&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Pools 介面上長出兩個 pool&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;cephfs.cephfs-data.data
+&lt;ul&gt;
+&lt;li&gt;存放資料的 pool&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;cephfs.cephfs-data.meta
+&lt;ul&gt;
+&lt;li&gt;給 mds service 使用的 metadata&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241210123239.png&quot; alt=&quot;Pasted image 20241210123239.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;部署 mds 服務&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ceph orch apply mds cephfs-data
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226000609.png&quot; alt=&quot;Pasted image 20251226000609.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;MDS 的服務已經分別部署在 ceph-cluster-01 與 ceph-cluster-02&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241210123533.png&quot; alt=&quot;Pasted image 20241210123533.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;之後再根據這篇完成掛載即可&lt;br /&gt;
+&lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ceph/Ceph%20cluster%20%E8%B3%87%E6%96%99%E5%AF%AB%E5%85%A5%E7%AF%87%20-%20CephFS/&quot;&gt;Ceph cluster 資料寫入篇 - CephFS&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/cephadm/ceph 建立 filesystem/" >
+        </entry>
+        <entry>
+            <title>
+                Cephfs ACL mount path
+                
+            </title>
+            <updated></updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/Cephfs ACL mount path/</id>
+            <content type="html">
+                &lt;h1 id=&quot;背景&quot; tabindex=&quot;-1&quot;&gt;背景&lt;/h1&gt;
+&lt;p&gt;現在已經可以 mount 到指定的資料夾，但還是有機會被 mount 到 &amp;quot;/&amp;quot;&lt;br /&gt;
+期望可以依照 user keyring 來指定能掛載的 path&lt;br /&gt;
+官方文件&lt;sup class=&quot;footnote-ref&quot;&gt;&lt;a href=&quot;https://hung-jia-jun.github.io/#fn1&quot; id=&quot;fnref1&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt; 已經有實現這部分的 ACL 控制了&lt;/p&gt;
+&lt;h1 id=&quot;思路&quot; tabindex=&quot;-1&quot;&gt;思路&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;建立用戶並設定 Auth 規則，只能掛載特定的 Path&lt;/li&gt;
+&lt;li&gt;copy client keyring 到 client 機器&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&quot;demo&quot; tabindex=&quot;-1&quot;&gt;Demo&lt;/h1&gt;
+&lt;h2 id=&quot;ceph-cluster-master&quot; tabindex=&quot;-1&quot;&gt;Ceph-cluster master&lt;/h2&gt;
+&lt;p&gt;輸出所有的 ceph filesystem name&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;root@ceph-cluster-01:/mnt/ceph-cluster# ceph fs ls
+name: cephfs-data, metadata pool: cephfs.cephfs-data.meta, data pools: [cephfs.cephfs-data.data ]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立 「api_user」，並指定該用戶能掛載目錄位置&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-sh&quot;&gt;root@ceph-cluster-01:/etc/ceph# ceph fs authorize cephfs-data client.api_user /lab/latest rw
+[client.api_user]
+	key = YOUR_KEY==
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立的 client 會指名只能掛載指定的 path&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;root@ceph-cluster-01:/etc/ceph# ceph auth get client.api_user
+exported keyring for client.api_user
+[client.api_user]
+	key = YOUR_KEY==
+	caps mds = &amp;quot;allow rw path=/test/api/lab/latest&amp;quot;
+	caps mon = &amp;quot;allow r&amp;quot;
+	caps osd = &amp;quot;allow rw tag cephfs data=cephfs-data&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;client-server&quot; tabindex=&quot;-1&quot;&gt;client server&lt;/h2&gt;
+&lt;p&gt;將 server 端產製的 auth key 放到 ceph config目錄&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;root@lab-api:/etc/ceph# cat &amp;lt;&amp;lt; EOF &amp;gt; ceph.client.api_user.keyring
+&amp;gt; [client.api_user]
+&amp;gt;     key = YOUR_KEY==
+&amp;gt; EOF
+
+root@lab-api:/etc/ceph# cat ceph.client.api_user.keyring 
+[client.api_user]
+    key = YOUR_KEY==
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;嘗試 mount 一個不允許的資料夾位置 &lt;code&gt;/test/api/lab&lt;/code&gt;&lt;br /&gt;
+出現 「Operation not permitted」&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;root@test:/etc/ceph# ceph-fuse -n client.api_user  -r /test/api/lab /mnt/fuse_cephfs2
+ceph-fuse[566845]: starting ceph client
+ceph-fuse[5668452024-12-17T17:36:51.358+0800 7f18a4ff9700 -1 client.35409 mds.0 rejected us (non-allowable root &#39;/test/api/lab&#39;)
+]: ceph mount failed with (1) Operation not permitted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;如果 mount 到合法的位置，就掛載成功&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;root@lab-api:/etc/ceph# ceph-fuse -n client.api_user  -r /test/api/lab/latest /mnt/fuse_cephfs2
+ceph-fuse[567096]: starting ceph client
+2024-12-17T17:38:16.602+0800 7fd850d0a080 -1 init, newargv = 0x5636070a9900 newargc=9
+ceph-fuse[567096]: starting fuse
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;同樣的，也可以使用 linux 系統的 Mount 指令&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;root@lab-api:/etc/ceph# cat /etc/hosts
+10.94.1.20 ceph-cluster-01
+10.94.1.21 ceph-cluster-02
+10.94.1.22 ceph-cluster-03
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ mount -t ceph ceph-cluster-01,ceph-cluster-02,ceph-cluster-03:/test/api/lab/latest /mnt/fuse_cephfs2 -o name=api_user
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;清理環境&quot; tabindex=&quot;-1&quot;&gt;清理環境&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ sudo umount -lf /mnt/fuse_cephfs2/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&quot;reference&quot; tabindex=&quot;-1&quot;&gt;Reference&lt;/h1&gt;
+&lt;hr class=&quot;footnotes-sep&quot; /&gt;
+&lt;section class=&quot;footnotes&quot;&gt;
+&lt;ol class=&quot;footnotes-list&quot;&gt;
+&lt;li id=&quot;fn1&quot; class=&quot;footnote-item&quot;&gt;&lt;p&gt;&lt;a href=&quot;https://docs.ceph.com/en/reef/cephfs/client-auth/#path-restriction&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://docs.ceph.com/en/reef/cephfs/client-auth/#path-restriction&lt;/a&gt; &lt;a href=&quot;https://hung-jia-jun.github.io/#fnref1&quot; class=&quot;footnote-backref&quot;&gt;↩︎&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/Cephfs ACL mount path/" >
+        </entry>
+        <entry>
+            <title>
+                Ceph cluster 資料寫入篇 - ceph S3
+                
+            </title>
+            <updated>2025-12-25T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - ceph S3/</id>
+            <content type="html">
+                &lt;h2 id=&quot;前言&quot; tabindex=&quot;-1&quot;&gt;前言&lt;/h2&gt;
+&lt;p&gt;續前篇 &lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ceph/%E6%90%AD%E5%BB%BA%20Ceph%20cluster/&quot;&gt;搭建 Ceph cluster&lt;/a&gt; 結果，已經有一個 ceph cluster 可以使用了，現在要做的是將資料存入 ceph S3 內。&lt;/p&gt;
+&lt;p&gt;這邊會選用 Ceph S3 做範例的原因是因為 Ceph S3 和 AWS S3 都是基於 S3 API 標準進行物件儲存，兩者程式碼間可以無痛轉移。&lt;/p&gt;
+&lt;h2 id=&quot;差異&quot; tabindex=&quot;-1&quot;&gt;差異&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;AWS S3 (Simple Storage Service)&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;完全由 AWS 管理的公有雲服務，使用者無需關注基礎設施的運維。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ceph S3&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;開源的分散式儲存系統，可部署在私有雲、公有雲或混合雲中。&lt;/li&gt;
+&lt;li&gt;Ceph 提供了與 S3 API 兼容的物件儲存介面，通過 &lt;strong&gt;RADOS Gateway (RGW)&lt;/strong&gt; 實現。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;相同&quot; tabindex=&quot;-1&quot;&gt;相同&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;1. 使用 S3 API&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;相同點&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;都支持 &lt;strong&gt;AWS S3 API 標準&lt;/strong&gt;，如 &lt;strong&gt;PUT、GET、DELETE&lt;/strong&gt; 請求操作。&lt;/li&gt;
+&lt;li&gt;客戶端可以使用相同的 S3 工具（如 &lt;code&gt;boto3&lt;/code&gt;）與 Ceph S3 和 AWS S3 通訊。&lt;/li&gt;
+&lt;li&gt;支援 RESTful API 進行物件存取和操作。&lt;br /&gt;
+&lt;strong&gt;2. 存儲模型&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;相同點&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;都基於 &lt;strong&gt;桶（Bucket）&lt;/strong&gt; 和 &lt;strong&gt;物件（Object）&lt;/strong&gt; 的存儲結構設計。&lt;/li&gt;
+&lt;li&gt;支援桶內物件的層級目錄結構（邏輯上的文件夾）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;demo&quot; tabindex=&quot;-1&quot;&gt;Demo&lt;/h2&gt;
+&lt;h3 id=&quot;rgw&quot; tabindex=&quot;-1&quot;&gt;搭建 rgw 節點&lt;/h3&gt;
+&lt;p&gt;建立 rgw 節點 token&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker exec ceph-mon ceph auth get client.bootstrap-rgw -o /var/lib/ceph/bootstrap-rgw/ceph.keyring
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;啟動 rgw 節點&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker run -d --privileged=true --name ceph-rgw --network ceph-network --ip 172.20.0.15 -e CLUSTER=ceph -e RGW_NAME=ceph-rgw -p 7480:7480 -v /var/lib/ceph/:/var/lib/ceph/ -v /etc/ceph:/etc/ceph -v /etc/localtime:/etc/localtime:ro ceph/daemon:latest-luminous rgw
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;建立使用者&quot; tabindex=&quot;-1&quot;&gt;建立使用者&lt;/h3&gt;
+&lt;p&gt;連線到 ceph-rgw 主機建立 testuser&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker exec ceph-rgw radosgw-admin user create --uid=&amp;quot;testuser&amp;quot; --display-name=&amp;quot;testuser&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看剛剛建立的 testuser&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker exec ceph-rgw radosgw-admin   user info --uid testuser
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241126234037.png&quot; alt=&quot;Pasted image 20241126234037.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;填入剛剛顯示的 access_key 與 secret_key 欄位的值到 python script&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import os
+import boto
+import boto.s3.connection
+
+# S3 連線憑證
+access_key = &#39;ACCESS_KEY&#39;
+secret_key = &#39;SECRET_KEY&#39;
+
+# 連接到 S3 儲存服務
+conn = boto.connect_s3(
+	aws_access_key_id=access_key,
+	aws_secret_access_key=secret_key,
+	host=&#39;172.20.0.15&#39;,  # 替換為自建的 ceph RGW 節點 IP
+	port=7480,  # 替換為自建的 ceph RGW 節點 Port
+	is_secure=False,  # 禁用 HTTPS
+	calling_format=boto.s3.connection.OrdinaryCallingFormat(),
+)
+
+# 儲存桶內物件的操作
+def manage_bucket_operations():
+	bucket_name = &amp;quot;my-new-bucket-1&amp;quot;
+	local_download_dir = &amp;quot;./downloaded_files&amp;quot;  # 本機下載目錄
+
+	print(&amp;quot;建立儲存桶...&amp;quot;)
+	bucket = conn.create_bucket(bucket_name)
+
+	# 上傳檔案到儲存桶
+	file_path = &amp;quot;example.txt&amp;quot;
+	print(&amp;quot;上傳檔案...&amp;quot;)
+	key = bucket.new_key(&amp;quot;example.txt&amp;quot;)
+	key.set_contents_from_filename(file_path)
+	print(&amp;quot;檔案已上傳: example.txt&amp;quot;)
+
+	# 顯示儲存桶內所有檔案
+	print(&amp;quot;顯示儲存桶內所有檔案...&amp;quot;)
+	for key in bucket.list():
+		print(f&amp;quot;檔案名稱: {key.name}&amp;quot;)
+
+	# 下載儲存桶內容到本機
+	print(&amp;quot;下載儲存桶內容到本機...&amp;quot;)
+	if not os.path.exists(local_download_dir):
+		os.makedirs(local_download_dir)
+	for key in bucket.list():
+		local_file_path = os.path.join(local_download_dir, key.name)
+		print(f&amp;quot;下載檔案: {key.name} 到 {local_file_path}&amp;quot;)
+		key.get_contents_to_filename(local_file_path)
+	print(f&amp;quot;儲存桶內容已下載到: {local_download_dir}&amp;quot;)
+
+	# 清空儲存桶內所有物件
+	print(&amp;quot;清空儲存桶內的所有物件...&amp;quot;)
+	for key in bucket.list():
+		print(f&amp;quot;刪除物件: {key.name}&amp;quot;)
+		bucket.delete_key(key.name)
+	print(&amp;quot;儲存桶已清空&amp;quot;)
+
+	# 刪除儲存桶
+	print(&amp;quot;刪除儲存桶...&amp;quot;)
+	conn.delete_bucket(bucket_name)
+	print(f&amp;quot;已刪除儲存桶：{bucket_name}&amp;quot;)
+
+# 執行範例
+if __name__ == &amp;quot;__main__&amp;quot;:
+	print(&amp;quot;執行儲存桶操作...&amp;quot;)
+	manage_bucket_operations()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;result&quot; tabindex=&quot;-1&quot;&gt;Result&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241127001610.png&quot; alt=&quot;Pasted image 20241127001610.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Ref: &lt;a href=&quot;https://docs.ceph.com/en/reef/radosgw/s3/python/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://docs.ceph.com/en/reef/radosgw/s3/python/&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - ceph S3/" >
+        </entry>
+        <entry>
+            <title>
+                Ceph cluster 資料寫入篇 - RBD
+                
+            </title>
+            <updated></updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - RBD/</id>
+            <content type="html">
+                &lt;p&gt;進入 ceph-mon&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker exec -it ceph-mon bash
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立 osd pool&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;osd pool create test-rbd 128 128
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;顯示所有 pool&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ceph osd pool ls
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;ceph osd pool application enable test-rbd rbd
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在已建立的 osd pool 內，建立一個 test-data-image&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;rbd create test-data-image --size 20G --pool test-rbd --image-format 2 --image-feature layering
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;rbd create --pool test-rbd --image rbd-demo1.img --size 10G
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;rbd ls --pool test-rbd
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;rbd --image test-data-image --pool test-rbd info
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;$ ceph auth get-or-create client.testuser mon &#39;allow r&#39; osd &#39;allow * pool=test-rbd&#39; -o /var/lib/ceph/client-auth/ceph.keyring
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;回到宿主機上&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mkdir -p /var/lib/ceph/client-auth/
+cp /var/lib/ceph/client-auth/ceph.keyring /etc/ceph/client-auth/ceph.keyring
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安裝 docker rbd plugin (每個 node 都要)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker plugin install wetopi/rbd &#92;
+  --alias=wetopi/rbd &#92;
+  LOG_LEVEL=1 &#92;
+  RBD_CONF_POOL=&amp;quot;test-rbd&amp;quot; &#92;
+  RBD_CONF_CLUSTER=ceph &#92;
+  RBD_CONF_KEYRING_USER=client.testuser
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;docker plugin ls
+ID             NAME                DESCRIPTION             ENABLED
+029dbbd2e032   wetopi/rbd:latest   RBD plugin for Docker   true
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;docker volume create -d wetopi/rbd my_rbd_volume
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/wetopi/docker-volume-rbd&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://github.com/wetopi/docker-volume-rbd&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://rdwaykos.medium.com/ceph-rbd-for-docker-volume-fa2884cedaf5&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://rdwaykos.medium.com/ceph-rbd-for-docker-volume-fa2884cedaf5&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;測試掛載剛剛建立的 volume&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker run -it --rm &#92;
+  --volume my_rbd_volume:/data:ro &#92;
+  --network ceph-network &#92;
+  --volume-driver=wetopi/rbd &#92;
+  ubuntu:latest bash
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;連線到 ceph mon 可以看到剛剛建立的 volume 已經被 ceph 託管了&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ rbd ls test-rbd
+my_rbd_volume
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;將建立好的 ceph.keyring 同步到其他台主機的 /etc/ceph&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo scp -i /home/ubuntu/.ssh/id_rsa -r /etc/ceph ubuntu@192.168.1.51:~/ceph
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo mv ./ceph.keyring /etc/ceph
+$ ls /etc/ceph
+ceph.keyring
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;重要事項&quot; tabindex=&quot;-1&quot;&gt;重要事項&lt;/h2&gt;
+&lt;p&gt;RBD 不支援一個 volume 被多個 container 掛載(readwrite many)，只有 ReadWriteOnce 模式&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - RBD/" >
+        </entry>
+        <entry>
+            <title>
+                Ceph cluster 資料寫入篇 - CephFS
+                
+            </title>
+            <updated></updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - CephFS/</id>
+            <content type="html">
+                &lt;h2 id=&quot;環境準備&quot; tabindex=&quot;-1&quot;&gt;環境準備&lt;/h2&gt;
+&lt;h2 id=&quot;在準備掛載的主機&quot; tabindex=&quot;-1&quot;&gt;在準備掛載的主機&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;安裝 ceph-fuse&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apt install ceph-fuse
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;ceph&quot; tabindex=&quot;-1&quot;&gt;在 ceph 主機&lt;/h3&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;ssh ubuntu@ceho-mon &amp;lt;--- cephFS 主機
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安裝 ceph-fuse&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apt install ceph-fuse
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立使用者&lt;br /&gt;
+設定client.mds_user 為使用者名稱，後面則是分別設定mon,mds,osd的存取權限&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ceph auth get-or-create client.mds_user mon &#39;allow r&#39; mds &#39;allow *&#39; osd &#39;allow rw pool=cephfs_metadata,allow rwx pool=cephfs_data&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;查看使用者及其存取權限&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;ceph auth list
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;同步主機憑證&lt;br /&gt;
+&lt;a href=&quot;mailto:ubuntu@192.168.1.62&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;ubuntu@192.168.1.62&lt;/a&gt; 為待會要掛載 NFS 資料夾的主機位置&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo scp -i ~/.ssh/id_rsa -r /etc/ceph ubuntu@192.168.1.62:/etc/ceph
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;在準備掛載的主機-1&quot; tabindex=&quot;-1&quot;&gt;在準備掛載的主機&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;ssh ubuntu@192.168.1.62 &amp;lt;--- 欲掛載的主機
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建立掛載資料夾&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mkdir -p /mnt/fuse_cephfs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;掛載 cephfs 到 /mnt/fuse_cephfs&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# 指定 172.20.0.10 為 ceph-mon 的 IP 位置
+sudo ceph-fuse -m 172.20.0.10:6789 /mnt/fuse_cephfs
+
+# 如果 /etc/ceph/ceph.confg 設定檔有設定 mon_ip 就不用帶『-m 172.20.0.10:6789』 參數
+sudo ceph-fuse /mnt/fuse_cephfs
+
+# Debug mode
+sudo ceph-fuse /mnt/fuse_cephfs -d
+
+# 指定 mount cephfs 的位置
+ceph-fuse -r /lab/api /mnt/fuse_cephfs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241127141833.png&quot; alt=&quot;Pasted image 20241127141833.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;嘗試讀取同一個檔案內容&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251225235515.png&quot; alt=&quot;Pasted image 20251225235515.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;修改檔案後，也同步到另一台機器了&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251225235413.png&quot; alt=&quot;Pasted image 20251225235413.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;mount-cephfs&quot; tabindex=&quot;-1&quot;&gt;指定 mount cephfs 的位置&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;ceph-fuse -r /lab/api /mnt/fuse_cephfs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a class=&quot;internal-link is-unresolved&quot; href=&quot;https://hung-jia-jun.github.io/404&quot; target=&quot;&quot;&gt;cephfs 指定 mount cephfs 的位置&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;清理環境&quot; tabindex=&quot;-1&quot;&gt;清理環境&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;$ df -h
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251225235639.png&quot; alt=&quot;Pasted image 20251225235639.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;清除正在這個 mount 資料夾的user&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ fuser -km /mnt/fuse_cephfs/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251225235620.png&quot; alt=&quot;Pasted image 20251225235620.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;umount&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ sudo umount -lf /mnt/fuse_cephfs/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251225235707.png&quot; alt=&quot;Pasted image 20251225235707.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - CephFS/" >
         </entry>
         <entry>
             <title>
@@ -2895,5 +3835,146 @@ int main()
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/C 語言學習/C 語言 pass by value/" >
+        </entry>
+        <entry>
+            <title>
+                Apache Beam
+                
+            </title>
+            <updated>2025-12-25T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/Apache Beam/Apache Beam/</id>
+            <content type="html">
+                &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#etl&quot;&gt;#etl&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#apache-beam&quot;&gt;#apache-beam&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#pipeline&quot;&gt;#pipeline&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;basics-of-the-beam-model&quot; tabindex=&quot;-1&quot;&gt;Basics of the Beam model&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/AFAqk1j.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+Apache Beam是一個統一的模型, 用於定義批處理和流式數據並行處理管道。要開始使用Beam, 您需要了解一組重要的核心概念：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/basics/#pipeline&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;&lt;em&gt;Pipeline&lt;/em&gt;&lt;/a&gt; &lt;br /&gt;
+管道是用戶設定的轉換圖, 定義了所需的數據處理操作。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/basics/#pcollection&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;&lt;em&gt;PCollection&lt;/em&gt;&lt;/a&gt;&lt;br /&gt;
+PCollection - &lt;code&gt;PCollection&lt;/code&gt; 是數據集或數據流。管道處理的數據是PCollection的一部分。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/basics/#ptransform&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;&lt;em&gt;PTransform&lt;/em&gt;&lt;/a&gt; &lt;br /&gt;
+PTransform - &lt;code&gt;PTransform&lt;/code&gt; （或transform）表示管道中的數據處理操作或步驟。變換應用於零個或多個 &lt;code&gt;PCollection&lt;/code&gt; 對象, 並產生零個或多個 &lt;code&gt;PCollection&lt;/code&gt; 對象。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/basics/#window&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;&lt;em&gt;Window&lt;/em&gt;&lt;/a&gt; &lt;br /&gt;
+窗口 &lt;code&gt;PCollection&lt;/code&gt; 可以根據各個元素的時間戳細分為窗口。通過將集合劃分為有限集合的窗口, 窗口支持對隨時間增長的集合進行分組操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/gGnioKt.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Bounded vs. unbounded&lt;/strong&gt;: Bounded vs. unbounded：&lt;/p&gt;
+&lt;h2 id=&quot;p-collection&quot; tabindex=&quot;-1&quot;&gt;PCollection&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;PCollection&lt;/code&gt; 可以是有界的或無界的。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A &lt;em&gt;bounded&lt;/em&gt; &lt;code&gt;PCollection&lt;/code&gt; is a dataset of a known&lt;br /&gt;
+有界的 &lt;code&gt;PCollection&lt;/code&gt; 是一個已知的、固定大小的數據集（或者, 一個不隨時間增長的數據集）。有界數據可以通過批處理管道進行處理。&lt;/li&gt;
+&lt;li&gt;An &lt;em&gt;unbounded&lt;/em&gt; &lt;code&gt;PCollection&lt;/code&gt; is a dataset that grows over time&lt;br /&gt;
+無界的 &lt;code&gt;PCollection&lt;/code&gt; 是一個隨時間增長的數據集, 數據在到達時被處理。無界數據必須通過流式管道處理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;這兩個類別直覺的來自於批處理和流處理, 但這兩者在Beam中是統一的&lt;br /&gt;
+有界和無界PCollections可以在同一管道中共存。如果你的runner只能支持有界PCollection, 你必須拒絕包含無界PCollection的管道。如果你的runner只針對stream&lt;br /&gt;
+那麼Beam的支持代碼中有Adapter可以將所有內容轉換為針對無界(unbound)數據的API。&lt;/p&gt;
+&lt;h2 id=&quot;p-transform&quot; tabindex=&quot;-1&quot;&gt;PTransform&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;PTransform&lt;/code&gt; （或transform）表示管道中的數據處理操作或步驟。變換通常應用於一個或多個輸入 &lt;code&gt;PCollection&lt;/code&gt; 對象。&lt;/p&gt;
+&lt;p&gt;您以函數對象的形式提供轉換處理邏輯（通俗地稱為「用戶代碼」）, 並且您的用戶代碼應用於輸入PCollection（或多個PCollection）的每個元素。根據您選擇的管道運行器和後端, 集群中的許多不同工作者可能會並行執行用戶代碼的實例。在每個worker上運行的用戶代碼生成輸出元素, 這些元素被添加到零個或多個輸出 &lt;code&gt;PCollection&lt;/code&gt; 對象。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Source transforms&lt;br /&gt;
+如 &lt;code&gt;TextIO.Read&lt;/code&gt; 和 &lt;code&gt;Create&lt;/code&gt; 。&lt;/li&gt;
+&lt;li&gt;Processing and conversion operations&lt;br /&gt;
+處理和轉換操作, 如 &lt;code&gt;ParDo&lt;/code&gt; 、 &lt;code&gt;GroupByKey&lt;/code&gt; 、 &lt;code&gt;CoGroupByKey&lt;/code&gt; 、 &lt;code&gt;Combine&lt;/code&gt; 和 &lt;code&gt;Count&lt;/code&gt; 。&lt;/li&gt;
+&lt;li&gt;Outputting transforms&lt;br /&gt;
+輸出轉換, 如 &lt;code&gt;TextIO.Write&lt;/code&gt; 。&lt;/li&gt;
+&lt;li&gt;User-defined,&lt;br /&gt;
+用戶定義的、特定於應用程式的複合轉換。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;自定義函數&quot; tabindex=&quot;-1&quot;&gt;自定義函數&lt;/h2&gt;
+&lt;p&gt;某些Beam操作允許您運行用戶定義的代碼作為配置轉換的一種方式。例如, 當使用 &lt;code&gt;ParDo&lt;/code&gt; 時, 用戶定義的代碼指定對每個元素應用什麼操作。對於 &lt;code&gt;Combine&lt;/code&gt; , 它指定應該如何組合值。通過使用跨語言轉換, Beam管道可以包含用不同語言編寫的UDF, 甚至可以在同一管道中包含多種語言。&lt;/p&gt;
+&lt;p&gt;Beam有幾種UDF：&lt;br /&gt;
+舉常用的為例&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/programming-guide/#pardo&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;&lt;em&gt;DoFn&lt;/em&gt;&lt;/a&gt; &lt;br /&gt;
+DoFn -每元素處理函數（用於 &lt;code&gt;ParDo&lt;/code&gt; ）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;runner&quot; tabindex=&quot;-1&quot;&gt;Runner&lt;/h2&gt;
+&lt;p&gt;Beam運行器在特定平台上運行Beam管道。大多數runner都是大規模並行大數據處理系統的翻譯器或適配器, 例如Apache Flink, Apache Spark, Google Cloud Dataflow等。&lt;br /&gt;
+例如, Flink runner將Beam管道轉換為Flink作業。Direct Runner在本地運行管道, 這樣您就可以測試、調試和驗證管道是否儘可能接近Apache Beam模型。&lt;/p&gt;
+&lt;p&gt;有關Runner的更多信息, 請參閱以下頁面：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/#choosing-a-runner&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;Choosing a Runner&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://beam.apache.org/documentation/runners/capability-matrix/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;Beam Capability Matrix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;window&quot; tabindex=&quot;-1&quot;&gt;Window 窗口&lt;/h2&gt;
+&lt;p&gt;根據其各個元素的時間戳將 &lt;code&gt;PCollection&lt;/code&gt; 細分為窗口。通過將集合劃分為有限集合的窗口, 窗口支持對無界集合的分組操作。&lt;/p&gt;
+&lt;p&gt;ex:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fixed time windows&lt;/strong&gt;&lt;br /&gt;
+固定時間窗口, 表示數據流中持續時間一致、不重疊的時間間隔。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;8-2-1-strong-fixed-time-windows-strong&quot; tabindex=&quot;-1&quot;&gt;8.2.1.&lt;strong&gt;Fixed time windows&lt;/strong&gt;(固定時間窗口)&lt;/h4&gt;
+&lt;p&gt;最簡單的窗口形式是使用固定時間窗口：給定可能連續更新的帶時間戳的 &lt;code&gt;PCollection&lt;/code&gt; , 每個窗口可以捕獲（例如）具有落入30秒間隔的時間戳的所有元素。&lt;/p&gt;
+&lt;p&gt;固定時間窗口表示數據流中的一致持續時間、非重疊時間間隔。考慮持續時間為30秒的窗口：在unbounded &lt;code&gt;PCollection&lt;/code&gt; 中, 所有時間戳值從0：00：00到（但不包括）0：00：30的元素都屬於第一個窗口, 時間戳值從0：00：30到（但不包括）0：01：00的元素屬於第二個窗口, 依此類推。&lt;br /&gt;
+&lt;img src=&quot;https://i.imgur.com/2DwJ53K.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/Apache Beam/Apache Beam/" >
+        </entry>
+        <entry>
+            <title>
+                Apache Beam 研究
+                
+            </title>
+            <updated>2025-12-25T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/Apache Beam/Apache Beam 研究/</id>
+            <content type="html">
+                &lt;p&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#etl&quot;&gt;#etl&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#apache-beam&quot;&gt;#apache-beam&lt;/a&gt; &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#pipeline&quot;&gt;#pipeline&lt;/a&gt;&lt;br /&gt;
+Example code&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import sys
+
+import apache_beam as beam
+&amp;quot;&amp;quot;&amp;quot;
+
+假設這是個用戶從什麼來源進來的資料
+
+&amp;quot;&amp;quot;&amp;quot;
+
+sample_dataset = [
+
+	{&#39;id&#39;: &#39;123&#39;,  &#39;source&#39;: &#39;A&#39;}, 
+	
+	{&#39;id&#39;: &#39;456&#39;,  &#39;source&#39;: &#39;A&#39;}, 
+	
+	{&#39;id&#39;: &#39;456&#39;,  &#39;source&#39;: &#39;B&#39;}, 
+	
+	{&#39;id&#39;: &#39;789&#39;,  &#39;source&#39;: &#39;B&#39;}, 
+	
+	{&#39;id&#39;: &#39;789&#39;,  &#39;source&#39;: &#39;C&#39;}, 
+	
+	{&#39;id&#39;: &#39;789&#39;,  &#39;source&#39;: &#39;D&#39;}, 
+
+]
+
+  
+
+if __name__ == &#39;__main__&#39;:
+
+	with beam.Pipeline(argv=sys.argv) as pipeline:
+
+		(
+		
+		pipeline
+		
+		| &#39;資料初始化(轉為 pcollection)&#39; &amp;gt;&amp;gt; beam.Create(sample_dataset)
+		
+		| &#39;每行資料轉為 (source,  1)&#39; &amp;gt;&amp;gt; beam.Map(lambda row: (row[&#39;source&#39;],  1))
+		
+		| &#39;同樣的 source 加總起來&#39; &amp;gt;&amp;gt; beam.CombinePerKey(sum)
+		
+		| &#39;轉換輸出的格式&#39; &amp;gt;&amp;gt; beam.Map(lambda row: {&#39;source&#39;: row[0],  &#39;count&#39;: row[1]})
+		
+		| &#39;寫入檔案&#39; &amp;gt;&amp;gt; beam.io.WriteToText(&#39;sample-output&#39;)
+		
+		)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/Apache Beam/Apache Beam 研究/" >
         </entry>
 </feed>
