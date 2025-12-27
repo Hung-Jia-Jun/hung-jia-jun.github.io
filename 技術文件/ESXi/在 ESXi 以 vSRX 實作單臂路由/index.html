@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<title>在 ESXi 以 vSRX 實作單臂路由</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script async type="module">import mermaid from"https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-sv0slik/5O0JIPdLBCR2A3XDg/1U3WuDEheZfI/DI5n8Yqc3h5kjrnr46FGBNiUAJF7rE4LHKwQ/SoSLRKAxEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async src="https://cdn.jsdelivr.net/npm/lucide@0.115.0/dist/umd/lucide.min.js"></script>
+<script>window.addEventListener("load",(()=>{document.querySelectorAll(".callout").forEach((e=>{const t=getComputedStyle(e).getPropertyValue("--callout-icon"),l=t&&t.trim().replace(/^lucide-/,"");if(l){const t=e.querySelector(".callout-title");if(t){const e=document.createElement("div"),c=document.createElement("i");e.appendChild(c),c.setAttribute("icon-name",l),e.setAttribute("class","callout-icon"),t.insertBefore(e,t.firstChild)}}})),lucide.createIcons(),Array.from(document.querySelectorAll(".callout.is-collapsible")).forEach((e=>{e.querySelector(".callout-title").addEventListener("click",(t=>{e.classList.contains("is-collapsed")?e.classList.remove("is-collapsed"):e.classList.add("is-collapsed")}))}))}))</script>
+<script async src="https://fastly.jsdelivr.net/npm/force-graph@1.43.0/dist/force-graph.min.js"></script>
+<script async src="https://fastly.jsdelivr.net/npm/@alpinejs/persist@3.11.1/dist/cdn.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/alpinejs@3.11.1/dist/cdn.min.js" async></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" referrerpolicy="no-referrer" async>
+<script src="https://fastly.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" async></script>
+<link href="/styles/digital-garden-base.css" rel="stylesheet">
+<link href="/styles/style.css" rel="stylesheet">
+<link href="/styles/custom-style.css" rel="stylesheet">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<style></style>
+</head>
+<body class="theme-dark markdown-preview-view markdown-rendered markdown-preview-section">
+<div x-init="isDesktop = (window.innerWidth>=1400) ? true: false;" x-on:resize.window="isDesktop = (window.innerWidth>=1400) ? true : false;" x-data="{isDesktop: true, showFilesMobile: false}">
+<div x-show.important="!isDesktop" style="display:none">
+<nav class="navbar">
+<div class="navbar-inner">
+<span style="font-size:1.5rem;margin-right:10px" @click="showFilesMobile=!showFilesMobile"><i icon-name="menu"></i></span>
+<a href="/" style="text-decoration:none">
+<h1 style="margin:15px!important">Jason&#39;s tech blog</h1>
+</a>
+</div>
+<div class="search-button align-icon" onclick="toggleSearch()">
+<span class="search-icon">
+<i icon-name="search"></i>
+</span>
+<span class="search-text">
+<span>Search</span>
+<span style="font-size:.6rem;padding:2px 2px 0 6px;text-align:center;transform:translateY(4px)" class="search-keys">
+CTRL + K
+</span>
+</span>
+</div>
+</nav>
+</div>
+<div x-show="showFilesMobile && !isDesktop" @click="showFilesMobile = false" style="display:none" class="fullpage-overlay"></div>
+<nav class="filetree-sidebar" x-show.important="isDesktop || showFilesMobile" style="display:none">
+<a href="/" style="text-decoration:none">
+<h1 style="text-align:center">Jason&#39;s tech blog</h1>
+</a>
+<div style="display:flex;justify-content:center">
+<div class="search-button align-icon" onclick="toggleSearch()">
+<span class="search-icon">
+<i icon-name="search"></i>
+</span>
+<span class="search-text">
+<span>Search</span>
+<span style="font-size:.6rem;padding:2px 2px 0 6px;text-align:center;transform:translateY(4px)" class="search-keys">
+CTRL + K
+</span>
+</span>
+</div>
+</div>
+<div class="folder" x-data="{isOpen: true}">
+<div x-show="isOpen" style="display:none" class="">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">技術文件</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Apache Beam')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Apache Beam</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Apache Beam/Apache Beam 研究/">Apache Beam 研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Apache Beam/Apache Beam/">Apache Beam </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/apache_kafka')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">apache_kafka</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Consumer offset reset 行為/">Consumer offset reset 行為 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/kafka  topic 實驗/">kafka topic 實驗 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/">Kafka consumer group 與 rebalance 機制 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka key hashing/">Kafka key hashing </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka leader partition 機制研究/">Kafka leader partition 機制研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/">Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance) </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/">Kafka rebalance 機制 - Eager Rebalance </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka Topic Availability/">Kafka Topic Availability </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka 冪等 Producer/">Kafka 冪等 Producer </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/kafka 高效率傳輸設定/">kafka 高效率傳輸設定 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/C 語言學習')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">C 語言學習</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/C 語言 pass by value/">C 語言 pass by value </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/malloc 內存分配 - void 指針/">malloc 內存分配 - void 指針 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/malloc 內存分配/">malloc 內存分配 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/二級指針(多重指針)/">二級指針(多重指針) </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/同類指針相減運算/">同類指針相減運算 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/字符數組/">字符數組 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/指針的自增自減運算/">指針的自增自減運算 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/數組反轉操作/">數組反轉操作 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體指針傳遞練習題 1/">結構體指針傳遞練習題 1 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體指針變數使用/">結構體指針變數使用 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體指針變數傳遞/">結構體指針變數傳遞 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體數組訪問/">結構體數組訪問 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體複製 - pass by value/">結構體複製 - pass by value </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體訪問 - 課後練習/">結構體訪問 - 課後練習 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/聲明結構體練習/">聲明結構體練習 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/野指針/">野指針 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/ceph')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">ceph</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/ceph/cephadm')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">cephadm</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/cephadm/ceph 建立 filesystem/">ceph 建立 filesystem </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/cephadm/ceph 新增 OSD/">ceph 新增 OSD </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/">cephadm 搭建 ceph 集群 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Ceph cluster 資料寫入篇 - ceph S3/">Ceph cluster 資料寫入篇 - ceph S3 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Ceph cluster 資料寫入篇 - CephFS/">Ceph cluster 資料寫入篇 - CephFS </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Ceph cluster 資料寫入篇 - RBD/">Ceph cluster 資料寫入篇 - RBD </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Cephfs ACL mount path/">Cephfs ACL mount path </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/搭建 Ceph cluster/">搭建 Ceph cluster </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Docker')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Docker</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Docker/Docker overlay2 儲存結構研究/">Docker overlay2 儲存結構研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Docker/Docker swarm 研究/">Docker swarm 研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Docker/docker 特權逃逸/">docker 特權逃逸 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/ESXi')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">ESXi</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink active-note"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/">在 ESXi 以 vSRX 實作單臂路由 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/建立虛擬機器並綁定 VLAN/">建立虛擬機器並綁定 VLAN </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/從現有的 ESXi 匯出 VM/">從現有的 ESXi 匯出 VM </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/other')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">other</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/other/Cloudflare tunnel 研究/">Cloudflare tunnel 研究 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Proxy')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Proxy</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Proxy/HA proxy VRRP 研究/">HA proxy VRRP 研究 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/pySpark')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">pySpark</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/pySpark/GCP dataproc 運行 python scripts/">GCP dataproc 運行 python scripts </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Redis')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Redis</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Redis/Redis ACL 持久化/">Redis ACL 持久化 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Redis/Redis stream 訂閱權限設定/">Redis stream 訂閱權限設定 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/其他')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">其他</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/其他/演算法')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">演算法</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/其他/演算法/實作 queue (Linked list)/">實作 queue (Linked list) </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/CVE-2025-55182 漏洞研究/">CVE-2025-55182 漏洞研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/SonarQube 靜態程式碼檢查工具/">SonarQube 靜態程式碼檢查工具 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/">使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/安裝 Obsidian 語意搜尋套件/">安裝 Obsidian 語意搜尋套件 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/密碼學 - 零知識證明 - 密鑰協商/">密碼學 - 零知識證明 - 密鑰協商 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/">技術筆記 </a>
+</div>
+</div>
+</div>
+</nav>
+</div>
+<div class="search-container" id="globalsearch" onclick="toggleSearch()">
+<div class="search-box">
+<input type="search" id="term" placeholder="Start typing...">
+<div id="search-results"></div>
+<footer class="search-box-footer">
+<div class="navigation-hint">
+<span>Enter to select</span>
+</div>
+<div class="navigation-hint align-icon">
+<i icon-name="arrow-up" aria-hidden="true"></i>
+<i icon-name="arrow-down" aria-hidden="true"></i>
+<span>to navigate</span>
+</div>
+<div class="navigation-hint">
+<span>ESC to close</span>
+</div>
+</footer>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js"></script>
+<script>document.addEventListener("DOMContentLoaded",init,!1),document.addEventListener("DOMContentLoaded",setCorrectShortcut,!1),window.toggleSearch=function(){document.getElementById("globalsearch").classList.contains("active")?document.getElementById("globalsearch").classList.remove("active"):(document.getElementById("globalsearch").classList.add("active"),document.getElementById("term").focus())},window.toggleTagSearch=function(e){console.log(e.textContent);const t=e.textContent;t&&(window.document.getElementById("term").value=t.trim(),window.toggleSearch(),window.search())};const loadingSvg='\n    <svg width="100" height="100" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg" stroke="#fff">\n      <g fill="none" fill-rule="evenodd" transform="translate(1 1)" stroke-width="2">\n          <circle cx="22" cy="22" r="6" stroke-opacity="0">\n              <animate attributeName="r"\n                   begin="1.5s" dur="3s"\n                   values="6;22"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-opacity"\n                   begin="1.5s" dur="3s"\n                   values="1;0" calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-width"\n                   begin="1.5s" dur="3s"\n                   values="2;0" calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n          <circle cx="22" cy="22" r="6" stroke-opacity="0">\n              <animate attributeName="r"\n                   begin="3s" dur="3s"\n                   values="6;22"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-opacity"\n                   begin="3s" dur="3s"\n                   values="1;0" calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-width"\n                   begin="3s" dur="3s"\n                   values="2;0" calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n          <circle cx="22" cy="22" r="8">\n              <animate attributeName="r"\n                   begin="0s" dur="1.5s"\n                   values="6;1;2;3;4;5;6"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n      </g>\n  </svg>';function debounce(e,t,n){var a;return function(){var r=this,i=arguments,c=n&&!a;clearTimeout(a),a=setTimeout((function(){a=null,n||e.apply(r,i)}),t),c&&e.apply(r,i)}}function setCorrectShortcut(){navigator.platform.toUpperCase().indexOf("MAC")>=0&&document.querySelectorAll(".search-keys").forEach((e=>e.innerHTML="⌘ + K"))}function createIndex(e){const t=e=>e.toLowerCase().split(/([^a-z]|[^\x00-\x7F])/),n=new FlexSearch.Document({cache:!0,charset:"latin:extra",optimize:!0,index:[{field:"content",tokenize:"reverse",encode:t},{field:"title",tokenize:"forward",encode:t},{field:"tags",tokenize:"forward",encode:t}]});return e.forEach(((e,t)=>{n.add({id:t,title:e.title,content:e.content,tags:e.tags})})),n}async function init(){let e=!0;if(localStorage.getItem("searchIndex")){let{date:t,docs:n}=JSON.parse(localStorage.getItem("searchIndex"));if("2025-12-27T03:22:43.162Z"===t){e=!1;let t=createIndex(n);window.docs=n,window.index=t}}if(e){let e=await(await fetch("/searchIndex.json?v=2025-12-27T03:22:43.162Z")).json(),t=createIndex(e);localStorage.setItem("searchIndex",JSON.stringify({date:"2025-12-27T03:22:43.162Z",docs:e})),window.docs=e,window.index=t}document.addEventListener("keydown",(e=>{if((e.ctrlKey||e.metaKey)&&"k"===e.key&&(e.preventDefault(),toggleSearch()),"Escape"===e.key&&document.getElementById("globalsearch").classList.remove("active"),document.getElementById("globalsearch").classList.contains("active")){if("ArrowDown"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t?(t.classList.remove("active"),t.nextElementSibling?t.nextElementSibling.classList.add("active"):document.querySelector(".searchresult").classList.add("active")):document.querySelector(".searchresult").classList.add("active");let n=document.querySelector(".searchresult.active");n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})}if("ArrowUp"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t?(t.classList.remove("active"),t.previousElementSibling?t.previousElementSibling.classList.add("active"):document.querySelectorAll(".searchresult").forEach((e=>{e.nextElementSibling||e.classList.add("active")}))):document.querySelectorAll(".searchresult").forEach((e=>{e.nextElementSibling&&e.classList.add("active")}));let n=document.querySelector(".searchresult.active");n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})}if("Enter"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t&&(window.location.href=t.querySelector("a").href)}}}));const t=debounce(search,200,!1);field=document.querySelector("#term"),field.addEventListener("keydown",(e=>{"ArrowDown"!==e.key&&"ArrowUp"!==e.key&&t()})),resultsDiv=document.querySelector("#search-results");const n=new URL(location.href).searchParams;n.get("q")&&(field.setAttribute("value",n.get("q")),toggleSearch(),search())}async function search(){let e=field.value.trim();if(!e)return;if(e==lastSearch)return;console.log(`search for ${e}`),window.lastSearch=e,resultsDiv.innerHTML=loadingSvg;let t=offlineSearch(e),n="";if(!t.length){let t=document.createElement("p");return t.innerText=`No results for "${e}"`,resultsDiv.innerHTML="",void resultsDiv.appendChild(t)}n+='<div style="max-width:100%;">',t.forEach((e=>{e.tags&&e.tags.length>0?n+=`<div class="searchresult">\n                    <a class="search-link" href="${e.url}">${e.title}</a>\n                    <div onclick="window.location='${e.url}'">\n                        <div class="header-meta">\n                            <div class="header-tags">\n                                ${e.tags.map((e=>'<a class="tag" href="JavaScript:Void(0);">#'+e+"</a>")).join("")}\n                            </div>\n                        </div>\n                        ${e.content}\n                    </div>\n                </div>`:n+=`<div class="searchresult">\n                    <a class="search-link" href="${e.url}">${e.title}</a>\n                    <div onclick="window.location='${e.url}'">\n                        ${e.content}\n                    </div>\n                </div>`})),n+="</div>",resultsDiv.innerHTML=n}function truncate(e,t){return(e=e.replaceAll(/<[^>]*>/g,"")).length<t?e:e.substring(0,t-3)+"..."}function offlineSearch(e){let t=window.docs,n="#"===e[0]&&e.length>1?index.search(e.substring(1),[{field:"tags"}]):index.search(e,[{field:"title",limit:5},{field:"content",weight:10}]);const a=e=>{const t=n.filter((t=>t.field===e));return 0===t.length?[]:[...t[0].result]};return[...new Set([...a("title"),...a("content"),...a("tags")])].map((e=>{let n=t[e];return n.content=truncate(n.content,400),n.tags=n.tags.filter((e=>"gardenEntry"!=e&&"note"!=e)),n}))}window.lastSearch=""</script>
+<main class="content cm-s-obsidian">
+<header>
+<h1 data-note-icon="">在 ESXi 以 vSRX 實作單臂路由</h1>
+<div class="header-meta">
+<div class="header-tags">
+<a class="tag" onclick="toggleTagSearch(this)">
+#vsrx
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+#ESXi
+</a>
+</div>
+<div class="timestamps"><div><i icon-name="calendar-plus"></i> <span class="human-date" data-date="[object Object]"></span></div><div><i icon-name="calendar-clock"></i> <span class="human-date" data-date="[object Object]"></span></div></div></div>
+</header>
+<h2 id="vsrx" tabindex="-1">建立 vsrx 機器</h2>
+<hr>
+<p>下載與試用 vsrx<br>
+<a href="https://www.juniper.net/us/en/dm/download-next-gen-vsrx-firewall-trial.html" target="_blank" class="external-link">https://www.juniper.net/us/en/dm/download-next-gen-vsrx-firewall-trial.html</a></p>
+<ol>
+<li>啟動並登入 vsrx<picture src="/img/user/images/Pasted%20image%2020251226154318.png" alt="Pasted image 20251226154318.png"><source media="(max-width:480px)" srcset="/img/optimized/kgJsbQ6pLm-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/kgJsbQ6pLm-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/kgJsbQ6pLm-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/kgJsbQ6pLm-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226154318.png" alt="Pasted image 20251226154318.png" width=""></picture></li>
+<li>新增連接埠群組 test-1<picture src="/img/user/images/Pasted%20image%2020251226154910.png" alt="Pasted image 20251226154910.png"><source media="(max-width:480px)" srcset="/img/optimized/dtTQ0cHjNj-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/dtTQ0cHjNj-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/dtTQ0cHjNj-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/dtTQ0cHjNj-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226154910.png" alt="Pasted image 20251226154910.png" width=""></picture></li>
+<li>新增連接埠群組 test-2<picture src="/img/user/images/Pasted%20image%2020251226155140.png" alt="Pasted image 20251226155140.png"><source media="(max-width:480px)" srcset="/img/optimized/M__cVRJKgr-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/M__cVRJKgr-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/M__cVRJKgr-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/M__cVRJKgr-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226155140.png" alt="Pasted image 20251226155140.png" width=""></picture></li>
+<li>設定 trunk 讓所有封包都走來這個 port-group<picture src="/img/user/images/Pasted%20image%2020251226160743.png" alt="Pasted image 20251226160743.png"><source media="(max-width:480px)" srcset="/img/optimized/sWW8T2cfZy-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/sWW8T2cfZy-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/sWW8T2cfZy-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/sWW8T2cfZy-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226160743.png" alt="Pasted image 20251226160743.png" width=""></picture></li>
+<li>將 trunk port-group 綁到 vSRX<picture src="/img/user/images/Pasted%20image%2020251226160908.png" alt="Pasted image 20251226160908.png"><source media="(max-width:480px)" srcset="/img/optimized/L6-rLkTe_V-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/L6-rLkTe_V-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/L6-rLkTe_V-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/L6-rLkTe_V-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226160908.png" alt="Pasted image 20251226160908.png" width=""></picture></li>
+</ol>
+<h2 id="vlan-v-srx" tabindex="-1">註冊並設定 vlan 到 vSRX</h2>
+<hr>
+<h3 id="vlan" tabindex="-1">新增一個 VLAN</h3>
+<hr>
+<p>新增</p>
+<ul>
+<li>ESXi port-group name: test-1</li>
+<li>VLAN ID: 888</li>
+<li>Subnet：<code>10.10.106.0/24</code>(自行指定)</li>
+<li>Gateway：<code>10.10.106.254</code></li>
+</ul>
+<p>新增</p>
+<ul>
+<li>ESXi port-group name: test-2</li>
+<li>VLAN ID: 123</li>
+<li>Subnet：<code>10.10.107.0/24</code> (自行指定)</li>
+<li>Gateway：<code>10.10.107.254</code></li>
+</ul>
+<h2 id="網路拓樸圖" tabindex="-1">網路拓樸圖</h2>
+<hr>
+<p>pg-trunk-vsrx VLAN ID 4095<br>
+test-1 VLAN ID 888<br>
+test-2 VLAN ID 123<br>
+<picture src="/img/user/images/Pasted%20image%2020251227095327.png" alt="Pasted image 20251227095327.png"><source media="(max-width:480px)" srcset="/img/optimized/4ShdFtiaku-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/4ShdFtiaku-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/4ShdFtiaku-531.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/4ShdFtiaku-531.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227095327.png" alt="Pasted image 20251227095327.png" width=""></picture></p>
+<h2 id="v-srx" tabindex="-1">開始設定 vSRX</h2>
+<hr>
+<p>輸入 root 登入<br>
+並輸入 cli 進入 cli 模式<br>
+<picture src="/img/user/images/Pasted%20image%2020251226161349.png" alt="Pasted image 20251226161349.png"><source media="(max-width:480px)" srcset="/img/optimized/6WDPuM6Kyr-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/6WDPuM6Kyr-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/6WDPuM6Kyr-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/6WDPuM6Kyr-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226161349.png" alt="Pasted image 20251226161349.png" width=""></picture></p>
+<p>檢查目前 interface 狀態<picture src="/img/user/images/Pasted%20image%2020251226161557.png" alt="Pasted image 20251226161557.png"><source media="(max-width:480px)" srcset="/img/optimized/QRnn2L-2DF-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/QRnn2L-2DF-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/QRnn2L-2DF-658.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/QRnn2L-2DF-658.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251226161557.png" alt="Pasted image 20251226161557.png" width=""></picture></p>
+<h2 id="指令解釋" tabindex="-1">指令解釋</h2>
+<hr>
+<pre><code>set interfaces ge-0/0/0 unit 888 vlan-id 888 family inet address 10.10.106.254/24
+</code></pre>
+<ul>
+<li>
+<p>set interfaces<br>
+功能：設定網路介面（interface）。<br>
+簡單說，就是告訴 Juniper「我要修改或新增一個網路介面設定」。</p>
+</li>
+<li>
+<p>ge-0/0/0<br>
+功能：指定要設定的實體介面。<br>
+ge = Gigabit Ethernet（千兆以太網）<br>
+0/0/0 = Slot / PIC / Port（Juniper 介面的命名方式）<br>
+簡單說，就是選定一塊實體網卡。</p>
+</li>
+<li>
+<p>unit 888<br>
+功能：指定子介面（sub-interface）的編號。<br>
+Juniper 允許一個實體介面拆成多個子介面，用於不同 VLAN。<br>
+這裡 unit 888 就是給這個子介面編號為 888。</p>
+</li>
+<li>
+<p>vlan-id 888<br>
+功能：指定這個子介面對應的 VLAN ID。<br>
+VLAN 888 的流量會走到這個子介面上。<br>
+換句話說，這個子介面屬於 VLAN 888，這個值對應到的是 ESXi 裡的 port-group 定義的 VLAN ID。</p>
+</li>
+<li>
+<p>family inet<br>
+功能：指定 IP 層類型，這裡是 IPv4。<br>
+Juniper 的介面可以同時支援多種協議（例如 IPv4, IPv6, MPLS），用 family 來區分。<br>
+這裡的 family inet 就是 IPv4。<br>
+如果你要用 IPv6，就會寫成 family inet6。<br>
+family = 協議類型<br>
+inet = IPv4<br>
+inet6 = IPv6</p>
+</li>
+<li>
+<p>address 10.10.106.254/24<br>
+功能：設定這個子介面的 IP 位址及子網路遮罩。<br>
+10.10.106.254 = IP<br>
+/24 = 子網路遮罩 255.255.255.0<br>
+這個 IP 就是 VLAN 888 的 Layer 3 閘道（gateway）或 VM 要配發的 IP 網段。</p>
+</li>
+</ul>
+<h2 id="root" tabindex="-1">設定 root 帳戶權限</h2>
+<hr>
+<pre><code class="language-bash">set system root-authentication plain-text-password
+</code></pre>
+<h2 id="vlan-1" tabindex="-1">開始設定 VLAN</h2>
+<hr>
+<p>進入設定模式：</p>
+<pre><code class="language-bash"># 1. 啟動 Tagging
+set interfaces ge-0/0/0 vlan-tagging
+
+# 2. 定義 Subinterfaces (L3)
+set interfaces ge-0/0/0 unit 888 vlan-id 888 family inet address 10.10.106.254/24
+set interfaces ge-0/0/0 unit 123 vlan-id 123 family inet address 10.10.107.254/24
+
+# 3. 安全區域設定 (允許介面通訊與 Ping 自機)
+set security zones security-zone trust interfaces ge-0/0/0.888 host-inbound-traffic system-services ping
+set security zones security-zone trust interfaces ge-0/0/0.123 host-inbound-traffic system-services ping
+
+# 4. 預設全開 Policy (Trust to Trust)
+set security policies from-zone trust to-zone trust policy allow-all match source-address any destination-address any application any
+set security policies from-zone trust to-zone trust policy allow-all then permit
+
+commit
+</code></pre>
+<p>輸入</p>
+<pre><code>show interfaces ge-0/0/0
+</code></pre>
+<p>vlan 888 與 vlan 123 已設定完成<br>
+<picture src="/img/user/images/Pasted%20image%2020251227100135.png" alt="Pasted image 20251227100135.png"><source media="(max-width:480px)" srcset="/img/optimized/2xz00dDCoz-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/2xz00dDCoz-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/2xz00dDCoz-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/2xz00dDCoz-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227100135.png" alt="Pasted image 20251227100135.png" width=""></picture></p>
+<h2 id="下一步" tabindex="-1">下一步</h2>
+<hr>
+<p>依以下步驟建立兩台 VM，<br>
+<a class="internal-link" target="" data-note-icon="" href="/技術文件/ESXi/建立虛擬機器並綁定 VLAN/">建立虛擬機器並綁定 VLAN</a><br>
+VM1 :</p>
+<ul>
+<li>VM name: test-1</li>
+<li>VLAN ID: 888</li>
+<li>Address: <code>10.10.106.1/32</code></li>
+<li>Subnet：<code>10.10.106.0/24</code></li>
+<li>Gateway：<code>10.10.106.254</code></li>
+<li></li>
+</ul>
+<p>VM2 :</p>
+<ul>
+<li>VM name: test-2</li>
+<li>VLAN ID: 123</li>
+<li>Address: <code>10.10.107.1/32</code></li>
+<li>Subnet：<code>10.10.107.0/24</code></li>
+<li>Gateway：<code>10.10.107.254</code></li>
+<li>依序填入下列資訊<picture src="/img/user/images/Pasted%20image%2020251227103559.png" alt="Pasted image 20251227103559.png"><source media="(max-width:480px)" srcset="/img/optimized/jmW-AHSEtS-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/jmW-AHSEtS-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/jmW-AHSEtS-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/jmW-AHSEtS-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227103559.png" alt="Pasted image 20251227103559.png" width=""></picture></li>
+</ul>
+<h2 id="v-srx-1" tabindex="-1">vSRX 設定檢查</h2>
+<hr>
+<h3 id="arp" tabindex="-1">檢查機器是否有廣播 ARP</h3>
+<p>輸入</p>
+<pre><code>show arp
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020251227104844.png" alt="Pasted image 20251227104844.png"><source media="(max-width:480px)" srcset="/img/optimized/flOQr2tIGw-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/flOQr2tIGw-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/flOQr2tIGw-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/flOQr2tIGw-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227104844.png" alt="Pasted image 20251227104844.png" width=""></picture></p>
+<p>兩台新建立的機器已經開始廣播 ARP 了</p>
+<h3 id="v-srx-interface" tabindex="-1">查看 vSRX interface 設定</h3>
+<p>輸入</p>
+<pre><code>show configuration interfaces
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020251227110207.png" alt="Pasted image 20251227110207.png"><source media="(max-width:480px)" srcset="/img/optimized/dgKR1vKICK-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/dgKR1vKICK-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/dgKR1vKICK-646.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/dgKR1vKICK-646.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227110207.png" alt="Pasted image 20251227110207.png" width=""></picture></p>
+<h3 id="security-zone" tabindex="-1">檢查 security zone</h3>
+<p>輸入</p>
+<pre><code>show security zones
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020251227110533.png" alt="Pasted image 20251227110533.png"><source media="(max-width:480px)" srcset="/img/optimized/CPyW37TsM9-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/CPyW37TsM9-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/CPyW37TsM9-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/CPyW37TsM9-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227110533.png" alt="Pasted image 20251227110533.png" width=""></picture></p>
+<h2 id="測試路由狀況" tabindex="-1">測試路由狀況</h2>
+<hr>
+<p>從 test-1 ping 到 test-2 (ping OK)<br>
+<picture src="/img/user/images/Pasted%20image%2020251227105248.png" alt="Pasted image 20251227105248.png"><source media="(max-width:480px)" srcset="/img/optimized/nhnEb_hQI6-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/nhnEb_hQI6-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/nhnEb_hQI6-524.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/nhnEb_hQI6-524.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227105248.png" alt="Pasted image 20251227105248.png" width=""></picture></p>
+<p>從 test-2 ping 到 test-1 (ping OK)<br>
+<picture src="/img/user/images/Pasted%20image%2020251227105322.png" alt="Pasted image 20251227105322.png"><source media="(max-width:480px)" srcset="/img/optimized/VdKh8PsRLm-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/VdKh8PsRLm-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/VdKh8PsRLm-524.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/VdKh8PsRLm-524.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227105322.png" alt="Pasted image 20251227105322.png" width=""></picture></p>
+<p>暫停 vSRX 後測試 (ping 不通)<br>
+<picture src="/img/user/images/Pasted%20image%2020251227105439.png" alt="Pasted image 20251227105439.png"><source media="(max-width:480px)" srcset="/img/optimized/iAIg5aPv9p-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/iAIg5aPv9p-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/iAIg5aPv9p-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/iAIg5aPv9p-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227105439.png" alt="Pasted image 20251227105439.png" width=""></picture></p>
+<p>兩台 VM 無法互通<picture src="/img/user/images/Pasted%20image%2020251227105537.png" alt="Pasted image 20251227105537.png"><source media="(max-width:480px)" srcset="/img/optimized/ruu6oKVgTV-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/ruu6oKVgTV-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/ruu6oKVgTV-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/ruu6oKVgTV-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227105537.png" alt="Pasted image 20251227105537.png" width=""></picture></p>
+<p>恢復 vSRX 後測試 (ping OK)<br>
+<picture src="/img/user/images/Pasted%20image%2020251227105637.png" alt="Pasted image 20251227105637.png"><source media="(max-width:480px)" srcset="/img/optimized/i4QO-wsQGr-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/i4QO-wsQGr-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/i4QO-wsQGr-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/i4QO-wsQGr-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227105637.png" alt="Pasted image 20251227105637.png" width=""></picture></p>
+<h3 id="80-port" tabindex="-1">測試 80 port</h3>
+<p>test-2 -&gt; test-1(port 80 OK)<br>
+<picture src="/img/user/images/Pasted%20image%2020251227111916.png" alt="Pasted image 20251227111916.png"><source media="(max-width:480px)" srcset="/img/optimized/nMmOMk3l2F-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/nMmOMk3l2F-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/nMmOMk3l2F-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/nMmOMk3l2F-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227111916.png" alt="Pasted image 20251227111916.png" width=""></picture><br>
+test-1 -&gt; test-2(port 80 OK)<br>
+<picture src="/img/user/images/Pasted%20image%2020251227112035.png" alt="Pasted image 20251227112035.png"><source media="(max-width:480px)" srcset="/img/optimized/X43NaXYUH5-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/X43NaXYUH5-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/X43NaXYUH5-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/X43NaXYUH5-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251227112035.png" alt="Pasted image 20251227112035.png" width=""></picture></p>
+<h1 id="總結" tabindex="-1">總結</h1>
+<hr>
+<p>透過在 ESXi 上建立 VLAN 連接埠群組，並在 vSRX 上設定對應的子介面與 VLAN ID，可以成功實現單臂路由，讓不同 VLAN 的虛擬機器能夠互相通訊。</p>
+</main>
+<aside>
+<div class="sidebar">
+<div class="sidebar-container">
+<div class="toc">
+<div class="toc-title-container">
+<div class="toc-title">
+On this page
+</div>
+</div>
+<div class="toc-container">
+<nav class="toc">
+<ol>
+<li><a href="#vsrx">建立 vsrx 機器</a>
+</li>
+<li><a href="#vlan-v-srx">註冊並設定 vlan 到 vSRX</a>
+<ol>
+<li><a href="#vlan">新增一個 VLAN</a>
+</li>
+</ol>
+</li>
+<li><a href="#網路拓樸圖">網路拓樸圖</a>
+</li>
+<li><a href="#v-srx">開始設定 vSRX</a>
+</li>
+<li><a href="#指令解釋">指令解釋</a>
+</li>
+<li><a href="#root">設定 root 帳戶權限</a>
+</li>
+<li><a href="#vlan-1">開始設定 VLAN</a>
+</li>
+<li><a href="#下一步">下一步</a>
+</li>
+<li><a href="#v-srx-1">vSRX 設定檢查</a>
+<ol>
+<li><a href="#arp">檢查機器是否有廣播 ARP</a>
+</li>
+<li><a href="#v-srx-interface">查看 vSRX interface 設定</a>
+</li>
+<li><a href="#security-zone">檢查 security zone</a>
+</li>
+</ol>
+</li>
+<li><a href="#測試路由狀況">測試路由狀況</a>
+<ol>
+<li><a href="#80-port">測試 80 port</a>
+</li>
+</ol>
+</li>
+<li><a href="#總結">總結</a>
+</li>
+</ol>
+</nav>
+</div>
+</div>
+<div class="backlinks">
+<div class="backlink-title" style="margin:4px 0!important">Pages mentioning this page</div>
+<div class="backlink-list"><div class="backlink-card">
+<span class="no-backlinks-message">No other pages mentions this page</span>
+</div></div>
+</div>
+</div>
+</div>
+</aside>
+<style>#tooltip-wrapper{background:var(--background-primary);padding:1em;border-radius:4px;overflow:hidden;position:fixed;width:80%;max-width:400px;height:auto;max-height:300px;font-size:.8em;box-shadow:0 5px 10px rgba(0,0,0,.1);opacity:0;transition:opacity .1s;unicode-bidi:plaintext;overflow-y:scroll;z-index:10}#tooltip-wrapper:after{content:"";position:absolute;z-index:1;bottom:0;left:0;pointer-events:none;width:100%;unicode-bidi:plaintext;height:75px}</style>
+<div style="opacity:0;display:none" id="tooltip-wrapper">
+<div id="tooltip-content">
+</div>
+</div>
+<iframe style="display:none;height:0;width:0" id="link-preview-iframe" src="">
+</iframe>
+<script>var opacityTimeout,contentTimeout,transitionDurationMs=100,iframe=document.getElementById("link-preview-iframe"),tooltipWrapper=document.getElementById("tooltip-wrapper"),tooltipContent=document.getElementById("tooltip-content"),linkHistories={};function hideTooltip(){opacityTimeout=setTimeout((function(){tooltipWrapper.style.opacity=0,contentTimeout=setTimeout((function(){tooltipContent.innerHTML="",tooltipWrapper.style.display="none"}),transitionDurationMs+1)}),transitionDurationMs)}function showTooltip(t){var e=t.target,o=e.getClientRects()[e.getClientRects().length-1],i=window.pageYOffset||document.documentElement.scrollTop,n=t.target.getAttribute("href");if(-1===n.indexOf("http")||-1!==n.indexOf(window.location.host)){let t=n.split("#")[0];linkHistories[t]?(tooltipContent.innerHTML=linkHistories[t],tooltipWrapper.style.display="block",setTimeout((function(){if(tooltipWrapper.style.opacity=1,-1!=n.indexOf("#")){let t=n.split("#")[1];const e=tooltipWrapper.querySelector(`[id='${t}']`);e.classList.add("referred"),e.scrollIntoView({behavior:"smooth"},!0)}else tooltipWrapper.scroll(0,0)}),1)):(iframe.src=t,iframe.onload=function(){tooltipContentHtml="",tooltipContentHtml+='<div style="font-weight: bold; unicode-bidi: plaintext;">'+iframe.contentWindow.document.querySelector("h1").innerHTML+"</div>",tooltipContentHtml+=iframe.contentWindow.document.querySelector(".content").innerHTML,tooltipContent.innerHTML=tooltipContentHtml,linkHistories[t]=tooltipContentHtml,tooltipWrapper.style.display="block",tooltipWrapper.scrollTop=0,setTimeout((function(){if(tooltipWrapper.style.opacity=1,-1!=n.indexOf("#")){let t=n.split("#")[1];const e=tooltipWrapper.querySelector(`[id='${t}']`);e.classList.add("referred"),console.log(e),e.scrollIntoView({behavior:"smooth"},!0)}else tooltipWrapper.scroll(0,0)}),1)}),tooltipWrapper.style.left=o.left-tooltipWrapper.offsetWidth/2+o.width/2+"px",window.innerHeight-o.top<tooltipWrapper.offsetHeight?tooltipWrapper.style.top=o.top+i-tooltipWrapper.offsetHeight-10+"px":window.innerHeight-o.top>tooltipWrapper.offsetHeight&&(tooltipWrapper.style.top=o.top+i+35+"px"),o.left+o.width/2<tooltipWrapper.offsetWidth/2?tooltipWrapper.style.left="10px":document.body.clientWidth-o.left-o.width/2<tooltipWrapper.offsetWidth/2&&(tooltipWrapper.style.left=document.body.clientWidth-tooltipWrapper.offsetWidth-20+"px")}}function setupListeners(t){t.addEventListener("mouseleave",(function(t){hideTooltip()})),tooltipWrapper.addEventListener("mouseleave",(function(t){hideTooltip()})),t.addEventListener("mouseenter",(function(t){clearTimeout(opacityTimeout),clearTimeout(contentTimeout),showTooltip(t)})),tooltipWrapper.addEventListener("mouseenter",(function(t){clearTimeout(opacityTimeout),clearTimeout(contentTimeout)}))}window.addEventListener("load",(function(t){document.querySelectorAll(".internal-link").forEach(setupListeners),document.querySelectorAll(".backlink-card a").forEach(setupListeners)}))</script>
+<script>window.location.hash&&document.getElementById(window.location.hash.slice(1)).classList.add("referred"),window.addEventListener("hashchange",(e=>{const t=e.oldURL.split("#");t[1]&&document.getElementById(t[1]).classList.remove("referred");const n=e.newURL.split("#");n[1]&&document.getElementById(n[1]).classList.add("referred")}),!1);const url_parts=window.location.href.split("#"),url=url_parts[0],referrence=url_parts[1];document.querySelectorAll(".cm-s-obsidian > *[id]").forEach((function(e){e.ondblclick=function(e){const t=url+"#"+e.target.id;navigator.clipboard.writeText(t)}}))</script>
+<script src="https://fastly.jsdelivr.net/npm/luxon@3.2.1/build/global/luxon.min.js"></script>
+<script defer="defer">TIMESTAMP_FORMAT="MMM dd, yyyy",document.querySelectorAll(".human-date").forEach((function(e){date=e.getAttribute("data-date")||e.innerText,parsed_date=luxon.DateTime.fromISO(date),null!=parsed_date.invalid&&(parsed_date=luxon.DateTime.fromSQL(date)),null!=parsed_date.invalid&&(parsed_date=luxon.DateTime.fromHTML(date)),e.innerHTML=parsed_date.toFormat(TIMESTAMP_FORMAT)}))</script>
+<script>lucide.createIcons({attrs:{class:["svg-icon"]}})</script>
+</body>
+</html>
