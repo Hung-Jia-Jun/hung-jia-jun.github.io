@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-29T08:28:47Z</updated>
+    <updated>2025-12-29T09:15:38Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-29T08:28:29Z</updated>
+            <updated>2025-12-29T09:15:28Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -2438,7 +2438,7 @@ sudo systemctl stop keepalived&lt;br /&gt;
                 從現有的 ESXi 匯出 VM
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ESXi/從現有的 ESXi 匯出 VM/</id>
             <content type="html">
                 &lt;h2 id=&quot;es-xi-vm&quot; tabindex=&quot;-1&quot;&gt;從現有的 ESXi 匯出 VM&lt;/h2&gt;
@@ -2456,6 +2456,214 @@ sudo systemctl stop keepalived&lt;br /&gt;
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/ESXi/從現有的 ESXi 匯出 VM/" >
+        </entry>
+        <entry>
+            <title>
+                建立虛擬機器並綁定 VLAN
+                
+            </title>
+            <updated>2025-12-29T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ESXi/建立虛擬機器並綁定 VLAN/</id>
+            <content type="html">
+                &lt;p&gt;建立虛擬機器&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100826.png&quot; alt=&quot;Pasted image 20251227100826.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;選取建立類型&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100852.png&quot; alt=&quot;Pasted image 20251227100852.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;選取名稱和客體作業系統&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100951.png&quot; alt=&quot;Pasted image 20251227100951.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;選取儲存區&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101036.png&quot; alt=&quot;Pasted image 20251227101036.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;設定網路介面卡&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101137.png&quot; alt=&quot;Pasted image 20251227101137.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;下一頁&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101159.png&quot; alt=&quot;Pasted image 20251227101159.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;完成&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101228.png&quot; alt=&quot;Pasted image 20251227101228.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/建立虛擬機器並綁定 VLAN/" >
+        </entry>
+        <entry>
+            <title>
+                在 ESXi 以 vSRX 實作單臂路由
+                
+            </title>
+            <updated>2025-12-29T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/</id>
+            <content type="html">
+                &lt;h2 id=&quot;vsrx&quot; tabindex=&quot;-1&quot;&gt;建立 vsrx 機器&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;下載與試用 vsrx&lt;br /&gt;
+&lt;a href=&quot;https://www.juniper.net/us/en/dm/download-next-gen-vsrx-firewall-trial.html&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://www.juniper.net/us/en/dm/download-next-gen-vsrx-firewall-trial.html&lt;/a&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;啟動並登入 vsrx&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226154318.png&quot; alt=&quot;Pasted image 20251226154318.png&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;新增連接埠群組 test-1&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226154910.png&quot; alt=&quot;Pasted image 20251226154910.png&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;新增連接埠群組 test-2&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226155140.png&quot; alt=&quot;Pasted image 20251226155140.png&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;設定 trunk 讓所有封包都走來這個 port-group&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226160743.png&quot; alt=&quot;Pasted image 20251226160743.png&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;將 trunk port-group 綁到 vSRX&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226160908.png&quot; alt=&quot;Pasted image 20251226160908.png&quot; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;vlan-v-srx&quot; tabindex=&quot;-1&quot;&gt;註冊並設定 vlan 到 vSRX&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;h3 id=&quot;vlan&quot; tabindex=&quot;-1&quot;&gt;新增一個 VLAN&lt;/h3&gt;
+&lt;hr /&gt;
+&lt;p&gt;新增&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ESXi port-group name: test-1&lt;/li&gt;
+&lt;li&gt;VLAN ID: 888&lt;/li&gt;
+&lt;li&gt;Subnet：&lt;code&gt;10.10.106.0/24&lt;/code&gt;(自行指定)&lt;/li&gt;
+&lt;li&gt;Gateway：&lt;code&gt;10.10.106.254&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;新增&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ESXi port-group name: test-2&lt;/li&gt;
+&lt;li&gt;VLAN ID: 123&lt;/li&gt;
+&lt;li&gt;Subnet：&lt;code&gt;10.10.107.0/24&lt;/code&gt;  (自行指定)&lt;/li&gt;
+&lt;li&gt;Gateway：&lt;code&gt;10.10.107.254&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;網路拓樸圖&quot; tabindex=&quot;-1&quot;&gt;網路拓樸圖&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;pg-trunk-vsrx VLAN ID 4095&lt;br /&gt;
+test-1 VLAN ID 888&lt;br /&gt;
+test-2 VLAN ID 123&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227095327.png&quot; alt=&quot;Pasted image 20251227095327.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;v-srx&quot; tabindex=&quot;-1&quot;&gt;開始設定 vSRX&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;輸入 root 登入&lt;br /&gt;
+並輸入 cli 進入 cli 模式&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226161349.png&quot; alt=&quot;Pasted image 20251226161349.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;檢查目前 interface 狀態&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251226161557.png&quot; alt=&quot;Pasted image 20251226161557.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;指令解釋&quot; tabindex=&quot;-1&quot;&gt;指令解釋&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;set interfaces ge-0/0/0 unit 888 vlan-id 888 family inet address 10.10.106.254/24
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;set interfaces&lt;br /&gt;
+功能：設定網路介面（interface）。&lt;br /&gt;
+簡單說，就是告訴 Juniper「我要修改或新增一個網路介面設定」。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ge-0/0/0&lt;br /&gt;
+功能：指定要設定的實體介面。&lt;br /&gt;
+ge = Gigabit Ethernet（千兆以太網）&lt;br /&gt;
+0/0/0 = Slot / PIC / Port（Juniper 介面的命名方式）&lt;br /&gt;
+簡單說，就是選定一塊實體網卡。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;unit 888&lt;br /&gt;
+功能：指定子介面（sub-interface）的編號。&lt;br /&gt;
+Juniper 允許一個實體介面拆成多個子介面，用於不同 VLAN。&lt;br /&gt;
+這裡 unit 888 就是給這個子介面編號為 888。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;vlan-id 888&lt;br /&gt;
+功能：指定這個子介面對應的 VLAN ID。&lt;br /&gt;
+VLAN 888 的流量會走到這個子介面上。&lt;br /&gt;
+換句話說，這個子介面屬於 VLAN 888，這個值對應到的是 ESXi 裡的 port-group 定義的 VLAN ID。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;family inet&lt;br /&gt;
+功能：指定 IP 層類型，這裡是 IPv4。&lt;br /&gt;
+Juniper 的介面可以同時支援多種協議（例如 IPv4, IPv6, MPLS），用 family 來區分。&lt;br /&gt;
+這裡的 family inet 就是 IPv4。&lt;br /&gt;
+如果你要用 IPv6，就會寫成 family inet6。&lt;br /&gt;
+family = 協議類型&lt;br /&gt;
+inet = IPv4&lt;br /&gt;
+inet6 = IPv6&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;address 10.10.106.254/24&lt;br /&gt;
+功能：設定這個子介面的 IP 位址及子網路遮罩。&lt;br /&gt;
+10.10.106.254 = IP&lt;br /&gt;
+/24 = 子網路遮罩 255.255.255.0&lt;br /&gt;
+這個 IP 就是 VLAN 888 的 Layer 3 閘道（gateway）或 VM 要配發的 IP 網段。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;root&quot; tabindex=&quot;-1&quot;&gt;設定 root 帳戶權限&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;set system root-authentication plain-text-password
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;vlan-1&quot; tabindex=&quot;-1&quot;&gt;開始設定 VLAN&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;進入設定模式：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# 1. 啟動 Tagging
+set interfaces ge-0/0/0 vlan-tagging
+
+# 2. 定義 Subinterfaces (L3)
+set interfaces ge-0/0/0 unit 888 vlan-id 888 family inet address 10.10.106.254/24
+set interfaces ge-0/0/0 unit 123 vlan-id 123 family inet address 10.10.107.254/24
+
+# 3. 安全區域設定 (允許介面通訊與 Ping 自機)
+set security zones security-zone trust interfaces ge-0/0/0.888 host-inbound-traffic system-services ping
+set security zones security-zone trust interfaces ge-0/0/0.123 host-inbound-traffic system-services ping
+
+# 4. 預設全開 Policy (Trust to Trust)
+set security policies from-zone trust to-zone trust policy allow-all match source-address any destination-address any application any
+set security policies from-zone trust to-zone trust policy allow-all then permit
+
+commit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;輸入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;show interfaces ge-0/0/0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;vlan 888 與 vlan 123 已設定完成&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100135.png&quot; alt=&quot;Pasted image 20251227100135.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;下一步&quot; tabindex=&quot;-1&quot;&gt;下一步&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;依以下步驟建立兩台 VM，&lt;br /&gt;
+&lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ESXi/%E5%BB%BA%E7%AB%8B%E8%99%9B%E6%93%AC%E6%A9%9F%E5%99%A8%E4%B8%A6%E7%B6%81%E5%AE%9A%20VLAN/&quot;&gt;建立虛擬機器並綁定 VLAN&lt;/a&gt;&lt;br /&gt;
+VM1 :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VM name: test-1&lt;/li&gt;
+&lt;li&gt;VLAN ID: 888&lt;/li&gt;
+&lt;li&gt;Address: &lt;code&gt;10.10.106.1/32&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Subnet：&lt;code&gt;10.10.106.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Gateway：&lt;code&gt;10.10.106.254&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;VM2 :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VM name: test-2&lt;/li&gt;
+&lt;li&gt;VLAN ID: 123&lt;/li&gt;
+&lt;li&gt;Address: &lt;code&gt;10.10.107.1/32&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Subnet：&lt;code&gt;10.10.107.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Gateway：&lt;code&gt;10.10.107.254&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;依序填入下列資訊&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227103559.png&quot; alt=&quot;Pasted image 20251227103559.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;v-srx-1&quot; tabindex=&quot;-1&quot;&gt;vSRX 設定檢查&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;h3 id=&quot;arp&quot; tabindex=&quot;-1&quot;&gt;檢查機器是否有廣播 ARP&lt;/h3&gt;
+&lt;p&gt;輸入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;show arp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227104844.png&quot; alt=&quot;Pasted image 20251227104844.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;兩台新建立的機器已經開始廣播 ARP 了&lt;/p&gt;
+&lt;h3 id=&quot;v-srx-interface&quot; tabindex=&quot;-1&quot;&gt;查看 vSRX interface 設定&lt;/h3&gt;
+&lt;p&gt;輸入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;show configuration interfaces
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227110207.png&quot; alt=&quot;Pasted image 20251227110207.png&quot; /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;security-zone&quot; tabindex=&quot;-1&quot;&gt;檢查 security zone&lt;/h3&gt;
+&lt;p&gt;輸入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;show security zones
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227110533.png&quot; alt=&quot;Pasted image 20251227110533.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;測試路由狀況&quot; tabindex=&quot;-1&quot;&gt;測試路由狀況&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;從 test-1 ping 到 test-2 (ping OK)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227105248.png&quot; alt=&quot;Pasted image 20251227105248.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;從 test-2 ping 到 test-1 (ping OK)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227105322.png&quot; alt=&quot;Pasted image 20251227105322.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;暫停 vSRX 後測試 (ping 不通)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227105439.png&quot; alt=&quot;Pasted image 20251227105439.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;兩台 VM 無法互通&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227105537.png&quot; alt=&quot;Pasted image 20251227105537.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;恢復 vSRX 後測試 (ping OK)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227105637.png&quot; alt=&quot;Pasted image 20251227105637.png&quot; /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;80-port&quot; tabindex=&quot;-1&quot;&gt;測試 80 port&lt;/h3&gt;
+&lt;p&gt;test-2 -&amp;gt; test-1(port 80 OK)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227111916.png&quot; alt=&quot;Pasted image 20251227111916.png&quot; /&gt;&lt;br /&gt;
+test-1 -&amp;gt; test-2(port 80 OK)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227112035.png&quot; alt=&quot;Pasted image 20251227112035.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;總結&quot; tabindex=&quot;-1&quot;&gt;總結&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;透過在 ESXi 上建立 VLAN 連接埠群組，並在 vSRX 上設定對應的子介面與 VLAN ID，可以成功實現單臂路由，讓不同 VLAN 的虛擬機器能夠互相通訊。&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/" >
         </entry>
         <entry>
             <title>
