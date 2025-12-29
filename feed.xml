@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-29T08:22:55Z</updated>
+    <updated>2025-12-29T08:23:35Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-29T08:22:42Z</updated>
+            <updated>2025-12-29T08:23:24Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -2456,26 +2456,6 @@ sudo systemctl stop keepalived&lt;br /&gt;
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/ESXi/從現有的 ESXi 匯出 VM/" >
-        </entry>
-        <entry>
-            <title>
-                建立虛擬機器並綁定 VLAN
-                
-            </title>
-            <updated></updated>
-            <id>https://hung-jia-jun.github.io/技術文件/ESXi/建立虛擬機器並綁定 VLAN/</id>
-            <content type="html">
-                &lt;p&gt;建立虛擬機器&lt;br /&gt;
-&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100826.png&quot; alt=&quot;Pasted image 20251227100826.png&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;選取建立類型&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100852.png&quot; alt=&quot;Pasted image 20251227100852.png&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;選取名稱和客體作業系統&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227100951.png&quot; alt=&quot;Pasted image 20251227100951.png&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;選取儲存區&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101036.png&quot; alt=&quot;Pasted image 20251227101036.png&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;設定網路介面卡&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101137.png&quot; alt=&quot;Pasted image 20251227101137.png&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;下一頁&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101159.png&quot; alt=&quot;Pasted image 20251227101159.png&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;完成&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251227101228.png&quot; alt=&quot;Pasted image 20251227101228.png&quot; /&gt;&lt;/p&gt;
-
-            </content>
-            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/建立虛擬機器並綁定 VLAN/" >
         </entry>
         <entry>
             <title>
