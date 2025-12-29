@@ -1,5 +1,5 @@
 ---
-{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":{"{ date }":null},"dg-updated_time":{"{ date }":null},"permalink":"/技術文件/ceph/Cephfs ACL mount path/","dgPassFrontmatter":true,"created":{"{ date }":null},"updated":{"{ date }":null}}
+{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ceph/Cephfs ACL mount path/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29"}
 ---
 
 # 背景
