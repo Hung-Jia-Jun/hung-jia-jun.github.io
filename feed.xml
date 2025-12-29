@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-29T13:14:40Z</updated>
+    <updated>2025-12-29T13:23:20Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-29T13:14:33Z</updated>
+            <updated>2025-12-29T13:23:05Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -2664,6 +2664,238 @@ test-1 -&amp;gt; test-2(port 80 OK)&lt;br /&gt;
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/" >
+        </entry>
+        <entry>
+            <title>
+                ESXi VM 擴容實作 - Partition 擴增
+                
+            </title>
+            <updated>2025-12-29T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ESXi/ESXi VM 擴容實作 - Partition 擴增/</id>
+            <content type="html">
+                &lt;h1 id=&quot;背景&quot; tabindex=&quot;-1&quot;&gt;背景&lt;/h1&gt;
+&lt;p&gt;在 ESXi 調整硬碟大小&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207193016.png&quot; alt=&quot;Pasted image 20241207193016.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;但這次是直接將 partition 掛載到 &lt;code&gt;/&lt;/code&gt;&lt;br /&gt;
+沒有再經過 PV -&amp;gt; VG -&amp;gt; LV 掛載流程&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251229211818.png&quot; alt=&quot;Pasted image 20251229211818.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;開始&quot; tabindex=&quot;-1&quot;&gt;開始&lt;/h1&gt;
+&lt;p&gt;輸入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;parted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251229211932.png&quot; alt=&quot;Pasted image 20251229211932.png&quot; /&gt;&lt;br /&gt;
+確認新擴增的空間尚未被格式化&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!CAUTION] 注意 !!!&lt;br /&gt;
+要被 growpart 的空間絕對不能被格式化，不然會出現「NOCHANGE: partition 2 is size 62908416. it cannot be grown」錯誤&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果發現已經被格式化過了，就刪除該分區，讓他變成未被格式化的狀態，如下圖&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207193928.png&quot; alt=&quot;Pasted image 20241207193928.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;增加 partition 空間&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;growpart /dev/sda 2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251229212025.png&quot; alt=&quot;Pasted image 20251229212025.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;用 &lt;code&gt;resize2fs&lt;/code&gt; 讓實際掛載在系統根目錄的 &lt;code&gt;/dev/sda2&lt;/code&gt; 擴容&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;resize2fs /dev/sda2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251229212105.png&quot; alt=&quot;Pasted image 20251229212105.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;總結&quot; tabindex=&quot;-1&quot;&gt;總結&lt;/h1&gt;
+&lt;p&gt;如果掛載到系統根目錄的方式沒有使用 LVM 的方式，即透過 PV(Physical Volume) 組成 VG(Volume group)，然後在 VG(Volume group) 裡面建立 LV(Logic volume) 的方法，用上面的方式就可以對特定的 partition 做擴容了，方法相對簡單，但沒有 LVM2(Logic volume manage, version 2) 的加持，未來調整空間就比較受限&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/ESXi VM 擴容實作 - Partition 擴增/" >
+        </entry>
+        <entry>
+            <title>
+                ESXi VM 擴容實作 - LVM2
+                
+            </title>
+            <updated>2025-12-29T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ESXi/ESXi VM 擴容實作 - LVM2/</id>
+            <content type="html">
+                &lt;h1 id=&quot;背景&quot; tabindex=&quot;-1&quot;&gt;背景&lt;/h1&gt;
+&lt;p&gt;在 ESXi 建立的 VM 想增加磁碟空間，所以紀錄下整個過程。&lt;/p&gt;
+&lt;p&gt;目標主機使用 LVM2 的方式掛載系統根目錄，即實際掛載對象為 LV(Logic volume)。&lt;/p&gt;
+&lt;h2 id=&quot;系統版本&quot; tabindex=&quot;-1&quot;&gt;系統版本&lt;/h2&gt;
+&lt;p&gt;ubuntu 20.04.5&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207173634.png&quot; alt=&quot;Pasted image 20241207173634.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;開始&quot; tabindex=&quot;-1&quot;&gt;開始&lt;/h1&gt;
+&lt;p&gt;進入 edit settings&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251229211619.png&quot; alt=&quot;Pasted image 20251229211619.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;調整硬碟大小&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207173040.png&quot; alt=&quot;Pasted image 20241207173040.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207173153.png&quot; alt=&quot;Pasted image 20241207173153.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;調整完成，硬碟空間變大了&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020251229211639.png&quot; alt=&quot;Pasted image 20251229211639.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;但目前 linux 主機內空間還是沒改變&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207173444.png&quot; alt=&quot;Pasted image 20241207173444.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;重開機後&lt;br /&gt;
+/dev/sda 就擴容到 35G 了&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207174314.png&quot; alt=&quot;Pasted image 20241207174314.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;但實際掛載在系統目錄 lv 的大小還是沒改變，目標是「擴增系統位置 &amp;quot;/&amp;quot;」&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ lsblk
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207174728.png&quot; alt=&quot;Pasted image 20241207174728.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;查看 pv 與 vg 狀態，目前都是 28.25(原始大小)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ pvdisplay
+$ vgdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207175440.png&quot; alt=&quot;Pasted image 20241207175440.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;LV 的空間 28G&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ lvdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;LV 是實際上被掛載到系統根目錄 &amp;quot;/&amp;quot; 的 volume&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207175659.png&quot; alt=&quot;Pasted image 20241207175659.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&quot;partition&quot; tabindex=&quot;-1&quot;&gt;擴充原有 partition，使用剩餘空間&lt;/h2&gt;
+&lt;p id=&quot;dc4611&quot;&gt;使用 parted 工具進行 resize&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ parted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;輸入「&lt;code&gt;p&lt;/code&gt;」顯示所有 partition&lt;br /&gt;
+系統告知不是所有空間都能被使用&lt;br /&gt;
+輸入「Fix」修復 GPT(GUID Partition Table) 分區表&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207180056.png&quot; alt=&quot;Pasted image 20241207180056.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;執行 partition resize 操作&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(parted) resizepart
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;將 /dev/sda 上的 /dev/sda3(partition 3) 從 32G 擴增到 35G，此時 number 3 partition 已經使用了所有空間&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207180824.png&quot; alt=&quot;Pasted image 20241207180824.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;輸入 「&lt;code&gt;q&lt;/code&gt;」離開&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207181023.png&quot; alt=&quot;Pasted image 20241207181023.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;pv&quot; tabindex=&quot;-1&quot;&gt;擴充 PV 空間&lt;/h2&gt;
+&lt;p&gt;原本上面的 number 3 partition 已經是現存的 PV，既然 partition 已經變大，接著就可以直接進行 resize 的操作&lt;br /&gt;
+尚未進行 resize 前 PV 大小 28.25G&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ pvdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207181459.png&quot; alt=&quot;Pasted image 20241207181459.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;執行 pvresize&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ pvresize /dev/sda3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;變成 30.84G&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207181722.png&quot; alt=&quot;Pasted image 20241207181722.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;查看 vg size&lt;br /&gt;
+vg size 也變大了&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ vgdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207181909.png&quot; alt=&quot;Pasted image 20241207181909.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;lv&quot; tabindex=&quot;-1&quot;&gt;擴充 LV 空間&lt;/h1&gt;
+&lt;p&gt;接著擴充 LV 空間&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# 原本的 LV 空間狀況  
+$ lvdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207182040.png&quot; alt=&quot;Pasted image 20241207182040.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;lv-35-gb&quot; tabindex=&quot;-1&quot;&gt;將 LV 空間擴充成 35GB&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;$ lvextend -L 35G /dev/ubuntu-vg/ubuntu-lv
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207182818.png&quot; alt=&quot;Pasted image 20241207182818.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;出現錯誤，看起來是目前輸入的值超過可擴展的 pv 空間&lt;/p&gt;
+&lt;p&gt;進一步排查發現，扣掉 1.8G 的 sda2 分區，還有2.3GB 的 disk 空間未分配給 /dev/sda3&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207183136.png&quot; alt=&quot;Pasted image 20241207183136.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;輸入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ parted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;回到 &lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/ESXi/ESXi%20VM%20%E6%93%B4%E5%AE%B9%E5%AF%A6%E4%BD%9C%20-%20LVM2/#partition&quot;&gt;ESXi VM 擴容實作 - LVM2#擴充原有 partition，使用剩餘空間&lt;/a&gt;&lt;br /&gt;
+但這次請注意這個 Disk 值，這是可用的最大空間&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207184423.png&quot; alt=&quot;Pasted image 20241207184423.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;partition 3 確實沒有佔滿所有的 37.6GB 的空間&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207184930.png&quot; alt=&quot;Pasted image 20241207184930.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;將 end 設為 37.6GB&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207184647.png&quot; alt=&quot;Pasted image 20241207184647.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;再執行一次 pvresize&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;pvresize /dev/sda3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;已經從原本的 30.84GB 增加到 33.25GB 了&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207185342.png&quot; alt=&quot;Pasted image 20241207185342.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;執行 lvextend 增加 lv 空間&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;lvextend -L 33G /dev/ubuntu-vg/ubuntu-lv
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207185752.png&quot; alt=&quot;Pasted image 20241207185752.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;最後再 resize2fs 增加系統根目錄 &lt;code&gt;/&lt;/code&gt; 的可用空間&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;resize2fs /dev/ubuntu-vg/ubuntu-lv
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207190011.png&quot; alt=&quot;Pasted image 20241207190011.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;知識點&quot; tabindex=&quot;-1&quot;&gt;知識點&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;磁碟掛載命名順序與分區命名規則如下:
+&lt;ol&gt;
+&lt;li&gt;disk:
+&lt;ol&gt;
+&lt;li&gt;第一顆 disk -&amp;gt; /dev/sda
+&lt;ol&gt;
+&lt;li&gt;第一個分區 -&amp;gt; /dev/sda1
+&lt;ol&gt;
+&lt;li&gt;partition id: 1&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;第二個分區 -&amp;gt; /dev/sda2
+&lt;ol&gt;
+&lt;li&gt;partition id: 2&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;... 以此類推&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;第二顆 disk -&amp;gt; /dev/sdb&lt;/li&gt;
+&lt;li&gt;第三顆 disk -&amp;gt; /dev/sdc&lt;/li&gt;
+&lt;li&gt;... 以此類推&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;理解 Linux PV、LV、VG 之間的關係
+&lt;ol&gt;
+&lt;li&gt;PV(Physical volume) = 磁碟分割區 (/dev/sda1、/dev/sda2)
+&lt;ol&gt;
+&lt;li&gt;可以從 &lt;code&gt;pvdisplay&lt;/code&gt; 看到，PV Name = 系統磁碟分區&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207190420.png&quot; alt=&quot;Pasted image 20241207190420.png&quot; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;VG(Volume group)
+&lt;ol&gt;
+&lt;li&gt;多個 PV 可以建成一個 VG，也可以將 PV 加入現有 VG&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;LV(Logical volume)
+&lt;ol&gt;
+&lt;li&gt;用 &lt;code&gt;lsblk -f&lt;/code&gt; 可以看出，sda3 下面有 一個 vg，vg下面有一個 lv&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020241207190231.png&quot; alt=&quot;Pasted image 20241207190231.png&quot; /&gt;&lt;/li&gt;
+&lt;li&gt;VG 下面會有多個 LV&lt;/li&gt;
+&lt;li&gt;LV 就是實際掛載給系統根目錄使用的，屬於虛擬邏輯分區&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&quot;指令&quot; tabindex=&quot;-1&quot;&gt;指令&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;lsblk -f
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;$ pvdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;$ lvdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;$ vgdisplay
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;parted&quot; tabindex=&quot;-1&quot;&gt;parted&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;$ parted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;fdisk&quot; tabindex=&quot;-1&quot;&gt;fdisk&lt;/h2&gt;
+&lt;p&gt;輸入 fdisk 指令後，會進入磁碟管理工具裡面&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ fdisk /dev/sda
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;指令:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;p 列出該 disk 所有的分區&lt;/li&gt;
+&lt;li&gt;m 輸出 menu 列表&lt;/li&gt;
+&lt;li&gt;n 建立新的磁碟分區&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;參考資料&quot; tabindex=&quot;-1&quot;&gt;參考資料&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://godleon.github.io/blog/Linux/Linux-extend-lvm-from-unused-space/&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://godleon.github.io/blog/Linux/Linux-extend-lvm-from-unused-space/&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;https://sc8log.blogspot.com/2017/03/linux-lvm-lvm.html&quot; target=&quot;_blank&quot; class=&quot;external-link&quot;&gt;https://sc8log.blogspot.com/2017/03/linux-lvm-lvm.html&lt;/a&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/ESXi VM 擴容實作 - LVM2/" >
         </entry>
         <entry>
             <title>

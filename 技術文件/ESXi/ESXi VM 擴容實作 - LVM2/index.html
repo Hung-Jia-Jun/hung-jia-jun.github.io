@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<title>ESXi VM 擴容實作 - LVM2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script async type="module">import mermaid from"https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-sv0slik/5O0JIPdLBCR2A3XDg/1U3WuDEheZfI/DI5n8Yqc3h5kjrnr46FGBNiUAJF7rE4LHKwQ/SoSLRKAxEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async src="https://cdn.jsdelivr.net/npm/lucide@0.115.0/dist/umd/lucide.min.js"></script>
+<script>window.addEventListener("load",(()=>{document.querySelectorAll(".callout").forEach((e=>{const t=getComputedStyle(e).getPropertyValue("--callout-icon"),l=t&&t.trim().replace(/^lucide-/,"");if(l){const t=e.querySelector(".callout-title");if(t){const e=document.createElement("div"),c=document.createElement("i");e.appendChild(c),c.setAttribute("icon-name",l),e.setAttribute("class","callout-icon"),t.insertBefore(e,t.firstChild)}}})),lucide.createIcons(),Array.from(document.querySelectorAll(".callout.is-collapsible")).forEach((e=>{e.querySelector(".callout-title").addEventListener("click",(t=>{e.classList.contains("is-collapsed")?e.classList.remove("is-collapsed"):e.classList.add("is-collapsed")}))}))}))</script>
+<script async src="https://fastly.jsdelivr.net/npm/force-graph@1.43.0/dist/force-graph.min.js"></script>
+<script async src="https://fastly.jsdelivr.net/npm/@alpinejs/persist@3.11.1/dist/cdn.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/alpinejs@3.11.1/dist/cdn.min.js" async></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" referrerpolicy="no-referrer" async>
+<script src="https://fastly.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" async></script>
+<link href="/styles/digital-garden-base.css" rel="stylesheet">
+<link href="/styles/style.css" rel="stylesheet">
+<link href="/styles/custom-style.css" rel="stylesheet">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<style></style>
+</head>
+<body class="theme-dark markdown-preview-view markdown-rendered markdown-preview-section">
+<div x-init="isDesktop = (window.innerWidth>=1400) ? true: false;" x-on:resize.window="isDesktop = (window.innerWidth>=1400) ? true : false;" x-data="{isDesktop: true, showFilesMobile: false}">
+<div x-show.important="!isDesktop" style="display:none">
+<nav class="navbar">
+<div class="navbar-inner">
+<span style="font-size:1.5rem;margin-right:10px" @click="showFilesMobile=!showFilesMobile"><i icon-name="menu"></i></span>
+<a href="/" style="text-decoration:none">
+<h1 style="margin:15px!important">Jason&#39;s tech blog</h1>
+</a>
+</div>
+<div class="search-button align-icon" onclick="toggleSearch()">
+<span class="search-icon">
+<i icon-name="search"></i>
+</span>
+<span class="search-text">
+<span>Search</span>
+<span style="font-size:.6rem;padding:2px 2px 0 6px;text-align:center;transform:translateY(4px)" class="search-keys">
+CTRL + K
+</span>
+</span>
+</div>
+</nav>
+</div>
+<div x-show="showFilesMobile && !isDesktop" @click="showFilesMobile = false" style="display:none" class="fullpage-overlay"></div>
+<nav class="filetree-sidebar" x-show.important="isDesktop || showFilesMobile" style="display:none">
+<a href="/" style="text-decoration:none">
+<h1 style="text-align:center">Jason&#39;s tech blog</h1>
+</a>
+<div style="display:flex;justify-content:center">
+<div class="search-button align-icon" onclick="toggleSearch()">
+<span class="search-icon">
+<i icon-name="search"></i>
+</span>
+<span class="search-text">
+<span>Search</span>
+<span style="font-size:.6rem;padding:2px 2px 0 6px;text-align:center;transform:translateY(4px)" class="search-keys">
+CTRL + K
+</span>
+</span>
+</div>
+</div>
+<div class="folder" x-data="{isOpen: true}">
+<div x-show="isOpen" style="display:none" class="">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">技術文件</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Apache Beam')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Apache Beam</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Apache Beam/Apache Beam 研究/">Apache Beam 研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Apache Beam/Apache Beam/">Apache Beam </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/apache_kafka')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">apache_kafka</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Consumer offset reset 行為/">Consumer offset reset 行為 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/kafka  topic 實驗/">kafka topic 實驗 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka consumer group 與 rebalance 機制/">Kafka consumer group 與 rebalance 機制 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka key hashing/">Kafka key hashing </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka leader partition 機制研究/">Kafka leader partition 機制研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance)/">Kafka rebalance 機制 - Cooperative Rebalance(增量 Rebalance) </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka rebalance 機制 - Eager Rebalance/">Kafka rebalance 機制 - Eager Rebalance </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka Topic Availability/">Kafka Topic Availability </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/Kafka 冪等 Producer/">Kafka 冪等 Producer </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/apache_kafka/kafka 高效率傳輸設定/">kafka 高效率傳輸設定 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/C 語言學習')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">C 語言學習</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/C 語言 pass by value/">C 語言 pass by value </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/malloc 內存分配 - void 指針/">malloc 內存分配 - void 指針 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/malloc 內存分配/">malloc 內存分配 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/二級指針(多重指針)/">二級指針(多重指針) </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/同類指針相減運算/">同類指針相減運算 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/字符數組/">字符數組 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/指針的自增自減運算/">指針的自增自減運算 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/數組反轉操作/">數組反轉操作 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體指針傳遞練習題 1/">結構體指針傳遞練習題 1 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體指針變數使用/">結構體指針變數使用 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體指針變數傳遞/">結構體指針變數傳遞 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體數組訪問/">結構體數組訪問 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體複製 - pass by value/">結構體複製 - pass by value </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/結構體訪問 - 課後練習/">結構體訪問 - 課後練習 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/聲明結構體練習/">聲明結構體練習 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/C 語言學習/野指針/">野指針 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/ceph')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">ceph</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/ceph/cephadm')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">cephadm</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/cephadm/ceph 建立 filesystem/">ceph 建立 filesystem </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/cephadm/ceph 新增 OSD/">ceph 新增 OSD </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/">cephadm 搭建 ceph 集群 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Ceph cluster 資料寫入篇 - ceph S3/">Ceph cluster 資料寫入篇 - ceph S3 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Ceph cluster 資料寫入篇 - CephFS/">Ceph cluster 資料寫入篇 - CephFS </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Ceph cluster 資料寫入篇 - RBD/">Ceph cluster 資料寫入篇 - RBD </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/Cephfs ACL mount path/">Cephfs ACL mount path </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ceph/搭建 Ceph cluster/">搭建 Ceph cluster </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Docker')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Docker</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Docker/Docker overlay2 儲存結構研究/">Docker overlay2 儲存結構研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Docker/Docker swarm 研究/">Docker swarm 研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Docker/docker 特權逃逸/">docker 特權逃逸 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/ESXi')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">ESXi</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink active-note"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/ESXi VM 擴容實作 - LVM2/">ESXi VM 擴容實作 - LVM2 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/ESXi VM 擴容實作 - Partition 擴增/">ESXi VM 擴容實作 - Partition 擴增 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/">在 ESXi 以 vSRX 實作單臂路由 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/建立虛擬機器並綁定 VLAN/">建立虛擬機器並綁定 VLAN </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/ESXi/從現有的 ESXi 匯出 VM/">從現有的 ESXi 匯出 VM </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/other')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">other</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/other/Cloudflare tunnel 研究/">Cloudflare tunnel 研究 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Proxy')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Proxy</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Proxy/HA proxy VRRP 研究/">HA proxy VRRP 研究 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/pySpark')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">pySpark</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/pySpark/GCP dataproc 運行 python scripts/">GCP dataproc 運行 python scripts </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/Redis')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">Redis</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Redis/Redis ACL 持久化/">Redis ACL 持久化 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/Redis/Redis stream 訂閱權限設定/">Redis stream 訂閱權限設定 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/其他')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">其他</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div class="folder inner-folder" x-data="{isOpen: $persist(false).as('技術文件/其他/演算法')}" @click.stop="isOpen=!isOpen">
+<div class="foldername-wrapper align-icon">
+<i x-show="isOpen" style="display:none" icon-name="chevron-down"></i>
+<i x-show="!isOpen" icon-name="chevron-right"></i>
+<span class="foldername">演算法</span>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/其他/演算法/實作 queue (Linked list)/">實作 queue (Linked list) </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/CVE-2025-55182 漏洞研究/">CVE-2025-55182 漏洞研究 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/SonarQube 靜態程式碼檢查工具/">SonarQube 靜態程式碼檢查工具 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學/">使用 pmap、smaps 與 gdb Dump 出 Nginx Worker 記憶體區段教學 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/安裝 Obsidian 語意搜尋套件/">安裝 Obsidian 語意搜尋套件 </a>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="filelist">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/技術文件/密碼學 - 零知識證明 - 密鑰協商/">密碼學 - 零知識證明 - 密鑰協商 </a>
+</div>
+</div>
+</div>
+</div>
+<div x-show="isOpen" style="display:none" class="">
+<div @click.stop class="notelink"><i icon-name="sticky-note" aria-hidden="true"></i><a data-note-icon="" style="text-decoration:none" class="filename" href="/">技術筆記 </a>
+</div>
+</div>
+</div>
+</nav>
+</div>
+<div class="search-container" id="globalsearch" onclick="toggleSearch()">
+<div class="search-box">
+<input type="search" id="term" placeholder="Start typing...">
+<div id="search-results"></div>
+<footer class="search-box-footer">
+<div class="navigation-hint">
+<span>Enter to select</span>
+</div>
+<div class="navigation-hint align-icon">
+<i icon-name="arrow-up" aria-hidden="true"></i>
+<i icon-name="arrow-down" aria-hidden="true"></i>
+<span>to navigate</span>
+</div>
+<div class="navigation-hint">
+<span>ESC to close</span>
+</div>
+</footer>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js"></script>
+<script>document.addEventListener("DOMContentLoaded",init,!1),document.addEventListener("DOMContentLoaded",setCorrectShortcut,!1),window.toggleSearch=function(){document.getElementById("globalsearch").classList.contains("active")?document.getElementById("globalsearch").classList.remove("active"):(document.getElementById("globalsearch").classList.add("active"),document.getElementById("term").focus())},window.toggleTagSearch=function(e){console.log(e.textContent);const t=e.textContent;t&&(window.document.getElementById("term").value=t.trim(),window.toggleSearch(),window.search())};const loadingSvg='\n    <svg width="100" height="100" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg" stroke="#fff">\n      <g fill="none" fill-rule="evenodd" transform="translate(1 1)" stroke-width="2">\n          <circle cx="22" cy="22" r="6" stroke-opacity="0">\n              <animate attributeName="r"\n                   begin="1.5s" dur="3s"\n                   values="6;22"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-opacity"\n                   begin="1.5s" dur="3s"\n                   values="1;0" calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-width"\n                   begin="1.5s" dur="3s"\n                   values="2;0" calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n          <circle cx="22" cy="22" r="6" stroke-opacity="0">\n              <animate attributeName="r"\n                   begin="3s" dur="3s"\n                   values="6;22"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-opacity"\n                   begin="3s" dur="3s"\n                   values="1;0" calcMode="linear"\n                   repeatCount="indefinite" />\n              <animate attributeName="stroke-width"\n                   begin="3s" dur="3s"\n                   values="2;0" calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n          <circle cx="22" cy="22" r="8">\n              <animate attributeName="r"\n                   begin="0s" dur="1.5s"\n                   values="6;1;2;3;4;5;6"\n                   calcMode="linear"\n                   repeatCount="indefinite" />\n          </circle>\n      </g>\n  </svg>';function debounce(e,t,n){var a;return function(){var r=this,i=arguments,c=n&&!a;clearTimeout(a),a=setTimeout((function(){a=null,n||e.apply(r,i)}),t),c&&e.apply(r,i)}}function setCorrectShortcut(){navigator.platform.toUpperCase().indexOf("MAC")>=0&&document.querySelectorAll(".search-keys").forEach((e=>e.innerHTML="⌘ + K"))}function createIndex(e){const t=e=>e.toLowerCase().split(/([^a-z]|[^\x00-\x7F])/),n=new FlexSearch.Document({cache:!0,charset:"latin:extra",optimize:!0,index:[{field:"content",tokenize:"reverse",encode:t},{field:"title",tokenize:"forward",encode:t},{field:"tags",tokenize:"forward",encode:t}]});return e.forEach(((e,t)=>{n.add({id:t,title:e.title,content:e.content,tags:e.tags})})),n}async function init(){let e=!0;if(localStorage.getItem("searchIndex")){let{date:t,docs:n}=JSON.parse(localStorage.getItem("searchIndex"));if("2025-12-29T13:23:20.310Z"===t){e=!1;let t=createIndex(n);window.docs=n,window.index=t}}if(e){let e=await(await fetch("/searchIndex.json?v=2025-12-29T13:23:20.310Z")).json(),t=createIndex(e);localStorage.setItem("searchIndex",JSON.stringify({date:"2025-12-29T13:23:20.310Z",docs:e})),window.docs=e,window.index=t}document.addEventListener("keydown",(e=>{if((e.ctrlKey||e.metaKey)&&"k"===e.key&&(e.preventDefault(),toggleSearch()),"Escape"===e.key&&document.getElementById("globalsearch").classList.remove("active"),document.getElementById("globalsearch").classList.contains("active")){if("ArrowDown"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t?(t.classList.remove("active"),t.nextElementSibling?t.nextElementSibling.classList.add("active"):document.querySelector(".searchresult").classList.add("active")):document.querySelector(".searchresult").classList.add("active");let n=document.querySelector(".searchresult.active");n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})}if("ArrowUp"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t?(t.classList.remove("active"),t.previousElementSibling?t.previousElementSibling.classList.add("active"):document.querySelectorAll(".searchresult").forEach((e=>{e.nextElementSibling||e.classList.add("active")}))):document.querySelectorAll(".searchresult").forEach((e=>{e.nextElementSibling&&e.classList.add("active")}));let n=document.querySelector(".searchresult.active");n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})}if("Enter"===e.key){e.preventDefault();let t=document.querySelector(".searchresult.active");t&&(window.location.href=t.querySelector("a").href)}}}));const t=debounce(search,200,!1);field=document.querySelector("#term"),field.addEventListener("keydown",(e=>{"ArrowDown"!==e.key&&"ArrowUp"!==e.key&&t()})),resultsDiv=document.querySelector("#search-results");const n=new URL(location.href).searchParams;n.get("q")&&(field.setAttribute("value",n.get("q")),toggleSearch(),search())}async function search(){let e=field.value.trim();if(!e)return;if(e==lastSearch)return;console.log(`search for ${e}`),window.lastSearch=e,resultsDiv.innerHTML=loadingSvg;let t=offlineSearch(e),n="";if(!t.length){let t=document.createElement("p");return t.innerText=`No results for "${e}"`,resultsDiv.innerHTML="",void resultsDiv.appendChild(t)}n+='<div style="max-width:100%;">',t.forEach((e=>{e.tags&&e.tags.length>0?n+=`<div class="searchresult">\n                    <a class="search-link" href="${e.url}">${e.title}</a>\n                    <div onclick="window.location='${e.url}'">\n                        <div class="header-meta">\n                            <div class="header-tags">\n                                ${e.tags.map((e=>'<a class="tag" href="JavaScript:Void(0);">#'+e+"</a>")).join("")}\n                            </div>\n                        </div>\n                        ${e.content}\n                    </div>\n                </div>`:n+=`<div class="searchresult">\n                    <a class="search-link" href="${e.url}">${e.title}</a>\n                    <div onclick="window.location='${e.url}'">\n                        ${e.content}\n                    </div>\n                </div>`})),n+="</div>",resultsDiv.innerHTML=n}function truncate(e,t){return(e=e.replaceAll(/<[^>]*>/g,"")).length<t?e:e.substring(0,t-3)+"..."}function offlineSearch(e){let t=window.docs,n="#"===e[0]&&e.length>1?index.search(e.substring(1),[{field:"tags"}]):index.search(e,[{field:"title",limit:5},{field:"content",weight:10}]);const a=e=>{const t=n.filter((t=>t.field===e));return 0===t.length?[]:[...t[0].result]};return[...new Set([...a("title"),...a("content"),...a("tags")])].map((e=>{let n=t[e];return n.content=truncate(n.content,400),n.tags=n.tags.filter((e=>"gardenEntry"!=e&&"note"!=e)),n}))}window.lastSearch=""</script>
+<main class="content cm-s-obsidian">
+<header>
+<h1 data-note-icon="">ESXi VM 擴容實作 - LVM2</h1>
+<div class="header-meta">
+<div class="header-tags">
+<a class="tag" onclick="toggleTagSearch(this)">
+##ESXi
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+##linux
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+##ubuntu
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+##PV
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+##LV
+</a>
+<a class="tag" onclick="toggleTagSearch(this)">
+#VG
+</a>
+</div>
+<div class="timestamps"><div><i icon-name="calendar-plus"></i> <span class="human-date" data-date="2025-12-29"></span></div><div><i icon-name="calendar-clock"></i> <span class="human-date" data-date="2025-12-29"></span></div></div></div>
+</header>
+<h1 id="背景" tabindex="-1">背景</h1>
+<p>在 ESXi 建立的 VM 想增加磁碟空間，所以紀錄下整個過程。</p>
+<p>目標主機使用 LVM2 的方式掛載系統根目錄，即實際掛載對象為 LV(Logic volume)。</p>
+<h2 id="系統版本" tabindex="-1">系統版本</h2>
+<p>ubuntu 20.04.5</p>
+<p><picture src="/img/user/images/Pasted%20image%2020241207173634.png" alt="Pasted image 20241207173634.png"><source media="(max-width:480px)" srcset="/img/optimized/XKEkch7tSG-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/XKEkch7tSG-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/XKEkch7tSG-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/XKEkch7tSG-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207173634.png" alt="Pasted image 20241207173634.png" width=""></picture></p>
+<h1 id="開始" tabindex="-1">開始</h1>
+<p>進入 edit settings<br>
+<picture src="/img/user/images/Pasted%20image%2020251229211619.png" alt="Pasted image 20251229211619.png"><source media="(max-width:480px)" srcset="/img/optimized/HhTy9eNcM2-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/HhTy9eNcM2-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/HhTy9eNcM2-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/HhTy9eNcM2-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251229211619.png" alt="Pasted image 20251229211619.png" width=""></picture></p>
+<p>調整硬碟大小<br>
+<picture src="/img/user/images/Pasted%20image%2020241207173040.png" alt="Pasted image 20241207173040.png"><source media="(max-width:480px)" srcset="/img/optimized/9G0N-s8XX7-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/9G0N-s8XX7-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/9G0N-s8XX7-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/9G0N-s8XX7-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207173040.png" alt="Pasted image 20241207173040.png" width=""></picture></p>
+<p><picture src="/img/user/images/Pasted%20image%2020241207173153.png" alt="Pasted image 20241207173153.png"><source media="(max-width:480px)" srcset="/img/optimized/kK08NvqDOf-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/kK08NvqDOf-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/kK08NvqDOf-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/kK08NvqDOf-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207173153.png" alt="Pasted image 20241207173153.png" width=""></picture></p>
+<p>調整完成，硬碟空間變大了<br>
+<picture src="/img/user/images/Pasted%20image%2020251229211639.png" alt="Pasted image 20251229211639.png"><source media="(max-width:480px)" srcset="/img/optimized/Km2_ODXyj--500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/Km2_ODXyj--500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/Km2_ODXyj--700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/Km2_ODXyj--700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020251229211639.png" alt="Pasted image 20251229211639.png" width=""></picture></p>
+<p>但目前 linux 主機內空間還是沒改變<br>
+<picture src="/img/user/images/Pasted%20image%2020241207173444.png" alt="Pasted image 20241207173444.png"><source media="(max-width:480px)" srcset="/img/optimized/lAray74__S-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/lAray74__S-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/lAray74__S-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/lAray74__S-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207173444.png" alt="Pasted image 20241207173444.png" width=""></picture></p>
+<p>重開機後<br>
+/dev/sda 就擴容到 35G 了<br>
+<picture src="/img/user/images/Pasted%20image%2020241207174314.png" alt="Pasted image 20241207174314.png"><source media="(max-width:480px)" srcset="/img/optimized/DnxTAS7ZOB-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/DnxTAS7ZOB-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/DnxTAS7ZOB-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/DnxTAS7ZOB-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207174314.png" alt="Pasted image 20241207174314.png" width=""></picture></p>
+<p>但實際掛載在系統目錄 lv 的大小還是沒改變，目標是「擴增系統位置 &quot;/&quot;」</p>
+<pre><code>$ lsblk
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207174728.png" alt="Pasted image 20241207174728.png"><source media="(max-width:480px)" srcset="/img/optimized/umnpbnt3ML-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/umnpbnt3ML-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/umnpbnt3ML-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/umnpbnt3ML-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207174728.png" alt="Pasted image 20241207174728.png" width=""></picture></p>
+<p>查看 pv 與 vg 狀態，目前都是 28.25(原始大小)</p>
+<pre><code>$ pvdisplay
+$ vgdisplay
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207175440.png" alt="Pasted image 20241207175440.png"><source media="(max-width:480px)" srcset="/img/optimized/OoaXDegc7Q-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/OoaXDegc7Q-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/OoaXDegc7Q-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/OoaXDegc7Q-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207175440.png" alt="Pasted image 20241207175440.png" width=""></picture></p>
+<p>LV 的空間 28G</p>
+<pre><code>$ lvdisplay
+</code></pre>
+<ul>
+<li>LV 是實際上被掛載到系統根目錄 &quot;/&quot; 的 volume<br>
+<picture src="/img/user/images/Pasted%20image%2020241207175659.png" alt="Pasted image 20241207175659.png"><source media="(max-width:480px)" srcset="/img/optimized/WnGKgxgzB9-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/WnGKgxgzB9-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/WnGKgxgzB9-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/WnGKgxgzB9-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207175659.png" alt="Pasted image 20241207175659.png" width=""></picture></li>
+</ul>
+<hr>
+<h2 id="partition" tabindex="-1">擴充原有 partition，使用剩餘空間</h2>
+<p id="dc4611">使用 parted 工具進行 resize</p>
+<pre><code>$ parted
+</code></pre>
+<p>輸入「<code>p</code>」顯示所有 partition<br>
+系統告知不是所有空間都能被使用<br>
+輸入「Fix」修復 GPT(GUID Partition Table) 分區表<br>
+<picture src="/img/user/images/Pasted%20image%2020241207180056.png" alt="Pasted image 20241207180056.png"><source media="(max-width:480px)" srcset="/img/optimized/hjKfTj1LWK-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/hjKfTj1LWK-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/hjKfTj1LWK-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/hjKfTj1LWK-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207180056.png" alt="Pasted image 20241207180056.png" width=""></picture></p>
+<p>執行 partition resize 操作</p>
+<pre><code>(parted) resizepart
+</code></pre>
+<p>將 /dev/sda 上的 /dev/sda3(partition 3) 從 32G 擴增到 35G，此時 number 3 partition 已經使用了所有空間<br>
+<picture src="/img/user/images/Pasted%20image%2020241207180824.png" alt="Pasted image 20241207180824.png"><source media="(max-width:480px)" srcset="/img/optimized/BLd2wxaxtj-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/BLd2wxaxtj-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/BLd2wxaxtj-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/BLd2wxaxtj-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207180824.png" alt="Pasted image 20241207180824.png" width=""></picture></p>
+<p>輸入 「<code>q</code>」離開<br>
+<picture src="/img/user/images/Pasted%20image%2020241207181023.png" alt="Pasted image 20241207181023.png"><source media="(max-width:480px)" srcset="/img/optimized/mxo1IZ-nuc-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/mxo1IZ-nuc-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/mxo1IZ-nuc-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/mxo1IZ-nuc-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207181023.png" alt="Pasted image 20241207181023.png" width=""></picture></p>
+<h2 id="pv" tabindex="-1">擴充 PV 空間</h2>
+<p>原本上面的 number 3 partition 已經是現存的 PV，既然 partition 已經變大，接著就可以直接進行 resize 的操作<br>
+尚未進行 resize 前 PV 大小 28.25G</p>
+<pre><code>$ pvdisplay
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207181459.png" alt="Pasted image 20241207181459.png"><source media="(max-width:480px)" srcset="/img/optimized/nt5JPUrvRK-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/nt5JPUrvRK-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/nt5JPUrvRK-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/nt5JPUrvRK-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207181459.png" alt="Pasted image 20241207181459.png" width=""></picture></p>
+<p>執行 pvresize</p>
+<pre><code>$ pvresize /dev/sda3
+</code></pre>
+<p>變成 30.84G<br>
+<picture src="/img/user/images/Pasted%20image%2020241207181722.png" alt="Pasted image 20241207181722.png"><source media="(max-width:480px)" srcset="/img/optimized/YmIGFqNgil-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/YmIGFqNgil-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/YmIGFqNgil-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/YmIGFqNgil-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207181722.png" alt="Pasted image 20241207181722.png" width=""></picture></p>
+<p>查看 vg size<br>
+vg size 也變大了</p>
+<pre><code>$ vgdisplay
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207181909.png" alt="Pasted image 20241207181909.png"><source media="(max-width:480px)" srcset="/img/optimized/S5PBxGRqde-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/S5PBxGRqde-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/S5PBxGRqde-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/S5PBxGRqde-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207181909.png" alt="Pasted image 20241207181909.png" width=""></picture></p>
+<h1 id="lv" tabindex="-1">擴充 LV 空間</h1>
+<p>接著擴充 LV 空間</p>
+<pre><code># 原本的 LV 空間狀況  
+$ lvdisplay
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207182040.png" alt="Pasted image 20241207182040.png"><source media="(max-width:480px)" srcset="/img/optimized/M3lzxmq0PU-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/M3lzxmq0PU-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/M3lzxmq0PU-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/M3lzxmq0PU-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207182040.png" alt="Pasted image 20241207182040.png" width=""></picture></p>
+<h1 id="lv-35-gb" tabindex="-1">將 LV 空間擴充成 35GB</h1>
+<pre><code>$ lvextend -L 35G /dev/ubuntu-vg/ubuntu-lv
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207182818.png" alt="Pasted image 20241207182818.png"><source media="(max-width:480px)" srcset="/img/optimized/qPvLPFHx3X-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/qPvLPFHx3X-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/qPvLPFHx3X-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/qPvLPFHx3X-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207182818.png" alt="Pasted image 20241207182818.png" width=""></picture></p>
+<p>出現錯誤，看起來是目前輸入的值超過可擴展的 pv 空間</p>
+<p>進一步排查發現，扣掉 1.8G 的 sda2 分區，還有2.3GB 的 disk 空間未分配給 /dev/sda3<br>
+<picture src="/img/user/images/Pasted%20image%2020241207183136.png" alt="Pasted image 20241207183136.png"><source media="(max-width:480px)" srcset="/img/optimized/fsGOfKjixS-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/fsGOfKjixS-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/fsGOfKjixS-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/fsGOfKjixS-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207183136.png" alt="Pasted image 20241207183136.png" width=""></picture></p>
+<p>輸入</p>
+<pre><code>$ parted
+</code></pre>
+<p>回到 <a class="internal-link" target="" data-note-icon="" href="/技術文件/ESXi/ESXi VM 擴容實作 - LVM2/#partition">ESXi VM 擴容實作 - LVM2#擴充原有 partition，使用剩餘空間</a><br>
+但這次請注意這個 Disk 值，這是可用的最大空間<br>
+<picture src="/img/user/images/Pasted%20image%2020241207184423.png" alt="Pasted image 20241207184423.png"><source media="(max-width:480px)" srcset="/img/optimized/LnGUr8gs2M-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/LnGUr8gs2M-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/LnGUr8gs2M-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/LnGUr8gs2M-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207184423.png" alt="Pasted image 20241207184423.png" width=""></picture></p>
+<p>partition 3 確實沒有佔滿所有的 37.6GB 的空間<br>
+<picture src="/img/user/images/Pasted%20image%2020241207184930.png" alt="Pasted image 20241207184930.png"><source media="(max-width:480px)" srcset="/img/optimized/qi7NCiFPlO-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/qi7NCiFPlO-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/qi7NCiFPlO-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/qi7NCiFPlO-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207184930.png" alt="Pasted image 20241207184930.png" width=""></picture></p>
+<p>將 end 設為 37.6GB<br>
+<picture src="/img/user/images/Pasted%20image%2020241207184647.png" alt="Pasted image 20241207184647.png"><source media="(max-width:480px)" srcset="/img/optimized/26YwnT03Zc-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/26YwnT03Zc-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/26YwnT03Zc-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/26YwnT03Zc-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207184647.png" alt="Pasted image 20241207184647.png" width=""></picture></p>
+<p>再執行一次 pvresize</p>
+<pre><code>pvresize /dev/sda3
+</code></pre>
+<p>已經從原本的 30.84GB 增加到 33.25GB 了<br>
+<picture src="/img/user/images/Pasted%20image%2020241207185342.png" alt="Pasted image 20241207185342.png"><source media="(max-width:480px)" srcset="/img/optimized/trayzgr0IH-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/trayzgr0IH-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/trayzgr0IH-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/trayzgr0IH-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207185342.png" alt="Pasted image 20241207185342.png" width=""></picture></p>
+<p>執行 lvextend 增加 lv 空間</p>
+<pre><code>lvextend -L 33G /dev/ubuntu-vg/ubuntu-lv
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207185752.png" alt="Pasted image 20241207185752.png"><source media="(max-width:480px)" srcset="/img/optimized/I00-lFYY95-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/I00-lFYY95-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/I00-lFYY95-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/I00-lFYY95-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207185752.png" alt="Pasted image 20241207185752.png" width=""></picture></p>
+<p>最後再 resize2fs 增加系統根目錄 <code>/</code> 的可用空間</p>
+<pre><code>resize2fs /dev/ubuntu-vg/ubuntu-lv
+</code></pre>
+<p><picture src="/img/user/images/Pasted%20image%2020241207190011.png" alt="Pasted image 20241207190011.png"><source media="(max-width:480px)" srcset="/img/optimized/WMJnI7xUHM-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/WMJnI7xUHM-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/WMJnI7xUHM-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/WMJnI7xUHM-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207190011.png" alt="Pasted image 20241207190011.png" width=""></picture></p>
+<h1 id="知識點" tabindex="-1">知識點</h1>
+<ol>
+<li>磁碟掛載命名順序與分區命名規則如下:
+<ol>
+<li>disk:
+<ol>
+<li>第一顆 disk -&gt; /dev/sda
+<ol>
+<li>第一個分區 -&gt; /dev/sda1
+<ol>
+<li>partition id: 1</li>
+</ol>
+</li>
+<li>第二個分區 -&gt; /dev/sda2
+<ol>
+<li>partition id: 2</li>
+</ol>
+</li>
+<li>... 以此類推</li>
+</ol>
+</li>
+<li>第二顆 disk -&gt; /dev/sdb</li>
+<li>第三顆 disk -&gt; /dev/sdc</li>
+<li>... 以此類推</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>理解 Linux PV、LV、VG 之間的關係
+<ol>
+<li>PV(Physical volume) = 磁碟分割區 (/dev/sda1、/dev/sda2)
+<ol>
+<li>可以從 <code>pvdisplay</code> 看到，PV Name = 系統磁碟分區<picture src="/img/user/images/Pasted%20image%2020241207190420.png" alt="Pasted image 20241207190420.png"><source media="(max-width:480px)" srcset="/img/optimized/Z_1LupCcGw-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/Z_1LupCcGw-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/Z_1LupCcGw-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/Z_1LupCcGw-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207190420.png" alt="Pasted image 20241207190420.png" width=""></picture></li>
+</ol>
+</li>
+<li>VG(Volume group)
+<ol>
+<li>多個 PV 可以建成一個 VG，也可以將 PV 加入現有 VG</li>
+</ol>
+</li>
+<li>LV(Logical volume)
+<ol>
+<li>用 <code>lsblk -f</code> 可以看出，sda3 下面有 一個 vg，vg下面有一個 lv<picture src="/img/user/images/Pasted%20image%2020241207190231.png" alt="Pasted image 20241207190231.png"><source media="(max-width:480px)" srcset="/img/optimized/1fyYq5e1YS-500.webp" type="image/webp">
+<source media="(max-width:480px)" srcset="/img/optimized/1fyYq5e1YS-500.jpeg">
+<source media="(max-width:1920px)" srcset="/img/optimized/1fyYq5e1YS-700.webp" type="image/webp"><source media="(max-width:1920px)" srcset="/img/optimized/1fyYq5e1YS-700.jpeg"><img class="" src="/img/user/images/Pasted%20image%2020241207190231.png" alt="Pasted image 20241207190231.png" width=""></picture></li>
+<li>VG 下面會有多個 LV</li>
+<li>LV 就是實際掛載給系統根目錄使用的，屬於虛擬邏輯分區</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="指令" tabindex="-1">指令</h1>
+<pre><code>lsblk -f
+</code></pre>
+<pre><code>$ pvdisplay
+</code></pre>
+<pre><code>$ lvdisplay
+</code></pre>
+<pre><code>$ vgdisplay
+</code></pre>
+<h2 id="parted" tabindex="-1">parted</h2>
+<pre><code>$ parted
+</code></pre>
+<h2 id="fdisk" tabindex="-1">fdisk</h2>
+<p>輸入 fdisk 指令後，會進入磁碟管理工具裡面</p>
+<pre><code>$ fdisk /dev/sda
+</code></pre>
+<p>指令:</p>
+<ul>
+<li>p 列出該 disk 所有的分區</li>
+<li>m 輸出 menu 列表</li>
+<li>n 建立新的磁碟分區</li>
+</ul>
+<h1 id="參考資料" tabindex="-1">參考資料</h1>
+<p><a href="https://godleon.github.io/blog/Linux/Linux-extend-lvm-from-unused-space/" target="_blank" class="external-link">https://godleon.github.io/blog/Linux/Linux-extend-lvm-from-unused-space/</a><br>
+<a href="https://sc8log.blogspot.com/2017/03/linux-lvm-lvm.html" target="_blank" class="external-link">https://sc8log.blogspot.com/2017/03/linux-lvm-lvm.html</a></p>
+</main>
+<aside>
+<div class="sidebar">
+<div class="sidebar-container">
+<div class="toc">
+<div class="toc-title-container">
+<div class="toc-title">
+On this page
+</div>
+</div>
+<div class="toc-container">
+<nav class="toc">
+<ol>
+<li><a href="#背景">背景</a>
+<ol>
+<li><a href="#系統版本">系統版本</a>
+</li>
+</ol>
+</li>
+<li><a href="#開始">開始</a>
+<ol>
+<li><a href="#partition">擴充原有 partition，使用剩餘空間</a>
+</li>
+<li><a href="#pv">擴充 PV 空間</a>
+</li>
+</ol>
+</li>
+<li><a href="#lv">擴充 LV 空間</a>
+</li>
+<li><a href="#lv-35-gb">將 LV 空間擴充成 35GB</a>
+</li>
+<li><a href="#知識點">知識點</a>
+</li>
+<li><a href="#指令">指令</a>
+<ol>
+<li><a href="#parted">parted</a>
+</li>
+<li><a href="#fdisk">fdisk</a>
+</li>
+</ol>
+</li>
+<li><a href="#參考資料">參考資料</a>
+</li>
+</ol>
+</nav>
+</div>
+</div>
+<div class="backlinks">
+<div class="backlink-title" style="margin:4px 0!important">Pages mentioning this page</div>
+<div class="backlink-list"></div>
+</div>
+</div>
+</div>
+</aside>
+<style>#tooltip-wrapper{background:var(--background-primary);padding:1em;border-radius:4px;overflow:hidden;position:fixed;width:80%;max-width:400px;height:auto;max-height:300px;font-size:.8em;box-shadow:0 5px 10px rgba(0,0,0,.1);opacity:0;transition:opacity .1s;unicode-bidi:plaintext;overflow-y:scroll;z-index:10}#tooltip-wrapper:after{content:"";position:absolute;z-index:1;bottom:0;left:0;pointer-events:none;width:100%;unicode-bidi:plaintext;height:75px}</style>
+<div style="opacity:0;display:none" id="tooltip-wrapper">
+<div id="tooltip-content">
+</div>
+</div>
+<iframe style="display:none;height:0;width:0" id="link-preview-iframe" src="">
+</iframe>
+<script>var opacityTimeout,contentTimeout,transitionDurationMs=100,iframe=document.getElementById("link-preview-iframe"),tooltipWrapper=document.getElementById("tooltip-wrapper"),tooltipContent=document.getElementById("tooltip-content"),linkHistories={};function hideTooltip(){opacityTimeout=setTimeout((function(){tooltipWrapper.style.opacity=0,contentTimeout=setTimeout((function(){tooltipContent.innerHTML="",tooltipWrapper.style.display="none"}),transitionDurationMs+1)}),transitionDurationMs)}function showTooltip(t){var e=t.target,o=e.getClientRects()[e.getClientRects().length-1],i=window.pageYOffset||document.documentElement.scrollTop,n=t.target.getAttribute("href");if(-1===n.indexOf("http")||-1!==n.indexOf(window.location.host)){let t=n.split("#")[0];linkHistories[t]?(tooltipContent.innerHTML=linkHistories[t],tooltipWrapper.style.display="block",setTimeout((function(){if(tooltipWrapper.style.opacity=1,-1!=n.indexOf("#")){let t=n.split("#")[1];const e=tooltipWrapper.querySelector(`[id='${t}']`);e.classList.add("referred"),e.scrollIntoView({behavior:"smooth"},!0)}else tooltipWrapper.scroll(0,0)}),1)):(iframe.src=t,iframe.onload=function(){tooltipContentHtml="",tooltipContentHtml+='<div style="font-weight: bold; unicode-bidi: plaintext;">'+iframe.contentWindow.document.querySelector("h1").innerHTML+"</div>",tooltipContentHtml+=iframe.contentWindow.document.querySelector(".content").innerHTML,tooltipContent.innerHTML=tooltipContentHtml,linkHistories[t]=tooltipContentHtml,tooltipWrapper.style.display="block",tooltipWrapper.scrollTop=0,setTimeout((function(){if(tooltipWrapper.style.opacity=1,-1!=n.indexOf("#")){let t=n.split("#")[1];const e=tooltipWrapper.querySelector(`[id='${t}']`);e.classList.add("referred"),console.log(e),e.scrollIntoView({behavior:"smooth"},!0)}else tooltipWrapper.scroll(0,0)}),1)}),tooltipWrapper.style.left=o.left-tooltipWrapper.offsetWidth/2+o.width/2+"px",window.innerHeight-o.top<tooltipWrapper.offsetHeight?tooltipWrapper.style.top=o.top+i-tooltipWrapper.offsetHeight-10+"px":window.innerHeight-o.top>tooltipWrapper.offsetHeight&&(tooltipWrapper.style.top=o.top+i+35+"px"),o.left+o.width/2<tooltipWrapper.offsetWidth/2?tooltipWrapper.style.left="10px":document.body.clientWidth-o.left-o.width/2<tooltipWrapper.offsetWidth/2&&(tooltipWrapper.style.left=document.body.clientWidth-tooltipWrapper.offsetWidth-20+"px")}}function setupListeners(t){t.addEventListener("mouseleave",(function(t){hideTooltip()})),tooltipWrapper.addEventListener("mouseleave",(function(t){hideTooltip()})),t.addEventListener("mouseenter",(function(t){clearTimeout(opacityTimeout),clearTimeout(contentTimeout),showTooltip(t)})),tooltipWrapper.addEventListener("mouseenter",(function(t){clearTimeout(opacityTimeout),clearTimeout(contentTimeout)}))}window.addEventListener("load",(function(t){document.querySelectorAll(".internal-link").forEach(setupListeners),document.querySelectorAll(".backlink-card a").forEach(setupListeners)}))</script>
+<script>window.location.hash&&document.getElementById(window.location.hash.slice(1)).classList.add("referred"),window.addEventListener("hashchange",(e=>{const t=e.oldURL.split("#");t[1]&&document.getElementById(t[1]).classList.remove("referred");const n=e.newURL.split("#");n[1]&&document.getElementById(n[1]).classList.add("referred")}),!1);const url_parts=window.location.href.split("#"),url=url_parts[0],referrence=url_parts[1];document.querySelectorAll(".cm-s-obsidian > *[id]").forEach((function(e){e.ondblclick=function(e){const t=url+"#"+e.target.id;navigator.clipboard.writeText(t)}}))</script>
+<script src="https://fastly.jsdelivr.net/npm/luxon@3.2.1/build/global/luxon.min.js"></script>
+<script defer="defer">TIMESTAMP_FORMAT="MMM dd, yyyy",document.querySelectorAll(".human-date").forEach((function(e){date=e.getAttribute("data-date")||e.innerText,parsed_date=luxon.DateTime.fromISO(date),null!=parsed_date.invalid&&(parsed_date=luxon.DateTime.fromSQL(date)),null!=parsed_date.invalid&&(parsed_date=luxon.DateTime.fromHTML(date)),e.innerHTML=parsed_date.toFormat(TIMESTAMP_FORMAT)}))</script>
+<script>lucide.createIcons({attrs:{class:["svg-icon"]}})</script>
+</body>
+</html>
