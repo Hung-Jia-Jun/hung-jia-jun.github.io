@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2025-12-29T09:15:38Z</updated>
+    <updated>2025-12-29T13:14:40Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2025-12-29T09:15:28Z</updated>
+            <updated>2025-12-29T13:14:33Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;just 技術筆記&lt;/p&gt;
@@ -814,7 +814,7 @@ $ rm -r /var/lib/ceph/
                 cephadm 搭建 ceph 集群
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/</id>
             <content type="html">
                 &lt;h2 id=&quot;firewall&quot; tabindex=&quot;-1&quot;&gt;Firewall&lt;/h2&gt;
@@ -940,7 +940,7 @@ Added label master to host ceph-cluster-01
                 ceph 新增 OSD
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ceph/cephadm/ceph 新增 OSD/</id>
             <content type="html">
                 &lt;p&gt;確認 orch 服務正常運行&lt;/p&gt;
@@ -1001,7 +1001,7 @@ Created osd(s) 2 on host &#39;ceph-cluster-03&#39;
                 ceph 建立 filesystem
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ceph/cephadm/ceph 建立 filesystem/</id>
             <content type="html">
                 &lt;h1 id=&quot;背景&quot; tabindex=&quot;-1&quot;&gt;背景&lt;/h1&gt;
@@ -1053,7 +1053,7 @@ $ ceph fs volume ls
                 Cephfs ACL mount path
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ceph/Cephfs ACL mount path/</id>
             <content type="html">
                 &lt;h1 id=&quot;背景&quot; tabindex=&quot;-1&quot;&gt;背景&lt;/h1&gt;
@@ -1269,7 +1269,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
                 Ceph cluster 資料寫入篇 - RBD
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - RBD/</id>
             <content type="html">
                 &lt;p&gt;進入 ceph-mon&lt;/p&gt;
@@ -1343,7 +1343,7 @@ ceph.keyring
                 Ceph cluster 資料寫入篇 - CephFS
                 
             </title>
-            <updated></updated>
+            <updated>2025-12-29T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/ceph/Ceph cluster 資料寫入篇 - CephFS/</id>
             <content type="html">
                 &lt;h2 id=&quot;環境準備&quot; tabindex=&quot;-1&quot;&gt;環境準備&lt;/h2&gt;
