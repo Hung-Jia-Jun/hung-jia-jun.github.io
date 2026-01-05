@@ -3,10 +3,7 @@
 ---
 
 
-::: hidden
-帳號 : root
-密碼 : 1qaz2wsx
-:::
+ 
 ## 網路拓樸圖
 ---
 ![Pasted image 20260101201716.png](/img/user/images/Pasted%20image%2020260101201716.png)
