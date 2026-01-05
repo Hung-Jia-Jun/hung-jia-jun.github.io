@@ -87,7 +87,7 @@ set interfaces ge-0/0/0 unit 888 vlan-id 888 family inet address 10.10.106.254/2
 ```bash
 set system root-authentication plain-text-password
 ```
-
+ 
 ## 開始設定 VLAN
 ---
 進入設定模式：
