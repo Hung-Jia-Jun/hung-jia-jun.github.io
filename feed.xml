@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-01-05T05:33:28Z</updated>
+    <updated>2026-01-05T05:34:16Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-01-05T05:33:15Z</updated>
+            <updated>2026-01-05T05:34:04Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -2134,138 +2134,10 @@ root&amp;gt;
 &lt;h2 id=&quot;下一步&quot; tabindex=&quot;-1&quot;&gt;下一步&lt;/h2&gt;
 &lt;hr /&gt;
 &lt;p&gt;配置一個 route 規則&lt;br /&gt;
-詳見 &lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/SRX/SRX%20%E4%B8%8A%E7%B6%B2%E8%A8%AD%E5%AE%9A/&quot;&gt;SRX 上網設定&lt;/a&gt;&lt;/p&gt;
+詳見 &lt;a class=&quot;internal-link is-unresolved&quot; href=&quot;https://hung-jia-jun.github.io/404&quot; target=&quot;&quot;&gt;SRX 上網設定&lt;/a&gt;&lt;/p&gt;
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/SRX/SRX 配置 Default gateway/" >
-        </entry>
-        <entry>
-            <title>
-                SRX 上網設定
-                
-            </title>
-            <updated>2026-01-01T00:00:00.000Z</updated>
-            <id>https://hung-jia-jun.github.io/技術文件/SRX/SRX 上網設定/</id>
-            <content type="html">
-                &lt;p&gt;::: hidden&lt;br /&gt;
-帳號 : root&lt;br /&gt;
-密碼 : 1qaz2wsx&lt;br /&gt;
-:::&lt;/p&gt;
-&lt;h2 id=&quot;網路拓樸圖&quot; tabindex=&quot;-1&quot;&gt;網路拓樸圖&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260101201716.png&quot; alt=&quot;Pasted image 20260101201716.png&quot; /&gt;&lt;br /&gt;
-若需要重置 SRX 可以參考 &lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/SRX/%E9%87%8D%E7%BD%AE%20SRX/&quot;&gt;重置 SRX&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;初始狀態(無法上網)&quot; tabindex=&quot;-1&quot;&gt;初始狀態(無法上網)&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;初始狀態&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root&amp;gt; show interfaces terse
-Interface               Admin Link Proto    Local                 Remote
-fe-0/0/0                up    up
-...
-fe-0/0/1                up    up
-fe-0/0/2                up    down
-fe-0/0/3                up    down
-fe-0/0/4                up    down
-fe-0/0/5                up    down
-fe-0/0/6                up    down
-fe-0/0/7                up    down
-...
----(more)---
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;fe-0/0/0  有連接數據機，但沒有被數據機配置 IP，現在要來設定 Static IP&lt;/p&gt;
-&lt;p&gt;無法 &lt;code&gt;ping 8.8.8.8&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root&amp;gt; ping 8.8.8.8
-PING 8.8.8.8 (8.8.8.8): 56 data bytes
-ping: sendto: Can&#39;t assign requested address
-ping: sendto: Can&#39;t assign requested address
-ping: sendto: Can&#39;t assign requested address
-^C
---- 8.8.8.8 ping statistics ---
-3 packets transmitted, 0 packets received, 100% packet loss
-
-root&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&quot;default-gateway&quot; tabindex=&quot;-1&quot;&gt;檢查 default gateway&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;輸入 &lt;code&gt;netstat -nr | grep default&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;netstat -nr | grep default
-default 192.168.1.1 UGScg                 en0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;default gateway 為 &lt;code&gt;192.168.1.1&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&quot;arp-table&quot; tabindex=&quot;-1&quot;&gt;檢查 arp table&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;輸入 &lt;code&gt;arp -an&lt;/code&gt; 檢查未被使用的 IP&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ arp -an
-? (192.168.1.1) at a8:c2:46:c:5a:71 on en0 ifscope [ethernet]
-? (192.168.1.110) at b6:d5:a6:81:7d:64 on en0 ifscope [ethernet]
-? (192.168.1.111) at ba:1d:e9:3:da:b1 on en0 ifscope [ethernet]
-? (192.168.1.255) at ff:ff:ff:ff:ff:ff on en0 ifscope [ethernet]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;以本次範例來說，可將 SRX 設定一個靜態 IP 在  &lt;code&gt;192.168.1.2/32&lt;/code&gt; 因為尚未被使用&lt;/p&gt;
-&lt;h2 id=&quot;設定流程&quot; tabindex=&quot;-1&quot;&gt;設定流程&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;進入 &lt;code&gt;cli&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root@% cli
-root&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;進入 configuration mode&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root&amp;gt; configure
-Entering configuration mode
-The configuration has been changed but not committed
-
-[edit]
-root#
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;設定靜態 IP&lt;br /&gt;
-Default gateway: &lt;code&gt;192.168.1.1&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root# set interfaces fe-0/0/0 unit 0 family inet
-root# set interfaces fe-0/0/0 unit 0 family inet address 192.168.1.2/24
-root# set routing-options static route 0.0.0.0/0 next-hop 192.168.1.1
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;將 fe-0/0/0.0 介面放入 untrust 區域&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root# set security zones security-zone untrust interfaces fe-0/0/0.0 host-inbound-traffic system-services ping
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;commit&lt;/code&gt; 保存&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root# commit
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;輸入 &lt;code&gt;exit&lt;/code&gt; 離開 configuration mode&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root# exit
-Exiting configuration mode
-
-root&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&quot;確認能否上網&quot; tabindex=&quot;-1&quot;&gt;確認能否上網&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;輸入 &lt;code&gt;show interfaces terse&lt;/code&gt; 靜態 IP 已配置為 &lt;code&gt;192.168.1.2/24&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root&amp;gt; show interfaces terse
-Interface               Admin Link Proto    Local                 Remote
-fe-0/0/0                up    up
-fe-0/0/0.0              up    up   inet     192.168.1.2/24
-...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;從 arp table 已能發現靜態 IP (&lt;code&gt;192.168.1.2&lt;/code&gt;)已配置完成&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;jason@my-mac ~ % arp -an
-? (192.168.1.1) at a8:c2:46:c:5a:71 on en0 ifscope [ethernet]
-? (192.168.1.2) at 84:18:88:b8:82:0 on en0 ifscope [ethernet]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;可以從 SRX ping 到 8.8.8.8&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root&amp;gt; ping 8.8.8.8
-PING 8.8.8.8 (8.8.8.8): 56 data bytes
-64 bytes from 8.8.8.8: icmp_seq=0 ttl=116 time=4.052 ms
-64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=5.899 ms
-^C
---- 8.8.8.8 ping statistics ---
-2 packets transmitted, 2 packets received, 0% packet loss
-round-trip min/avg/max/stddev = 4.052/4.976/5.899/0.923 ms
-
-root&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&quot;總結&quot; tabindex=&quot;-1&quot;&gt;總結&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;現在 SRX 已能透過 Default gateway 上網，下一步是要讓連接 SRX 的設備能上網&lt;/p&gt;
-
-            </content>
-            <link href="https://hung-jia-jun.github.io/技術文件/SRX/SRX 上網設定/" >
         </entry>
         <entry>
             <title>
@@ -2883,54 +2755,6 @@ test-1 -&amp;gt; test-2(port 80 OK)&lt;br /&gt;
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/" >
-        </entry>
-        <entry>
-            <title>
-                SRX ssh server 設定
-                
-            </title>
-            <updated>2026-01-05T00:00:00.000Z</updated>
-            <id>https://hung-jia-jun.github.io/技術文件/ESXi/SRX/SRX ssh server 設定/</id>
-            <content type="html">
-                &lt;h2 id=&quot;ssh&quot; tabindex=&quot;-1&quot;&gt;設定 SSH&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;pre&gt;&lt;code&gt;configure
-set system services ssh
-set system services ssh root-login allow
-set system root-authentication plain-text-password
-commit
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&quot;ssh-1&quot; tabindex=&quot;-1&quot;&gt;在安全區域上允許 SSH 流量&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;需要確認 10.77.18.12 這個 IP 所在的介面是屬於哪個安全區域 (security zone)。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;root&amp;gt; show security zones
-...
-Security zone: untrust
-  Send reset for non-SYN session TCP packets: Off
-  Policy configurable: Yes
-  Interfaces bound: 1
-  Interfaces:
-    fe-0/0/7.0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;目前配置 fe-0/0/7.0 屬於 untrust zone&lt;/p&gt;
-&lt;p&gt;為了允許 ssh 流量來到 &amp;quot;untrust&amp;quot; 區域，請執行以下指令：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;configure
-set security zones security-zone untrust interfaces fe-0/0/7.0 host-inbound-traffic system-services ssh
-commit
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;設定連線資訊在 ~/.ssh/config&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Host srx-firewall
-	HostName 10.7x.1x.1x
-	User root
-	KexAlgorithms +diffie-hellman-group1-sha1
-	HostKeyAlgorithms +ssh-rsa
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;ssh 連線&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;ssh srx-firewall
-&lt;/code&gt;&lt;/pre&gt;
-
-            </content>
-            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/SRX/SRX ssh server 設定/" >
         </entry>
         <entry>
             <title>
