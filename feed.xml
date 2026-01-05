@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-01-02T09:22:59Z</updated>
+    <updated>2026-01-05T05:28:51Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-01-02T09:22:49Z</updated>
+            <updated>2026-01-05T05:28:40Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -2883,6 +2883,54 @@ test-1 -&amp;gt; test-2(port 80 OK)&lt;br /&gt;
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/ESXi/在 ESXi 以 vSRX 實作單臂路由/" >
+        </entry>
+        <entry>
+            <title>
+                SRX ssh server 設定
+                
+            </title>
+            <updated>2026-01-05T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/ESXi/SRX/SRX ssh server 設定/</id>
+            <content type="html">
+                &lt;h2 id=&quot;ssh&quot; tabindex=&quot;-1&quot;&gt;設定 SSH&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;configure
+set system services ssh
+set system services ssh root-login allow
+set system root-authentication plain-text-password
+commit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;ssh-1&quot; tabindex=&quot;-1&quot;&gt;在安全區域上允許 SSH 流量&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;需要確認 10.77.18.12 這個 IP 所在的介面是屬於哪個安全區域 (security zone)。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;root&amp;gt; show security zones
+...
+Security zone: untrust
+  Send reset for non-SYN session TCP packets: Off
+  Policy configurable: Yes
+  Interfaces bound: 1
+  Interfaces:
+    fe-0/0/7.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;目前配置 fe-0/0/7.0 屬於 untrust zone&lt;/p&gt;
+&lt;p&gt;為了允許 ssh 流量來到 &amp;quot;untrust&amp;quot; 區域，請執行以下指令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;configure
+set security zones security-zone untrust interfaces fe-0/0/7.0 host-inbound-traffic system-services ssh
+commit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;設定連線資訊在 ~/.ssh/config&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Host srx-firewall
+	HostName 10.7x.1x.1x
+	User root
+	KexAlgorithms +diffie-hellman-group1-sha1
+	HostKeyAlgorithms +ssh-rsa
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ssh 連線&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh srx-firewall
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/ESXi/SRX/SRX ssh server 設定/" >
         </entry>
         <entry>
             <title>
