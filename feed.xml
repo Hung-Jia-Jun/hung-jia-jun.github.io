@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-01-05T05:36:43Z</updated>
+    <updated>2026-01-05T05:40:31Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-01-05T05:36:32Z</updated>
+            <updated>2026-01-05T05:40:19Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -2147,11 +2147,7 @@ root&amp;gt;
             <updated>2026-01-01T00:00:00.000Z</updated>
             <id>https://hung-jia-jun.github.io/技術文件/SRX/SRX 上網設定/</id>
             <content type="html">
-                &lt;p&gt;::: hidden&lt;br /&gt;
-帳號 : root&lt;br /&gt;
-密碼 : 1qaz2wsx&lt;br /&gt;
-:::&lt;/p&gt;
-&lt;h2 id=&quot;網路拓樸圖&quot; tabindex=&quot;-1&quot;&gt;網路拓樸圖&lt;/h2&gt;
+                &lt;h2 id=&quot;網路拓樸圖&quot; tabindex=&quot;-1&quot;&gt;網路拓樸圖&lt;/h2&gt;
 &lt;hr /&gt;
 &lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260101201716.png&quot; alt=&quot;Pasted image 20260101201716.png&quot; /&gt;&lt;br /&gt;
 若需要重置 SRX 可以參考 &lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/SRX/%E9%87%8D%E7%BD%AE%20SRX/&quot;&gt;重置 SRX&lt;/a&gt;&lt;/p&gt;
