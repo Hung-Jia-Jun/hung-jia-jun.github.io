@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-01-05T05:40:31Z</updated>
+    <updated>2026-01-12T06:39:32Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-01-05T05:40:19Z</updated>
+            <updated>2026-01-12T06:39:20Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -3535,6 +3535,130 @@ vim 會在修改檔案時，預設會刪除並覆蓋，所以會改變 inode id�
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/Docker/Docker overlay2 儲存結構研究/" >
+        </entry>
+        <entry>
+            <title>
+                Cisco Packet Tracer - 跨網段網路拓樸結構
+                
+            </title>
+            <updated>2026-01-12T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/Cisco Packet Tracer - 跨網段網路拓樸結構/</id>
+            <content type="html">
+                &lt;h1 id=&quot;拓樸圖&quot; tabindex=&quot;-1&quot;&gt;拓樸圖&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112141119.png&quot; alt=&quot;Pasted image 20260112141119.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;接線路徑&quot; tabindex=&quot;-1&quot;&gt;接線路徑&lt;/h2&gt;
+&lt;p&gt;SwitchA(Fa0/1) -&amp;gt; RouterA(2911) Gig0/0&lt;br /&gt;
+SwitchB(Fa0/1) -&amp;gt; RouterA(2911) Gig0/1&lt;br /&gt;
+SwitchA(Fa0/2) -&amp;gt; PCA(Fa0)&lt;br /&gt;
+SwitchB(Fa0/2) -&amp;gt; PCB(Fa0)&lt;/p&gt;
+&lt;h2 id=&quot;開始設定&quot; tabindex=&quot;-1&quot;&gt;開始設定&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;h3 id=&quot;pc-a&quot; tabindex=&quot;-1&quot;&gt;PC A&lt;/h3&gt;
+&lt;p id=&quot;9b539b&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Desktop -&amp;gt; IP Configuration&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112141222.png&quot; alt=&quot;Pasted image 20260112141222.png&quot; /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;pc-b&quot; tabindex=&quot;-1&quot;&gt;PC B&lt;/h3&gt;
+&lt;p&gt;Desktop -&amp;gt; IP Configuration&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112140729.png&quot; alt=&quot;Pasted image 20260112140729.png&quot; /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;route-a&quot; tabindex=&quot;-1&quot;&gt;Route A 設定&lt;/h3&gt;
+&lt;hr /&gt;
+&lt;p&gt;我們現在先針對連接 &lt;strong&gt;Switch A&lt;/strong&gt; 的 &lt;strong&gt;Gig0/0&lt;/strong&gt; 進行設定。&lt;br /&gt;
+請在 Router 的 CLI 模式下輸入以下指令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router&amp;gt; enable
+Router# configure terminal
+Router(config)# interface gigabitEthernet 0/0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;現在我們要為 PC A 這端做預設閘道(Default Gateway)&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112141240.png&quot; alt=&quot;Pasted image 20260112141240.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;輸入設定 IP 的指令（格式為 &lt;code&gt;ip address [IP位址] [子網路遮罩]&lt;/code&gt;）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router(config-if)#ip address 192.168.1.254 255.255.255.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;輸入 &lt;code&gt;no shutdown&lt;/code&gt; 以啟動 Gig 0/0&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router(config-if)#no shutdown
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;現在左半邊已設定完畢&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112141746.png&quot; alt=&quot;Pasted image 20260112141746.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;接下來要設定右半邊&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112141800.png&quot; alt=&quot;Pasted image 20260112141800.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;請繼續在 Router 的 CLI 模式下輸入以下指令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router&amp;gt; enable
+Router# configure terminal
+Router(config)# interface gigabitEthernet 0/1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;輸入設定 IP 的指令（格式為 &lt;code&gt;ip address [IP位址] [子網路遮罩]&lt;/code&gt;）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router(config-if)#ip address 192.168.2.254 255.255.255.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;輸入 &lt;code&gt;no shutdown&lt;/code&gt; 以啟動 Gig 0/1&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router(config-if)#no shutdown
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;退出 config 模式&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;exit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;ip-route-table&quot; tabindex=&quot;-1&quot;&gt;ip route table&lt;/h2&gt;
+&lt;p&gt;檢查 Route A 的 ip route table&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Router#show ip route
+
+Codes: L - local, C - connected
+...
+Gateway of last resort is not set
+192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks
+C 192.168.1.0/24 is directly connected, GigabitEthernet0/0
+L 192.168.1.254/32 is directly connected, GigabitEthernet0/0
+
+192.168.2.0/24 is variably subnetted, 2 subnets, 2 masks
+C 192.168.2.0/24 is directly connected, GigabitEthernet0/1
+L 192.168.2.254/32 is directly connected, GigabitEthernet0/1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;解釋&quot; tabindex=&quot;-1&quot;&gt;解釋&lt;/h3&gt;
+&lt;p&gt;Router A 的 GigabitEthernet0/0 已跟 192.168.1.0/24 網段建立連接(C - connected)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;C 192.168.1.0/24 is directly connected, GigabitEthernet0/0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Router A 的 GigabitEthernet0/0 已被配置為 &lt;code&gt;192.168.1.254/32&lt;/code&gt; 而且為(L - local)&lt;br /&gt;
+，代表在 192.168.1.0/24 這個網段內，路由器在 192.168.1.254/32。&lt;br /&gt;
+當 PC A 想要把資料送往其他網段時，它會把封包丟給這個地址。&lt;br /&gt;
+詳見 &lt;a class=&quot;internal-link&quot; target=&quot;&quot; data-note-icon=&quot;&quot; href=&quot;https://hung-jia-jun.github.io/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/Cisco%20Packet%20Tracer%20-%20%E8%B7%A8%E7%B6%B2%E6%AE%B5%E7%B6%B2%E8%B7%AF%E6%8B%93%E6%A8%B8%E7%B5%90%E6%A7%8B/#9b539b&quot;&gt;Cisco Packet Tracer - 跨網段網路拓樸結構#^9b539b&lt;/a&gt; PC A 的 Default Gateway 設定&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;L 192.168.1.254/32 is directly connected, GigabitEthernet0/0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;網路連線測試&quot; tabindex=&quot;-1&quot;&gt;網路連線測試&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Desktop -&amp;gt; Command Prompt&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112143518.png&quot; alt=&quot;Pasted image 20260112143518.png&quot; /&gt;&lt;br /&gt;
+PC A(192.168.1.1) - &amp;gt; PC B(192.168.2.1)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;C:&#92;&amp;gt;ping 192.168.2.1
+Pinging 192.168.2.1 with 32 bytes of data:
+Reply from 192.168.2.1: bytes=32 time=8ms TTL=127
+Reply from 192.168.2.1: bytes=32 time=8ms TTL=127
+Reply from 192.168.2.1: bytes=32 time=8ms TTL=127
+Reply from 192.168.2.1: bytes=32 time=8ms TTL=127
+
+Ping statistics for 192.168.2.1:
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+Minimum = 8ms, Maximum = 8ms, Average = 8ms
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;PC B(192.168.2.1) -&amp;gt; PC A(192.168.1.1)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;C:&#92;&amp;gt;ping 192.168.1.1
+Pinging 192.168.1.1 with 32 bytes of data:
+
+Reply from 192.168.1.1: bytes=32 time=15ms TTL=127
+Reply from 192.168.1.1: bytes=32 time=15ms TTL=127
+Reply from 192.168.1.1: bytes=32 time=16ms TTL=127
+Reply from 192.168.1.1: bytes=32 time=17ms TTL=127
+
+Ping statistics for 192.168.1.1:
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+Minimum = 15ms, Maximum = 17ms, Average = 15ms
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;總結&quot; tabindex=&quot;-1&quot;&gt;總結&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;透過 ㄇ型拓樸結構&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260112143727.png&quot; alt=&quot;Pasted image 20260112143727.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;已經能使用 Router 實現跨網段的通訊&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/Cisco Packet Tracer - 跨網段網路拓樸結構/" >
         </entry>
         <entry>
             <title>
