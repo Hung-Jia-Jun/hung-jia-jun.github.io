@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-01-12T13:56:18Z</updated>
+    <updated>2026-01-13T01:47:31Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-01-12T13:56:06Z</updated>
+            <updated>2026-01-13T01:47:20Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -2940,7 +2940,7 @@ Router(config)#
 &lt;pre&gt;&lt;code&gt;Router(config)#ip route 192.168.3.0 255.255.255.0 10.0.0.2
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;同樣的，Router B &lt;code&gt;192.168.4.0&lt;/code&gt; 網段，也需要在 Router A 這邊設定&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Router(config)#Router(config)#ip route 192.168.4.0 255.255.255.0 10.0.0.2
+&lt;pre&gt;&lt;code&gt;&lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#Router&quot;&gt;#Router&lt;/a&gt;(config)#ip route 192.168.4.0 255.255.255.0 10.0.0.2
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&quot;router-b-3&quot; tabindex=&quot;-1&quot;&gt;Router B&lt;/h2&gt;
 &lt;p&gt;現在要設定封包回程路徑&lt;br /&gt;
