@@ -155,7 +155,7 @@ Router(config)#ip route 192.168.3.0 255.255.255.0 10.0.0.2
 
 同樣的，Router B `192.168.4.0` 網段，也需要在 Router A 這邊設定
 ```
-Router(config)#Router(config)#ip route 192.168.4.0 255.255.255.0 10.0.0.2
+#Router(config)#ip route 192.168.4.0 255.255.255.0 10.0.0.2
 ```
 
 ## Router B
