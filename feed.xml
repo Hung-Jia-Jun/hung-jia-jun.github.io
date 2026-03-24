@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-01-13T01:47:31Z</updated>
+    <updated>2026-03-24T01:34:45Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-01-13T01:47:20Z</updated>
+            <updated>2026-03-24T01:34:32Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -2310,6 +2310,64 @@ commit
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/SRX/SRX ssh server 設定/" >
+        </entry>
+        <entry>
+            <title>
+                Redis 查詢語法
+                
+            </title>
+            <updated>2026-03-24T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/Redis/Redis 查詢語法/</id>
+            <content type="html">
+                &lt;h2 id=&quot;redis&quot; tabindex=&quot;-1&quot;&gt;Redis 操作紀錄&lt;/h2&gt;
+&lt;h3 id=&quot;1-login&quot; tabindex=&quot;-1&quot;&gt;1. 建立連線 (Login)&lt;/h3&gt;
+&lt;p&gt;使用帳戶憑證登入遠端 Redis 伺服器：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;redis-cli -h HOST_ADDRESS -p 6380 --user ACCOUNT_NAME -a PASSWORD_STRING
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;2-hash-httl&quot; tabindex=&quot;-1&quot;&gt;2. 檢查 Hash 欄位存活時間 (HTTL)&lt;/h3&gt;
+&lt;p&gt;查詢指定 Hash 表內某個欄位的剩餘生存時間：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;redis&amp;gt; HTTL RESOURCE_KEY:TENANT_ID FIELDS 1 FIELD_ID_A
+1) (integer) 282
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;3-hash-hscan&quot; tabindex=&quot;-1&quot;&gt;3. 掃描 Hash 內容 (HSCAN)&lt;/h3&gt;
+&lt;p&gt;列出該 Hash 表下的所有欄位與資料內容：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;redis&amp;gt; hscan RESOURCE_KEY:TENANT_ID 0 MATCH *
+1) &amp;quot;0&amp;quot;
+2) 1) &amp;quot;FIELD_ID_A&amp;quot;
+   3) &amp;quot;{&#92;&amp;quot;data_field&#92;&amp;quot;: ...}&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;4-pattern-match&quot; tabindex=&quot;-1&quot;&gt;4. 正則匹配查詢 (Pattern Match)&lt;/h3&gt;
+&lt;p&gt;使用前綴過濾特定的欄位 ID&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;redis&amp;gt; hscan RESOURCE_KEY:TENANT_ID 0 MATCH FIELD_PREFIX*
+1) &amp;quot;0&amp;quot;
+2) 1) &amp;quot;FIELD_ID_A&amp;quot;
+   3) &amp;quot;{&#92;&amp;quot;data_field&#92;&amp;quot;: ...}&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;5-hdel&quot; tabindex=&quot;-1&quot;&gt;5. 移除鍵值 (HDEL)&lt;/h3&gt;
+&lt;p&gt;從 Hash 表中刪除指定欄位，並驗證結果：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;redis&amp;gt; hdel RESOURCE_KEY:TENANT_ID &amp;quot;FIELD_ID_A&amp;quot;
+(integer) 1
+
+# 再次掃描確認，回傳空陣列表示已成功移除
+redis&amp;gt; hscan RESOURCE_KEY:TENANT_ID 0 MATCH FIELD_PREFIX*
+1) &amp;quot;0&amp;quot;
+2) (empty array)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;6-scan&quot; tabindex=&quot;-1&quot;&gt;6. 全域掃描與過濾 (SCAN)&lt;/h3&gt;
+&lt;p&gt;掃描符合規則的獨立 Key 列表：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;redis&amp;gt; SCAN 0 MATCH RESOURCE_PREFIX:TENANT_ID* COUNT 10
+1) &amp;quot;1664&amp;quot;
+2) 1) &amp;quot;RESOURCE_PREFIX:TENANT_ID:RULE_UUID_1&amp;quot;
+   3) &amp;quot;RESOURCE_PREFIX:TENANT_ID:RULE_UUID_2&amp;quot;
+   ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;7-key-ttl&quot; tabindex=&quot;-1&quot;&gt;7. 查詢獨立 Key 的 TTL&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;redis&amp;gt; ttl &amp;quot;RESOURCE_PREFIX:TENANT_ID:RULE_UUID_1&amp;quot;
+(integer) 287
+&lt;/code&gt;&lt;/pre&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/Redis/Redis 查詢語法/" >
         </entry>
         <entry>
             <title>
