@@ -1,5 +1,5 @@
 ---
-{"tags":["Redis"],"dg-publish":true,"dg-created_time":"2026-03-24","dg-updated_time":"2026-03-24","permalink":"/技術文件/Redis/Redis 查詢語法/","dgPassFrontmatter":true,"created":"2026-03-24","updated":"2026-03-24"}
+{"tags":["Redis"],"dg-publish":true,"dg-created_time":"2026-03-24","dg-updated_time":"2026-03-24","dg-draft":false,"permalink":"/技術文件/Redis/Redis 查詢語法/","dgPassFrontmatter":true,"created":"2026-03-24","updated":"2026-03-24"}
 ---
 
 ## Redis 操作紀錄
