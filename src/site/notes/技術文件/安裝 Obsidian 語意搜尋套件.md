@@ -1,5 +1,5 @@
 ---
-{"tags":["obsidian"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/安裝 Obsidian 語意搜尋套件/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"tags":["obsidian"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/安裝 Obsidian 語意搜尋套件/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["obsidian"]}}
 ---
 
 

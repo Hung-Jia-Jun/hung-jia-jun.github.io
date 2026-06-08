@@ -1,5 +1,5 @@
 ---
-{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ESXi/建立虛擬機器並綁定 VLAN/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29"}
+{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ESXi/建立虛擬機器並綁定 VLAN/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29","dg-note-properties":{"tags":null}}
 ---
 
 

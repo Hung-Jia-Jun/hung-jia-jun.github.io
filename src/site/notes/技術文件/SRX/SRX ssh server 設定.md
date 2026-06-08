@@ -1,5 +1,5 @@
 ---
-{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-05","dg-updated_time":"2026-01-05","permalink":"/技術文件/SRX/SRX ssh server 設定/","dgPassFrontmatter":true,"created":"2026-01-05","updated":"2026-01-05"}
+{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-05","dg-updated_time":"2026-01-05","permalink":"/技術文件/SRX/SRX ssh server 設定/","dgPassFrontmatter":true,"created":"2026-01-05","updated":"2026-01-05","dg-note-properties":{"tags":null}}
 ---
 
 

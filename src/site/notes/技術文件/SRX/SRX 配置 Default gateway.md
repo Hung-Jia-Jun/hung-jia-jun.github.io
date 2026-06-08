@@ -1,5 +1,5 @@
 ---
-{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-02","dg-updated_time":"2026-01-02","permalink":"/技術文件/SRX/SRX 配置 Default gateway/","dgPassFrontmatter":true,"created":"2026-01-02","updated":"2026-01-02"}
+{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-02","dg-updated_time":"2026-01-02","permalink":"/技術文件/SRX/SRX 配置 Default gateway/","dgPassFrontmatter":true,"created":"2026-01-02","updated":"2026-01-02","dg-note-properties":{"tags":null}}
 ---
 
 

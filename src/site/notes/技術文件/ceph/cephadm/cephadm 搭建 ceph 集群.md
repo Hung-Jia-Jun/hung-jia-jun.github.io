@@ -1,5 +1,5 @@
 ---
-{"tags":["ceph","cephadm"],"linklist":["[[link.tech.ceph]]"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29"}
+{"tags":["ceph","cephadm"],"linklist":["[[link.tech.ceph]]"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ceph/cephadm/cephadm 搭建 ceph 集群/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29","dg-note-properties":{"tags":["ceph","cephadm"],"linklist":["[[link.tech.ceph]]"]}}
 ---
 
 
@@ -108,7 +108,7 @@ ceph-cluster-02 身上的 docker container
 
 
 
-其餘的機器也照同樣的 [[#加入 host 到 ceph cluster]] 流程走
+其餘的機器也照同樣的 [[技術文件/ceph/cephadm/cephadm 搭建 ceph 集群#加入 host 到 ceph cluster\|#加入 host 到 ceph cluster]] 流程走
 
 加上 label 到 master ceph node (介面上就會顯示哪台機器是 master 了)
 ```

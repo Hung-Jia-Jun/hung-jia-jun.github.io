@@ -1,5 +1,5 @@
 ---
-{"tags":["network"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-12","dg-updated_time":"2026-01-12","permalink":"/技術文件/Network/多 Router 間的跨網段拓樸/","dgPassFrontmatter":true,"created":"2026-01-12","updated":"2026-01-12"}
+{"tags":["network"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-12","dg-updated_time":"2026-01-12","permalink":"/技術文件/Network/多 Router 間的跨網段拓樸/","dgPassFrontmatter":true,"created":"2026-01-12","updated":"2026-01-12","dg-note-properties":{"tags":["network"]}}
 ---
 
 

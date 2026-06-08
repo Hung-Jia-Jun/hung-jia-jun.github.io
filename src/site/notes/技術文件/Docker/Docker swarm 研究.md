@@ -1,5 +1,5 @@
 ---
-{"tags":["docker-swarm","swarm"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/Docker/Docker swarm 研究/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"tags":["docker-swarm","swarm"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/Docker/Docker swarm 研究/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["docker-swarm","swarm"]}}
 ---
 
 #docker #docker-swarm

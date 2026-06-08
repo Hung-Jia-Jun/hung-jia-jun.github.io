@@ -1,5 +1,5 @@
 ---
-{"tags":["cloudflare","tunnel"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/other/Cloudflare tunnel 研究/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"tags":["cloudflare","tunnel"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/other/Cloudflare tunnel 研究/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["cloudflare","tunnel"]}}
 ---
 
 

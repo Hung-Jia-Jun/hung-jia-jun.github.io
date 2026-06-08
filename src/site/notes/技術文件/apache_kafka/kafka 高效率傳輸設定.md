@@ -1,5 +1,5 @@
 ---
-{"tags":["kafka"],"dg-publish":true,"dg-home":false,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/kafka 高效率傳輸設定/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"tags":["kafka"],"dg-publish":true,"dg-home":false,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/apache_kafka/kafka 高效率傳輸設定/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["kafka"]}}
 ---
 
 訂閱 kafka 消息

@@ -1,5 +1,5 @@
 ---
-{"更新時間":"2026-06-03","創建時間":"2026-06-03","tags":["aws","lambda"],"dg-created_time":"2026-06-03","dg-updated_time":"2026-06-03","dg-publish":true,"permalink":"/技術文件/AWS/lambda/Lambda asynchronous-synchronous/","dgPassFrontmatter":true,"created":"2026-06-03","updated":"2026-06-03"}
+{"更新時間":"2026-06-03","創建時間":"2026-06-03","tags":["aws","lambda"],"dg-created_time":"2026-06-03","dg-updated_time":"2026-06-03","dg-publish":true,"permalink":"/技術文件/AWS/lambda/Lambda asynchronous-synchronous/","dgPassFrontmatter":true,"created":"2026-06-03","updated":"2026-06-03","dg-note-properties":{"更新時間":"2026-06-03","創建時間":"2026-06-03","tags":["aws","lambda"]}}
 ---
 
 # 目的

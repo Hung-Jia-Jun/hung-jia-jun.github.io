@@ -1,5 +1,5 @@
 ---
-{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-01","dg-updated_time":"2026-01-01","permalink":"/技術文件/SRX/重置 SRX/","dgPassFrontmatter":true,"created":"2026-01-01","updated":"2026-01-01"}
+{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2026-01-01","dg-updated_time":"2026-01-01","permalink":"/技術文件/SRX/重置 SRX/","dgPassFrontmatter":true,"created":"2026-01-01","updated":"2026-01-01","dg-note-properties":{"tags":null}}
 ---
 
 進入 `cli`

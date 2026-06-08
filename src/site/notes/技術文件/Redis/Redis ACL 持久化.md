@@ -1,5 +1,5 @@
 ---
-{"tags":["Redis","acl"],"dg-draft":false,"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/Redis/Redis ACL 持久化/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"tags":["Redis","acl"],"dg-draft":false,"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/Redis/Redis ACL 持久化/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["Redis","acl"]}}
 ---
 
 # 主旨

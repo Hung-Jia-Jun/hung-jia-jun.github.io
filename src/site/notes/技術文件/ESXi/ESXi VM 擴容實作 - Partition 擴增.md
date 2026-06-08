@@ -1,5 +1,5 @@
 ---
-{"tags":["#linux","#ubuntu","#PV","#LV","VG"],"linklist":["[[link.tech.linux]]"],"related":["[[ESXi VM 擴容實作 - LVM2]]","[[aws vm 擴容實驗]]"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ESXi/ESXi VM 擴容實作 - Partition 擴增/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29"}
+{"tags":["#linux","#ubuntu","#PV","#LV","VG"],"linklist":["[[link.tech.linux]]"],"related":["[[ESXi VM 擴容實作 - LVM2]]","[[aws vm 擴容實驗]]"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ESXi/ESXi VM 擴容實作 - Partition 擴增/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29","dg-note-properties":{"tags":["#linux","#ubuntu","#PV","#LV","VG"],"linklist":["[[link.tech.linux]]"],"related":["[[ESXi VM 擴容實作 - LVM2]]","[[aws vm 擴容實驗]]"]}}
 ---
 
 

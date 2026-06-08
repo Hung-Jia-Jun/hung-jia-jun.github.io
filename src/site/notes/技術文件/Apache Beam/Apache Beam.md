@@ -1,5 +1,5 @@
 ---
-{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-25","dg-updated_time":"2025-12-25","permalink":"/技術文件/Apache Beam/Apache Beam/","dgPassFrontmatter":true,"created":"2025-12-25","updated":"2025-12-25"}
+{"tags":null,"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-25","dg-updated_time":"2025-12-25","permalink":"/技術文件/Apache Beam/Apache Beam/","dgPassFrontmatter":true,"created":"2025-12-25","updated":"2025-12-25","dg-note-properties":{"tags":null}}
 ---
 
 

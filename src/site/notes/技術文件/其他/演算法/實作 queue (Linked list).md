@@ -1,5 +1,5 @@
 ---
-{"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","tags":["演算法","queue","linkedlist"],"permalink":"/技術文件/其他/演算法/實作 queue (Linked list)/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","tags":["演算法","queue","linkedlist"],"permalink":"/技術文件/其他/演算法/實作 queue (Linked list)/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["演算法","queue","linkedlist"]}}
 ---
 
 

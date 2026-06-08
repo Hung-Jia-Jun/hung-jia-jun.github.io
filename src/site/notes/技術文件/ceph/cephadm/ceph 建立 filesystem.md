@@ -1,5 +1,5 @@
 ---
-{"tags":["ceph","cephadm"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ceph/cephadm/ceph 建立 filesystem/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29"}
+{"tags":["ceph","cephadm"],"dg-publish":true,"dg-draft":false,"dg-created_time":"2025-12-29","dg-updated_time":"2025-12-29","permalink":"/技術文件/ceph/cephadm/ceph 建立 filesystem/","dgPassFrontmatter":true,"created":"2025-12-29","updated":"2025-12-29","dg-note-properties":{"tags":["ceph","cephadm"]}}
 ---
 
 # 背景

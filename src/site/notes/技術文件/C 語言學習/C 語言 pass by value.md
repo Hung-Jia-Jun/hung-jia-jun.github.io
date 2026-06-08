@@ -1,5 +1,5 @@
 ---
-{"tags":["C-lang"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/C 語言學習/C 語言 pass by value/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22"}
+{"tags":["C-lang"],"dg-publish":true,"dg-created_time":"2025-12-22","dg-updated_time":"2025-12-22","permalink":"/技術文件/C 語言學習/C 語言 pass by value/","dgPassFrontmatter":true,"created":"2025-12-22","updated":"2025-12-22","dg-note-properties":{"tags":["C-lang"]}}
 ---
 
 C 語言沒有 pass by reference, 只有 pass by value，這是語言特性
