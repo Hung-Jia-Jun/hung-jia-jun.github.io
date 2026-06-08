@@ -3,14 +3,14 @@
     <title>Jason&#39;s tech blog</title>
     <link href="https://hung-jia-jun.github.io/feed.xml" rel="self" >
     <link href="https://hung-jia-jun.github.io" >
-    <updated>2026-06-08T13:43:28Z</updated>
+    <updated>2026-06-08T13:47:10Z</updated>
     <id>https://hung-jia-jun.github.io</id>
         <entry>
             <title>
                 技術筆記
                 
             </title>
-            <updated>2026-06-08T13:43:15Z</updated>
+            <updated>2026-06-08T13:46:58Z</updated>
             <id>https://hung-jia-jun.github.io/</id>
             <content type="html">
                 &lt;p&gt;Jason&#39;s 技術筆記&lt;/p&gt;
@@ -5123,5 +5123,60 @@ if __name__ == &#39;__main__&#39;:
 
             </content>
             <link href="https://hung-jia-jun.github.io/技術文件/Apache Beam/Apache Beam 研究/" >
+        </entry>
+        <entry>
+            <title>
+                Lambda asynchronous-synchronous
+                
+            </title>
+            <updated>2026-06-03T00:00:00.000Z</updated>
+            <id>https://hung-jia-jun.github.io/技術文件/AWS/lambda/Lambda asynchronous-synchronous/</id>
+            <content type="html">
+                &lt;h1 id=&quot;目的&quot; tabindex=&quot;-1&quot;&gt;目的&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;本文目的是建立一個 lambda function，並以 sync 或 async 的方式運行這個 lambda func&lt;br /&gt;
+並且藉由 cloudwatch 工具，確認運行結果&lt;/p&gt;
+&lt;h2 id=&quot;code&quot; tabindex=&quot;-1&quot;&gt;Code&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;建立 lambda function 的過程就跳過，以下是 lambda 程式碼&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import json
+
+print(&#39;Loading function&#39;)
+
+def lambda_handler(event, context):
+    print(&amp;quot;Received event: &amp;quot; + json.dumps(event, indent=2))
+    print(&amp;quot;value1 = &amp;quot; + event[&#39;key1&#39;])
+    print(&amp;quot;value2 = &amp;quot; + event[&#39;key2&#39;])
+    print(&amp;quot;value3 = &amp;quot; + event[&#39;key3&#39;])
+    print(1/0) # 這裡故意讓他出錯
+    &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#return&quot;&gt;#return&lt;/a&gt; event[&#39;key1&#39;]  # Echo back the first key value
+    &lt;a class=&quot;tag&quot; onclick=&quot;toggleTagSearch(this)&quot; data-content=&quot;#raise&quot;&gt;#raise&lt;/a&gt; Exception(&#39;Something went wrong&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260607233107.png&quot; alt=&quot;Pasted image 20260607233107.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;lambda-synchronous&quot; tabindex=&quot;-1&quot;&gt;lambda synchronous&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;trigger lambda&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;export REGION=us-east-1
+aws lambda invoke --function-name helloworld --cli-binary-format raw-in-base64-out --payload &#39;{&amp;quot;key1&amp;quot;: &amp;quot;value1&amp;quot;, &amp;quot;key2&amp;quot;: &amp;quot;value2&amp;quot;, &amp;quot;key3&amp;quot;: &amp;quot;value3&amp;quot; }&#39; --region ${REGION} response.json
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;記得要確認 lambda region，因為 lambda region 是 regional resource&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260603075401.png&quot; alt=&quot;Pasted image 20260603075401.png&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;lambda-asynchronous&quot; tabindex=&quot;-1&quot;&gt;lambda asynchronous&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;加 async 參數到 command&lt;br /&gt;
+&lt;code&gt;--invocation-type Event &lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;會取得 statuscode 202&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260603075817.png&quot; alt=&quot;Pasted image 20260603075817.png&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;如何看執行結果？&quot; tabindex=&quot;-1&quot;&gt;如何看執行結果？&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;到 Functions &amp;gt; helloworld &amp;gt; Monitor &amp;gt; View CloudWatch logs&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260603080543.png&quot; alt=&quot;Pasted image 20260603080543.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;找到最新的 Log stream&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260603080757.png&quot; alt=&quot;Pasted image 20260603080757.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;執行 log 結果&lt;br /&gt;
+&lt;img src=&quot;https://hung-jia-jun.github.io/img/user/images/Pasted%20image%2020260603080832.png&quot; alt=&quot;Pasted image 20260603080832.png&quot; /&gt;&lt;/p&gt;
+
+            </content>
+            <link href="https://hung-jia-jun.github.io/技術文件/AWS/lambda/Lambda asynchronous-synchronous/" >
         </entry>
 </feed>
